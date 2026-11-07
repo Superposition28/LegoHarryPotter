@@ -1,0 +1,62 @@
+# LEGO Harry Potter Operations Manifest
+# Placeholders: Game_Root, Project_Root are built into the engine
+
+title = "LEGO Harry Potter Operations"
+
+## Downloads the tools listed in Tools.toml
+[[operation]]
+id = -1
+name = "Download Required Tools"
+run-all = true
+depends-on = []
+script_type = "engine"
+script = "download-tools"
+tools_manifest = "{{Game_Root}}/Tools.toml"
+
+# Extracts PS3 retail disc image (.iso) if present in Source/Orginals/PS3
+[[operation]]
+id = 3
+name = "Extract ISO Disc Image - LEGO Harry Potter (PS3)"
+run-all = false
+depends-on = []
+script_type = "engine"
+script = "format-extract"
+format = "iso"
+input = "{{Game_Root}}/Source/Orginals/PS3"
+output = "{{Game_Root}}/Source/Orginals/PS3"
+
+# Extracts Xbox 360 retail disc image (.iso) if present in Source/Orginals/Xbox_360
+[[operation]]
+id = 4
+name = "Extract ISO Disc Image - LEGO Harry Potter (Xbox 360)"
+run-all = false
+depends-on = []
+script_type = "engine"
+script = "format-extract"
+format = "iso"
+input = "{{Game_Root}}/Source/Orginals/Xbox_360"
+output = "{{Game_Root}}/Source/Orginals/Xbox_360"
+
+# Extracts all PakDat v1.01 (.DAT) archives from the PS3 builds of LEGO Harry Potter
+[[operation]]
+id = 1
+name = "Extract Archives (.DAT) - LEGO Harry Potter (PS3)"
+run-all = true
+depends-on = [-1]
+script_type = "bms"
+script = "{{Game_Root}}/operations/lhp_dat.bms"
+input = "{{Game_Root}}/Source/Orginals/PS3"
+output = "{{Game_Root}}/GameFiles/LHP-PS3"
+extension = ".dat"
+
+# Extracts all PakDat v1.01 (.DAT) archives from the Xbox 360 builds of LEGO Harry Potter
+[[operation]]
+id = 2
+name = "Extract Archives (.DAT) - LEGO Harry Potter (Xbox 360)"
+run-all = true
+depends-on = [-1]
+script_type = "bms"
+script = "{{Game_Root}}/operations/lhp_dat.bms"
+input = "{{Game_Root}}/Source/Orginals/Xbox_360"
+output = "{{Game_Root}}/GameFiles/LHP-XBOX"
+extension = ".dat"

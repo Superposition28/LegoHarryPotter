@@ -1,0 +1,186 @@
+# Traveller's Tales PakDat v1.01 (.DAT) Archive Extractor (PS3 / Xbox 360)
+# Script for QuickBMS http://quickbms.aluigi.org
+#
+# Format Specification (LEGO Harry Potter: Years 1-4 & Years 5-7):
+# - Header (52 bytes at 0x00):
+#     [0x00] int32  RawTocOffset : If < 0 (archives >= 2 GiB), TocOffset = (-RawTocOffset) << 8.
+#                                  Otherwise, TocOffset = (uint32)RawTocOffset.
+#     [0x04] uint32 TocSize      : Size of the trailing Table of Contents in bytes.
+#                                  Invariant: TocOffset + TocSize == ArchiveSize.
+#     [0x08] char[44] Signature  : "BEGIN_APP_ID_STRINGPakDat v1.01END_APP_ID_STRING\0"
+#
+# - Trailing Table of Contents (at TocOffset, loaded into MEMORY_FILE):
+#     int32  Version             : -4 (0xFFFFFFFC)
+#     uint32 FileCount           : Number of file entries (N)
+#     PakDatFileEntry[FileCount] : 16 bytes per entry:
+#       [+0x00] uint32 OffsetSector     (DataOffset = (OffsetSector << 8) + SubSectorOffset)
+#       [+0x04] uint32 CompressedSize
+#       [+0x08] uint32 UncompressedSize
+#       [+0x0C] uint8  CompressionType  (0 = Raw, 2 = Chunked LZ2K)
+#       [+0x0D] uint16 Padding
+#       [+0x0F] uint8  SubSectorOffset
+#     uint32 NodeCount           : Number of directory/file name tree nodes (M)
+#     PakDatNameNode[NodeCount]  : 8 bytes per node:
+#       [+0x00] int16  ChildOrFile      (> 0: directory first child; <= 0: leaf FileIndex = -ChildOrFile)
+#       [+0x02] int16  PrevSibling      (0: Parent = k - 1; > 0: Parent = Parent[PrevSibling])
+#       [+0x04] int32  NameOffset       (Offset into StringTable)
+#     uint32 StringTableSize     : Size of null-terminated ASCII StringTable (S)
+#     char[StringTableSize]      : StringTable
+#     uint32 PathHashes[FileCount]: FNV-1a variant hashes (seed 0x811C9DC5, prime 0x00199933)
+#
+# - Compression Framing (CompressionType == 2):
+#     Sequence of 32 KiB (0x8000) chunks, each prefixed by a 12-byte header:
+#       [+0x00] char[4] Magic           ("LZ2K")
+#       [+0x04] uint32  ChunkUncompSize
+#       [+0x08] uint32  ChunkCompSize
+#     If ChunkCompSize == ChunkUncompSize, the chunk payload is stored raw; otherwise LZ2K-compressed.
+
+comtype lz2k
+endian little
+
+get ARCHIVE_SIZE asize
+if ARCHIVE_SIZE u< 56
+    print "Skipping non-PakDat file (size %ARCHIVE_SIZE|u% < 56 bytes)"
+    cleanexit
+endif
+
+get RAW_TOC_OFFSET signed_long
+get TOC_SIZE long
+getdstring APP_ID 48
+if APP_ID != "BEGIN_APP_ID_STRINGPakDat v1.01END_APP_ID_STRING"
+    print "Skipping non-PakDat .DAT file"
+    cleanexit
+endif
+
+if RAW_TOC_OFFSET < 0
+    xmath TOC_OFFSET "(0 - RAW_TOC_OFFSET) << 8"
+else
+    set TOC_OFFSET long RAW_TOC_OFFSET
+endif
+
+log MEMORY_FILE TOC_OFFSET TOC_SIZE
+goto 0 MEMORY_FILE
+get VERSION signed_long MEMORY_FILE
+if VERSION != -4
+    print "ERROR: Unsupported PakDat TOC version %VERSION% (expected -4)"
+    cleanexit
+endif
+
+get FILES long MEMORY_FILE
+savepos ENTRIES_BASE MEMORY_FILE
+
+xmath NODES_POS "ENTRIES_BASE + (FILES * 16)"
+goto NODES_POS MEMORY_FILE
+get NODES long MEMORY_FILE
+savepos NODES_BASE MEMORY_FILE
+
+xmath STRINGS_POS "NODES_BASE + (NODES * 8)"
+goto STRINGS_POS MEMORY_FILE
+get STRING_TABLE_SIZE long MEMORY_FILE
+savepos STRING_TABLE_BASE MEMORY_FILE
+
+# Array 0: Parent node index for node k
+# Array 1: Reconstructed relative path for node k
+putarray 0 0 -1
+putarray 1 0 ""
+
+for k = 1 < NODES
+    xmath NODE_OFF "NODES_BASE + (k * 8)"
+    goto NODE_OFF MEMORY_FILE
+    get CHILD_OR_FILE signed_short MEMORY_FILE
+    get PREV_SIBLING signed_short MEMORY_FILE
+    get NAME_OFFSET long MEMORY_FILE
+
+    xmath STR_OFF "STRING_TABLE_BASE + NAME_OFFSET"
+    goto STR_OFF MEMORY_FILE
+    get NODE_NAME string MEMORY_FILE
+
+    if PREV_SIBLING == 0
+        xmath PARENT_NODE "k - 1"
+    else
+        getarray PARENT_NODE 0 PREV_SIBLING
+    endif
+    putarray 0 k PARENT_NODE
+
+    getarray PARENT_PATH 1 PARENT_NODE
+    if PARENT_PATH == ""
+        set FULL_PATH string NODE_NAME
+    else
+        string FULL_PATH p "%s\%s" PARENT_PATH NODE_NAME
+    endif
+    putarray 1 k FULL_PATH
+
+    if CHILD_OR_FILE <= 0
+        xmath FILE_INDEX "0 - CHILD_OR_FILE"
+        if FILE_INDEX >= FILES
+            print "ERROR: Leaf node %k% FileIndex %FILE_INDEX% exceeds FileCount %FILES%"
+            cleanexit
+        endif
+
+        xmath ENTRY_OFF "ENTRIES_BASE + (FILE_INDEX * 16)"
+        goto ENTRY_OFF MEMORY_FILE
+        get OFFSET_SECTOR long MEMORY_FILE
+        get COMP_SIZE long MEMORY_FILE
+        get UNCOMP_SIZE long MEMORY_FILE
+        get COMP_TYPE byte MEMORY_FILE
+        get PAD short MEMORY_FILE
+        get SUB_SECTOR byte MEMORY_FILE
+
+        xmath DATA_OFFSET "(OFFSET_SECTOR << 8) + SUB_SECTOR"
+
+        if COMP_TYPE == 0 || UNCOMP_SIZE == 0
+            log FULL_PATH DATA_OFFSET UNCOMP_SIZE
+        else
+            goto DATA_OFFSET
+            getdstring CHUNK_MAGIC 4
+            if CHUNK_MAGIC != "LZ2K"
+                print "ERROR: Expected LZ2K chunk magic at %DATA_OFFSET|x% for %FULL_PATH%, got %CHUNK_MAGIC%"
+                cleanexit
+            endif
+            get CHUNK_UNCOMP long
+            get CHUNK_COMP long
+            savepos CHUNK_DATA_OFFSET
+
+            if CHUNK_UNCOMP == UNCOMP_SIZE
+                # Fast path: single-chunk compressed entry (<= 32 KiB)
+                if CHUNK_COMP == CHUNK_UNCOMP
+                    log FULL_PATH CHUNK_DATA_OFFSET CHUNK_UNCOMP
+                else
+                    clog FULL_PATH CHUNK_DATA_OFFSET CHUNK_COMP CHUNK_UNCOMP
+                endif
+            else
+                # Multi-chunk compressed entry (> 32 KiB): reassemble in MEMORY_FILE2
+                log MEMORY_FILE2 0 0
+                append
+                if CHUNK_COMP == CHUNK_UNCOMP
+                    log MEMORY_FILE2 CHUNK_DATA_OFFSET CHUNK_UNCOMP
+                else
+                    clog MEMORY_FILE2 CHUNK_DATA_OFFSET CHUNK_COMP CHUNK_UNCOMP
+                endif
+                xmath CUR_OFFSET "CHUNK_DATA_OFFSET + CHUNK_COMP"
+                set OUT_BYTES long CHUNK_UNCOMP
+
+                for OUT_BYTES = OUT_BYTES < UNCOMP_SIZE
+                    goto CUR_OFFSET
+                    getdstring CHUNK_MAGIC 4
+                    if CHUNK_MAGIC != "LZ2K"
+                        print "ERROR: Expected LZ2K chunk magic at %CUR_OFFSET|x% for %FULL_PATH%, got %CHUNK_MAGIC%"
+                        cleanexit
+                    endif
+                    get CHUNK_UNCOMP long
+                    get CHUNK_COMP long
+                    savepos CHUNK_DATA_OFFSET
+                    if CHUNK_COMP == CHUNK_UNCOMP
+                        log MEMORY_FILE2 CHUNK_DATA_OFFSET CHUNK_UNCOMP
+                    else
+                        clog MEMORY_FILE2 CHUNK_DATA_OFFSET CHUNK_COMP CHUNK_UNCOMP
+                    endif
+                    xmath CUR_OFFSET "CHUNK_DATA_OFFSET + CHUNK_COMP"
+                    math OUT_BYTES + CHUNK_UNCOMP
+                next
+                append
+                log FULL_PATH 0 UNCOMP_SIZE MEMORY_FILE2
+            endif
+        endif
+    endif
+next k

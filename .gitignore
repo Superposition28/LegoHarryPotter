@@ -1,0 +1,13 @@
+
+.history/
+
+# engine generated files
+config.toml
+
+# game files
+**/source/**
+
+**/GameFiles/**
+
+operation_execution.log
+

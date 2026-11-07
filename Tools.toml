@@ -1,0 +1,27 @@
+title = "LEGO Harry Potter Tools"
+
+[[tool]]
+name = "Blender"
+version = "4.5.4"
+unpack = true
+
+[[tool]]
+name = "QuickBMS"
+version = "0.12.0"
+unpack = true
+
+[[tool]]
+name = "vgmstream-cli"
+version = "r2023"
+unpack = true
+
+[[tool]]
+name = "ffmpeg"
+version = "8.0"
+unpack = true
+
+[[tool]]
+name = "ImageMagick"
+version = "7.1.2-8-Q16-HDRI"
+unpack = true
+
