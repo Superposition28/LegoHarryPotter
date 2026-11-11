@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.cbx / .cbs (ChatterBoX Voice/SFX Audio & Lip-Sync Stream)</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.cbx
+    </nav>
+    <h1>.cbx / .cbs (ChatterBoX Voice/SFX Audio & Lip-Sync Stream)</h1>
+<aside class="source-notice"><p><strong>Category:</strong> Audio · <strong>Scope:</strong> Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 9,899 .cbx and 5,976 .cbs in Dimensions)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Format Specification · TT Games Engine</p>
+    <p>Proprietary 'ChatterBoX' (!B0X) EA MicroTalk-variant compressed speech/SFX audio container (.cbx, 0x1B0-sample frames) and companion phoneme/lip-sync curves (.cbs).</p>
+    <dl>
+        <dt>File Extension</dt><dd><code>.cbx</code></dd>
+        <dt>Header Signature / Magic</dt><dd><code>!B0X (0x58304221)</code></dd>
+        <dt>Subsystem</dt><dd>Audio</dd>
+        <dt>Cross-Game Scope</dt><dd>Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 9,899 .cbx and 5,976 .cbs in Dimensions)</dd>
+    </dl>
+</section>
+<h2>Overview &amp; Binary Structure (<code>CBX.cs</code> / <code>CBXDecoder</code>)</h2>
+<p>Verified against <code>TTGamesExplorerRebirthLib/Formats/CBX.cs</code> and <code>TTModding-Docs/src/fileformats/cbx.md</code>: <code>.cbx</code> stands for <strong>ChatterBoX</strong>, a custom speech and sound-effect compression format derived from Electronic Arts' 10:1 MicroTalk codec:</p>
+<div class="table-scroll"><table class="format-counts">
+<thead><tr><th>Offset</th><th>Size</th><th>Type</th><th>Field</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>0x00</td><td>4</td><td>Char[4]</td><td>Magic</td><td><code>!B0X</code> (<code>0x58304221</code>).</td></tr>
+<tr><td>0x04</td><td>4</td><td>Int32</td><td>Version</td><td>Format version (<code>-2</code> or <code>-3</code>).</td></tr>
+<tr><td>0x08</td><td>4</td><td>UInt32</td><td>SampleRate</td><td>Output PCM sample rate in Hz (e.g. <code>24000</code> or <code>32000</code> Hz).</td></tr>
+<tr><td>0x0C</td><td>4</td><td>UInt32</td><td>SampleCount</td><td>Total decoded 16-bit mono PCM samples (decoded in <code>0x1B0</code> = 432-sample frames via <code>SoundExpander16</code>).</td></tr>
+</tbody>
+</table></div>
+<p>Companion <code>.cbs</code> files (and <code>_cbs_ps4.pak</code> in the 2024 PC remaster) store synchronized lip-sync phoneme weights and event triggers.</p>
+</body>
+</html>

@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.vag / .wavx / .wavm / .msf / .xma / .ogg (Platform Audio Streams)</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.msf / .xma / .ogg / .vag
+    </nav>
+    <h1>.vag / .wavx / .wavm / .msf / .xma / .ogg (Platform Audio Streams)</h1>
+<aside class="source-notice"><p><strong>Category:</strong> Audio · <strong>Scope:</strong> Universal (Platform-Specific Codecs per Console/PC Target)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Format Specification · TT Games Engine</p>
+    <p>Streaming music, ambience, and dialogue audio containers tailored to each target platform's hardware decoder.</p>
+    <dl>
+        <dt>File Extension</dt><dd><code>.msf / .xma / .ogg / .vag</code></dd>
+        <dt>Header Signature / Magic</dt><dd><code>VAGp / RIFF / MSF\x01 / XMA2 / OggS</code></dd>
+        <dt>Subsystem</dt><dd>Audio</dd>
+        <dt>Cross-Game Scope</dt><dd>Universal (Platform-Specific Codecs per Console/PC Target)</dd>
+    </dl>
+</section>
+<h2>Cross-Platform Audio Codec Matrix</h2>
+<div class="table-scroll"><table class="format-counts">
+<thead><tr><th>Platform</th><th>Extension</th><th>Header Magic</th><th>Codec &amp; Observed Examples</th></tr></thead>
+<tbody>
+<tr><td>PS2</td><td><code>.vag</code> / <code>.mib</code></td><td><code>VAGp</code></td><td>Sony PS2 SPU2 ADPCM (1,037 <code>.vag</code> files in <em>LSW2</em> PS2 <code>GAME.DAT</code> + 170 MB <code>IOP/MODULES/SOUND/</code> streams).</td></tr>
+<tr><td>Original Xbox</td><td><code>.wavx</code> / <code>.wavm</code> / <code>.wma</code></td><td><code>RIFF</code> / <code>ASF</code></td><td>Xbox ADPCM &amp; WMA streams (124 <code>.wavx</code> in <em>LSW1</em> Xbox; 149 <code>.wavm</code> in <em>LSW2</em> Xbox).</td></tr>
+<tr><td>PS3</td><td><code>.msf</code></td><td><code>MSF\x01</code> (<code>0x4D534601</code>)</td><td>Sony CellOS ATRAC3plus / PCM (493 files in <em>HP 1–4</em> PS3).</td></tr>
+<tr><td>Xbox 360</td><td><code>.xma</code></td><td><code>RIFF</code> (<code>XMA2</code>)</td><td>Microsoft XMA2 hardware audio (149 in <em>LSW2</em> X360; 492 in <em>HP 1–4</em> X360).</td></tr>
+<tr><td>Windows PC</td><td><code>.ogg</code> / <code>.wav</code></td><td><code>OggS</code> / <code>RIFF WAVE</code></td><td>Ogg Vorbis streaming tracks and uncompressed RIFF WAVE sound effects (Audio\_SoundFX\).</td></tr>
+</tbody>
+</table></div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.txt / .csv (Plaintext Engine Configuration & Localization Tables)</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.txt
+    </nav>
+    <h1>.txt / .csv (Plaintext Engine Configuration & Localization Tables)</h1>
+<aside class="source-notice"><p><strong>Category:</strong> Configuration & Metadata · <strong>Scope:</strong> Universal (All TT Engine Generations 2005–2024)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Format Specification · TT Games Engine</p>
+    <p>Master game configuration scripts (GAME.TXT, LEVELS.TXT, CHARS.TXT, COLLECTION.TXT, 360_exlist, FILETABLE.TXT) and multilingual localization tables (text.csv).</p>
+    <dl>
+        <dt>File Extension</dt><dd><code>.txt</code></dd>
+        <dt>Header Signature / Magic</dt><dd><code>Plaintext ASCII / UTF-8</code></dd>
+        <dt>Subsystem</dt><dd>Configuration & Metadata</dd>
+        <dt>Cross-Game Scope</dt><dd>Universal (All TT Engine Generations 2005–2024)</dd>
+    </dl>
+</section>
+<h2>Key Configuration Files</h2>
+<ul>
+    <li><code>STUFF/GAME.TXT</code> &amp; <code>LEVELS.TXT</code>: Master campaign flow, hub links, and gameplay constants.</li>
+    <li><code>360_exlist</code> (<em>LSW2</em> Xbox 360): 42-line extension translation map converting legacy PS2/Xbox extensions (<code>ghg</code>, <code>gsc</code>, <code>ter</code>, <code>cu2</code>, <code>an3</code>, <code>vag</code>) into Xbox 360 equivalents (<code>ctr</code>, <code>cc2</code>, <code>ca3</code>, <code>xma</code>).</li>
+    <li><code>FILETABLE.TXT</code> &amp; <code>TRACKEDFILELIST360.TXT</code> (<em>Batman 2</em> PC): Developer build manifests revealing <code>__dlc1__</code>, <code>__dlc2__</code>, and <code>wii\</code> asset trees.</li>
+    <li><code>text.csv</code>: Multilingual string table indexed by <code>LABEL</code> across English, French, German, Spanish, Italian, Danish, Dutch, etc.</li>
+</ul>
+</body>
+</html>

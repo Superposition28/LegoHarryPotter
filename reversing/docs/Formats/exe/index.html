@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Windows Executables (.exe)</title>
+    <link rel="stylesheet" href="../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span>.exe
+    </nav>
+    <h1>PC Windows Executables (.exe — PE32 x86 &amp; PE32+ AMD64)</h1>
+<aside class="source-notice"><p><strong>Platform:</strong> Microsoft Windows (Retail Disc &amp; Steam) · 32-bit x86 (<code>PE32</code>) &amp; 64-bit AMD64 (<code>PE32+</code>)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Windows Portable Executables · Direct3D 9 &amp; Direct3D 11</p>
+    <p>Native Windows executables spanning Era 2 (<code>LEGOSTA2.EXE</code>), Era 3c (<code>LEGOBatman2.exe</code>), and the 2024 Double Eleven 64-bit remasters (<code>harry1.exe</code>, <code>harry2.exe</code>).</p>
+    <dl>
+        <dt>Header Magic</dt><dd><code>MZ</code> (<code>0x5A4D</code>), <code>PE\0\0</code> (<code>0x00004550</code>)</dd>
+        <dt>Inspected Executables</dt><dd><code>LEGOSTA2.EXE</code> (2006 x86), <code>LEGOBatman2.exe</code> (2012 x86), <code>harry1.exe</code> &amp; <code>harry2.exe</code> (2024 AMD64)</dd>
+    </dl>
+</section>
+<h2>Inspected Windows Executables</h2>
+<div class="table-scroll"><table class="format-counts">
+<thead><tr><th>Title</th><th>Executable</th><th>Size &amp; Arch</th><th>Compiler / PDB &amp; Embedded Signatures</th></tr></thead>
+<tbody>
+<tr><td><em>LEGO Star Wars II</em> (2006 PC ISO)</td><td><code>LEGOSTA2.EXE</code></td><td><code>7,493,144</code> B (<code>PE32</code> x86)</td><td>Timestamp <code>2006-09-26 17:21:58 UTC</code>; PDB: <code>c:\projects\starwars\Release_2K\starwars_pc.pdb</code>; mounts <code>GAME.DAT</code>, <code>PATCH.DAT</code>, <code>STARTUP.DAT</code>; SecuROM v7 <code>.securom</code> section.</td></tr>
+<tr><td><em>LEGO Batman 2: DC Super Heroes</em> (2012 Steam)</td><td><code>LEGOBatman2.exe</code></td><td><code>18,690,560</code> B (<code>PE32</code> x86)</td><td>Timestamp <code>2012-05-25 13:57:20 UTC</code>; mounts <code>GAME0.DAT</code>..<code>GAME6.DAT</code> (<code>PakDat v1.01</code> TOC <code>v-4</code>); contains <code>LZ2K</code>, <code>DXBC</code>, <code>FMOD</code>, and <code>StreamInfo</code> reflection tables.</td></tr>
+<tr><td><em>LEGO Harry Potter Collection</em> (2024 Steam)</td><td><code>harry1.exe</code> / <code>harry2.exe</code></td><td><code>13.09 MB</code> / <code>14.43 MB</code> (<code>PE32+</code> AMD64)</td><td><code>x64FinalD11Static</code>; mounts <code>.datwin</code> (TOC <code>v-1</code> with <code>0x12345678</code> canary and <code>LZHAM</code>) and <code>.pkiwin</code>/<code>.pkdwin</code> (zlib).</td></tr>
+</tbody>
+</table></div>
+</body>
+</html>

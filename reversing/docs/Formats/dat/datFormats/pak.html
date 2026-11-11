@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.pak / .pac / .fpk (Flat Resource Sub-Archive)</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.pak
+    </nav>
+    <h1>.pak / .pac / .fpk (Flat Resource Sub-Archive)</h1>
+<aside class="source-notice"><p><strong>Category:</strong> Archives & Containers · <strong>Scope:</strong> Universal (.fpk RFPK in LSW2; .pak/.pac 0x1234567A in HP 1–4, HP 5–7, Batman 2, Dimensions)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Format Specification · TT Games Engine</p>
+    <p>Flat sub-archive bundling small related files (textures, AI scripts, animation caches) with a 20-byte entry table and additive 0x12345678 filename checksums.</p>
+    <dl>
+        <dt>File Extension</dt><dd><code>.pak</code></dd>
+        <dt>Header Signature / Magic</dt><dd><code>0x1234567A / 0x12345678 / RFPK</code></dd>
+        <dt>Subsystem</dt><dd>Archives & Containers</dd>
+        <dt>Cross-Game Scope</dt><dd>Universal (.fpk RFPK in LSW2; .pak/.pac 0x1234567A in HP 1–4, HP 5–7, Batman 2, Dimensions)</dd>
+    </dl>
+</section>
+<h2>Binary Structure (<code>0x1234567A</code> / <code>0x12345678</code>)</h2>
+<p>Verified directly against <code>ICONS_TEX.PAK</code> (2,361,498 B, 136 files) in <em>LEGO Batman 2</em> and <code>ai.pak</code> / <code>_an3_ps4.pak</code> in <em>LEGO Harry Potter</em>:</p>
+<div class="table-scroll"><table class="format-counts">
+<thead><tr><th>Offset</th><th>Size</th><th>Type</th><th>Field</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>0x00</td><td>4</td><td>UInt32</td><td>VersionMagic</td><td><code>0x1234567A</code> (LE) or <code>0x7A563412</code> (BE).</td></tr>
+<tr><td>0x04</td><td>4</td><td>UInt32</td><td>FileCount</td><td>Number of packed sub-files (N).</td></tr>
+<tr><td>0x08</td><td>4</td><td>UInt32</td><td>TotalSize</td><td>Total archive size in bytes.</td></tr>
+<tr><td>0x0C</td><td>20*N</td><td>Struct[]</td><td>Entries</td><td>Five <code>uint32</code> fields per entry: <code>NameOffset</code> (relative to string table), <code>DataOffset</code>, <code>DataSize</code>, <code>Zero</code>, and <code>NameChecksum</code>.</td></tr>
+</tbody>
+</table></div>
+<p><strong>Additive Checksum Invariant:</strong> <code>NameChecksum = 0x12345678 + sum((byte)toupper(c))</code> over all characters in the entry filename. In <em>LSW2</em> (2006), the predecessor format is <code>.fpk</code> (137 files on Xbox, 141 on Xbox 360) with magic <code>RFPK</code>.</p>
+</body>
+</html>

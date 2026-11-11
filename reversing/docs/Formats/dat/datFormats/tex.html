@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.tex / .nxg_textures (DirectDraw Surface & Texture Dictionary)</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.tex
+    </nav>
+    <h1>.tex / .nxg_textures (DirectDraw Surface & Texture Dictionary)</h1>
+<aside class="source-notice"><p><strong>Category:</strong> Textures & Materials · <strong>Scope:</strong> Era 3–4 (2008–2024 Console & PC Titles; inline in .ghg/.gsc in Era 1–2)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Format Specification · TT Games Engine</p>
+    <p>Standalone DirectDraw Surface (DDS) textures (.tex) and multi-texture dictionary containers (.nxg_textures / .dx11_textures) storing DXT1/DXT5/BC1–BC7 mipmapped surfaces.</p>
+    <dl>
+        <dt>File Extension</dt><dd><code>.tex</code></dd>
+        <dt>Header Signature / Magic</dt><dd><code>DDS (0x20534444) / .CC4+HSER+02UN</code></dd>
+        <dt>Subsystem</dt><dd>Textures & Materials</dd>
+        <dt>Cross-Game Scope</dt><dd>Era 3–4 (2008–2024 Console & PC Titles; inline in .ghg/.gsc in Era 1–2)</dd>
+    </dl>
+</section>
+<h2>Overview</h2>
+<p>In Era 1–2 (<em>LSW1</em>, <em>LSW2</em>), level and character textures are embedded directly inside <code>.gsc</code>/<code>.nux</code>/<code>.nx2</code> and <code>.ghg</code>/<code>.hgx</code>/<code>.hx2</code> files. Starting with Era 3 (<em>NXG</em>), textures are split into standalone <code>.tex</code> files (raw <code>DDS </code> surfaces with 124-byte headers) or bundled into <code>.nxg_textures</code> dictionaries containing a <code>NU20</code> metadata table followed by concatenated DDS streams.</p>
+</body>
+</html>

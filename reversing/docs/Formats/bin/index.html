@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PlayStation Executables (.BIN / ELF)</title>
+    <link rel="stylesheet" href="../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span>.bin
+    </nav>
+    <h1>PlayStation Executables (.BIN / EBOOT.BIN &amp; PS2 ELF)</h1>
+<aside class="source-notice"><p><strong>Platforms:</strong> Sony PlayStation 3 (<code>SCE\0</code> SELF PPU ELF64 BE) &amp; PlayStation 2 (MIPS R5900 ELF32 LE)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">PlayStation Executable Containers · PS2 IOP/EE &amp; PS3 CellOS</p>
+    <p>Sony PlayStation executables across generations: PS2 Emotion Engine 32-bit MIPS ELF binaries (<code>SLUS_*</code> / <code>SLES_*</code>) and PS3 signed 64-bit Cell PPU SELF executables (<code>PS3_GAME/USRDIR/EBOOT.BIN</code>).</p>
+    <dl>
+        <dt>Header Signatures</dt><dd><code>SCE\0</code> + <code>\x7FELF</code> at <code>0x90</code> (PS3 SELF) · <code>\x7FELF</code> (PS2 MIPS R5900 LE)</dd>
+        <dt>Inspected PS2 Builds</dt><dd><em>LSW1</em> (<code>SLUS_210.83</code>, 3.16 MB), <em>LSW2</em> (<code>SLUS_214.09</code>, <code>SLES_542.21</code>, <code>SLED_543.15</code>, <code>SLPM_665.72</code>, 3.63 MB)</dd>
+        <dt>Inspected PS3 Builds</dt><dd><em>HP 1–4</em> (<code>BLES00752</code> v01.02 &amp; v03.01), <em>HP 5–7</em> (<code>BLES01297</code>), <em>LEGO Dimensions</em> (<code>BLES02158</code> &amp; <code>BLUS31456</code>, 15.86 MB)</dd>
+    </dl>
+</section>
+<h2>Inspected PlayStation Executables</h2>
+<div class="table-scroll"><table class="format-counts">
+<thead><tr><th>Title &amp; Disc ID</th><th>Executable</th><th>Size</th><th>Architecture &amp; Archive Role</th></tr></thead>
+<tbody>
+<tr><td><em>LEGO Star Wars: The Video Game</em> (PS2 USA v2.00)</td><td><code>SLUS_210.83</code></td><td><code>3,163,692</code> B</td><td>MIPS R5900 ELF32; mounts <code>GAME.DAT</code> (TOC <code>v-1</code>) and decompresses <code>RNC\x02</code> streams.</td></tr>
+<tr><td><em>LEGO Star Wars II</em> (PS2 USA / EU / Demo / JP)</td><td><code>SLUS_214.09</code></td><td><code>3,630,368</code> B</td><td>MIPS R5900 ELF32; mounts 1.74 GB <code>GAME.DAT</code> (TOC <code>v-1</code>, 8,600 files).</td></tr>
+<tr><td><em>LEGO Harry Potter: Years 1–4</em> (PS3 EU)</td><td><code>EBOOT.BIN</code></td><td><code>8,809,856</code> B</td><td>Cell PPU ELF64; mounts <code>GAME.DAT</code> + <code>GAME1.DAT</code>..<code>GAME4.DAT</code> (<code>PakDat v1.01</code> TOC <code>v-4</code>, <code>LZ2K</code>).</td></tr>
+<tr><td><em>LEGO Harry Potter: Years 5–7</em> (PS3 EU)</td><td><code>EBOOT.BIN</code></td><td><code>6,708,864</code> B</td><td>Cell PPU ELF64; mounts <code>GAME0.DAT</code>..<code>GAME3.DAT</code> (<code>PakDat v1.01</code> TOC <code>v-4</code>, <code>LZ2K</code>).</td></tr>
+<tr><td><em>LEGO Dimensions</em> (PS3 EU <code>BLES02158</code> / US <code>BLUS31456</code>)</td><td><code>EBOOT.BIN</code></td><td><code>15,857,088</code> B</td><td>Cell PPU ELF64; mounts <code>GAME*.HDR</code>/<code>.DAT</code> (TOC <code>v-7</code>, <code>DFLT</code>) + <code>CMP2</code> LZMA <code>INSTALL0_*.DAT</code> and USB Toy Pad hid driver.</td></tr>
+</tbody>
+</table></div>
+</body>
+</html>

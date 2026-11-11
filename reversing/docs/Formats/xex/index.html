@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Xbox & Xbox 360 Executables (.xex / .xbe)</title>
+    <link rel="stylesheet" href="../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span>.xex
+    </nav>
+    <h1>Xbox &amp; Xbox 360 Executables (.xex / .xbe)</h1>
+<aside class="source-notice"><p><strong>Platforms:</strong> Microsoft Xbox 360 (<code>XEX2</code> Xenon PPC64 BE) &amp; Original Xbox (<code>XBEH</code> x86 LE)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Executable Containers · Retail Discs, Demos &amp; STFS Packages</p>
+    <p>Microsoft console executable containers: Original Xbox <code>default.xbe</code> (32-bit x86 image at base <code>0x00010000</code>) for Era 1–2 and Xbox 360 <code>Default.xex</code> (64-bit Big-Endian PowerPC PE image at base <code>0x82000000</code>) for Era 2–4.</p>
+    <dl>
+        <dt>Container Signatures</dt><dd><code>XEX2</code> (<code>0x58455832</code>, Xbox 360) · <code>XBEH</code> (<code>0x48454258</code>, Original Xbox)</dd>
+        <dt>Inspected Titles</dt><dd><em>LSW1</em> Xbox (<code>default.xbe</code>, 2.74 MB), <em>LSW2</em> Xbox (<code>default.xbe</code>, 3.66 MB), <em>LSW2</em> X360 (<code>default.xex</code>, 6.29 MB), <em>HP 1–4</em> X360 (<code>Default.xex</code>, Title ID <code>0x575207E6</code>), <em>HP 5–7</em> X360 (<code>Default.xex</code>, Title ID <code>0x57520812</code>)</dd>
+        <dt>Decryption Tooling</dt><dd><code>XexTool v7.0</code> (<code>-u -o Default_unpacked.xex -d . -i Default.idc Default.xex</code>)</dd>
+    </dl>
+</section>
+<h2>Inspected Xbox &amp; Xbox 360 Executables</h2>
+<div class="table-scroll"><table class="format-counts">
+<thead><tr><th>Title &amp; Platform</th><th>Executable</th><th>Size</th><th>Internal PE / Details</th></tr></thead>
+<tbody>
+<tr><td><em>LEGO Star Wars: The Video Game</em> (Xbox USA)</td><td><code>default.xbe</code></td><td><code>2,740,224</code> B</td><td><code>XBEH</code> x86 image reading loose <code>.nux</code>, <code>.hgx</code>, <code>.ani</code>, <code>.bsa</code>, <code>.wavx</code> files from XDVDFS.</td></tr>
+<tr><td><em>LEGO Star Wars II: The Original Trilogy</em> (Xbox)</td><td><code>default.xbe</code></td><td><code>3,661,824</code> B</td><td><code>XBEH</code> x86 image reading loose <code>.nx2</code>, <code>.hx2</code>, <code>.an3</code>, <code>.fpk</code> files.</td></tr>
+<tr><td><em>LEGO Star Wars II: The Original Trilogy</em> (Xbox 360)</td><td><code>default.xex</code></td><td><code>6,287,360</code> B</td><td><code>XEX2</code> Xenon PPC64 executable reading loose XDVDFS assets via <code>360_exlist</code>.</td></tr>
+<tr><td><em>LEGO Harry Potter: Years 1–4</em> (Xbox 360)</td><td><code>Default.xex</code></td><td><code>9,838,592</code> B</td><td>Unpacks to <code>legogame_Final_360.exe</code> (25.3 MB, Title ID <code>0x575207E6</code>, Media ID <code>0x3E371834</code>).</td></tr>
+<tr><td><em>LEGO Harry Potter: Years 5–7</em> (Xbox 360)</td><td><code>Default.xex</code></td><td><code>11,640,832</code> B</td><td>Unpacks to <code>harry2.master.pe</code> (13.7 MB, Title ID <code>0x57520812</code>, Media ID <code>0x61D8E1DE</code>).</td></tr>
+</tbody>
+</table></div>
+</body>
+</html>

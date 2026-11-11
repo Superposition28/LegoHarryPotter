@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.an3 / .ca3 / .ani / .anm (Skeletal Animation Clip)</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.an3
+    </nav>
+    <h1>.an3 / .ca3 / .ani / .anm (Skeletal Animation Clip)</h1>
+<aside class="source-notice"><p><strong>Category:</strong> Animation · <strong>Scope:</strong> Universal (.ani in LSW1; .an3 in LSW2–Dimensions; .ca3 on LSW2 X360; .anm in HP/Batman 2)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Format Specification · TT Games Engine</p>
+    <p>Compressed keyframe skeletal animation tracks storing bone rotation quaternions, translation vectors, and scale curves over time.</p>
+    <dl>
+        <dt>File Extension</dt><dd><code>.an3</code></dd>
+        <dt>Header Signature / Magic</dt><dd><code>AN3! / 6INA / 8INA / ANM</code></dd>
+        <dt>Subsystem</dt><dd>Animation</dd>
+        <dt>Cross-Game Scope</dt><dd>Universal (.ani in LSW1; .an3 in LSW2–Dimensions; .ca3 on LSW2 X360; .anm in HP/Batman 2)</dd>
+    </dl>
+</section>
+<h2>Evolution Across TT Games</h2>
+<ul>
+    <li><code>.ani</code> (<strong>LSW1 2005</strong>): <code>ANI4</code> / <code>ANI6</code> keyframe curves; verified byte-identical between PS2 (<code>GAME.DAT</code>) and Original Xbox (<code>chars\amidala\explode.ani</code> = 11,922 B).</li>
+    <li><code>.an3</code> (<strong>LSW2 2006 – LEGO Dimensions 2015</strong>): Introduced in <em>LSW2</em> (2,440 files in PS2 GAME.DAT and Xbox XISO) and retained through <em>Dimensions</em> (19,580 files) and the 2024 <em>Harry Potter Collection</em> (bundled inside <code>_an3_ps4.pak</code>). Uses <code>6INA</code> / <code>8INA</code> / <code>AN3!</code> headers with quantized curve evaluation.</li>
+    <li><code>.ca3</code> (<strong>LSW2 Xbox 360</strong>): Big-endian Xbox 360 animation counterpart mapped in <code>360_exlist</code> (n3 -> ca3).</li>
+    <li><code>.anm</code> (<strong>HP 1–4, HP 5–7, Batman 2</strong>): High-precision animation clips used alongside <code>.an3</code> for complex character and creature rigs.</li>
+</ul>
+</body>
+</html>

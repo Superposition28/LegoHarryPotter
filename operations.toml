@@ -49,6 +49,57 @@ input = "{{Game_Root}}/Source/Orginals/PS3"
 output = "{{Game_Root}}/GameFiles/LHP-PS3"
 extension = ".dat"
 
+# Cross-reference inventory covers the console originals and Windows Collection.
+[[operation]]
+id = 10
+name = "Inventory TT archive formats"
+run-all = false
+depends-on = []
+script_type = "lua"
+script = "{{Game_Root}}/operations/CrossReference.lua"
+
+[[operation]]
+id = 11
+name = "Extract Windows Collection archives"
+run-all = false
+depends-on = [-1]
+script_type = "lua"
+script = "{{Game_Root}}/operations/CrossReference.lua"
+args = ["--extract"]
+
+[[operation]]
+id = 12
+name = "Inspect Collection launcher and supplied Xbox demo containers"
+run-all = false
+depends-on = []
+script_type = "lua"
+script = "{{Game_Root}}/operations/InspectContainers.lua"
+
+[[operation]]
+id = 13
+name = "Extract Collection launcher and supplied Xbox demo archives"
+run-all = false
+depends-on = [-1]
+script_type = "lua"
+script = "{{Game_Root}}/operations/InspectContainers.lua"
+args = ["--extract"]
+
+[[operation]]
+id = 14
+name = "Compare exported TT format inventories"
+run-all = false
+depends-on = [-1]
+script_type = "lua"
+script = "{{Game_Root}}/operations/CompareFormats.lua"
+
+[[operation]]
+id = 15
+name = "Validate TT archive parser with synthetic inputs"
+run-all = false
+depends-on = []
+script_type = "lua"
+script = "{{Game_Root}}/operations/ValidateArchiveParser.lua"
+
 # Extracts all PakDat v1.01 (.DAT) archives from the Xbox 360 builds of LEGO Harry Potter
 [[operation]]
 id = 2

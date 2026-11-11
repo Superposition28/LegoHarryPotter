@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.msf (Sony CellOS Multi-Stream Audio)</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='#home'>Documentation</a><span>/</span><a href='../../index.html'>Formats</a><span>/</span><a href='../dat.html'>.dat</a><span>/</span>.msf
+    </nav>
+    <h1>.msf (Sony CellOS Multi-Stream Audio)</h1>
+<aside class="source-notice"><p><strong>Category:</strong> Audio · Extracted from TT Games <code>.DAT</code> / <code>.datwin</code> archives</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Format Specification · TT Games Engine</p>
+    <p>Sony PlayStation 3 streaming audio container holding ATRAC3plus or PCM compressed background music and cutscene voice tracks.</p>
+    <dl>
+        <dt>File Extension</dt><dd><code>.msf</code></dd>
+        <dt>Header Signature / Magic</dt><dd><code>MSF\x01 (0x4D534601)</code></dd>
+        <dt>Subsystem</dt><dd>Audio</dd>
+    </dl>
+</section>
+<h2>Overview</h2>
+<p>PS3 hardware audio format. Decoded natively on Cell SPU / RSX via <code>cellAudio</code> stubs. Supported by <code>vgmstream</code> for conversion to WAV.</p>
+</body>
+</html>

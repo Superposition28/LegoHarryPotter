@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.giz (Gizmo & Interactive Obstacle Placement)</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.giz
+    </nav>
+    <h1>.giz (Gizmo & Interactive Obstacle Placement)</h1>
+<aside class="source-notice"><p><strong>Category:</strong> Level Design & AI · <strong>Scope:</strong> Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 2,520 files in Dimensions)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Format Specification · TT Games Engine</p>
+    <p>Interactive level gizmo container storing GizObstacle, GizBuildit, GizForce, Blowup, GizmoPickup, Lever, ZipUp, HatMachine, Plug, Tube, and Turret records.</p>
+    <dl>
+        <dt>File Extension</dt><dd><code>.giz</code></dd>
+        <dt>Header Signature / Magic</dt><dd><code>GizObstacle (0x0B000000)</code></dd>
+        <dt>Subsystem</dt><dd>Level Design & AI</dd>
+        <dt>Cross-Game Scope</dt><dd>Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 2,520 files in Dimensions)</dd>
+    </dl>
+</section>
+<h2>Overview &amp; Sub-Chunk Schema</h2>
+<p>Binary container storing interactive level gizmos per level sub-area. Each section is prefixed by a length-prefixed ASCII type identifier followed by structured placement records:</p>
+<ul>
+    <li><code>GizObstacle</code>: Interactive obstacles, gates, and hazard volumes.</li>
+    <li><code>GizBuildit</code>: Multi-brick bouncing LEGO build-it assembly spots.</li>
+    <li><code>GizForce</code>: Jedi Force / Harry Potter Wingardium Leviosa telekinesis targets.</li>
+    <li><code>Blowup</code>: Silver/Gold LEGO destructible props and stud drop tables.</li>
+    <li><code>GizmoPickup</code>, <code>Lever</code>, <code>ZipUp</code> (grapple points), <code>HatMachine</code>, <code>Plug</code>, <code>Tube</code>, and <code>Turret</code>.</li>
+</ul>
+</body>
+</html>

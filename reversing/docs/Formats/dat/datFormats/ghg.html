@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.ghg / .hgx / .hx2 / .hgp (Game Hierarchical Geometry / Skeletal Model)</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.ghg
+    </nav>
+    <h1>.ghg / .hgx / .hx2 / .hgp (Game Hierarchical Geometry / Skeletal Model)</h1>
+<aside class="source-notice"><p><strong>Category:</strong> Characters & Models · <strong>Scope:</strong> Universal (All TT Engine Generations 2005–2024; .hgx in LSW1 Xbox, .hx2 in LSW2 Xbox, .hgp in LSW1 PC/GCN)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Format Specification · TT Games Engine</p>
+    <p>Skeletal character, minifigure, creature, and vehicle mesh container storing bone hierarchies, inverse bind matrices, skinning weights, LODs, and embedded or referenced textures.</p>
+    <dl>
+        <dt>File Extension</dt><dd><code>.ghg</code></dd>
+        <dt>Header Signature / Magic</dt><dd><code>NU20 (0x3032554E) / .CC4+HSER+02UN</code></dd>
+        <dt>Subsystem</dt><dd>Characters & Models</dd>
+        <dt>Cross-Game Scope</dt><dd>Universal (All TT Engine Generations 2005–2024; .hgx in LSW1 Xbox, .hx2 in LSW2 Xbox, .hgp in LSW1 PC/GCN)</dd>
+    </dl>
+</section>
+<h2>Overview &amp; Platform Variants</h2>
+<p><code>.ghg</code> (Game Hierarchical Geometry) defines articulated characters, minifigures, creatures, and multi-part props:</p>
+<ul>
+    <li><strong>LSW1 (2005):</strong> <code>.ghg</code> on PS2 (<code>RNC\x02</code> compressed), <code>.hgx</code> on Original Xbox (uncompressed <code>NU20</code> v<code>0x25</code> with inline DXT <code>.dds</code> textures and <code>C:\Perforce\LSW\...</code> paths), and <code>.hgp</code> on PC/GameCube.</li>
+    <li><strong>LSW2 (2006):</strong> <code>.ghg</code> on PS2/Xbox 360/PC and <code>.hx2</code> on Original Xbox (accompanied by debug <code>.hx2.htm</code> Perforce export logs on the Xbox retail disc).</li>
+    <li><strong>NXG &amp; DX11 (HP 1–4, HP 5–7, Batman 2, Dimensions):</strong> Platform-suffixed <code>_nxg.ghg</code> / <code>_dx11.ghg</code> combining an inner <code>NU20</code> hierarchy (<code>HGOL</code> / <code>LOGH</code> layer lists, joints, locators) with GPU vertex/index streams.</li>
+</ul>
+<h2>Internal Chunks</h2>
+<ul>
+    <li><code>NTBL</code> / <code>LBTN</code>: Null-terminated string table holding joint names (<code>head</code>, <code>neck</code>, <code>torso</code>, <code>arm_L</code>, <code>hand_L</code>, <code>hips</code>, <code>leg_L</code>) and material identifiers.</li>
+    <li><code>TST0</code> / <code>0TST</code>: Texture set table (inline textures in Era 1–2; external <code>.tex</code> / <code>.nxg_textures</code> references in Era 3–4).</li>
+    <li><code>MSH0</code> / <code>0HSM</code>: Skinned mesh primitives and bone weight palette indices.</li>
+</ul>
+</body>
+</html>

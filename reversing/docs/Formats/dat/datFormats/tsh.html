@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.tsh (NuTextureSheet / Texture Share Atlas Lookup Table)</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.tsh
+    </nav>
+    <h1>.tsh (NuTextureSheet / Texture Share Atlas Lookup Table)</h1>
+<aside class="source-notice"><p><strong>Category:</strong> Textures & Materials · <strong>Scope:</strong> Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Format Specification · TT Games Engine</p>
+    <p>NuTextureSheet and texture sharing container (4CC.TXSH / TSHR / RHST) mapping FNV1UPPER hashes and UV sub-rectangles to shared minifigure decals and texture atlases.</p>
+    <dl>
+        <dt>File Extension</dt><dd><code>.tsh</code></dd>
+        <dt>Header Signature / Magic</dt><dd><code>4CC.TXSH / 02UN / NU20 (TSHR / RHST)</code></dd>
+        <dt>Subsystem</dt><dd>Textures & Materials</dd>
+        <dt>Cross-Game Scope</dt><dd>Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)</dd>
+    </dl>
+</section>
+<h2>Overview &amp; Structure (<code>NuTextureSheet</code> / <code>TSH.cs</code>)</h2>
+<p><code>.tsh</code> files appear in two closely related forms across Era 3–4:</p>
+<ul>
+    <li><strong><code>NU20</code> / <code>02UN</code> <code>TSHR</code> (LE) / <code>RHST</code> (BE):</strong> Aliases shared textures across character packages.</li>
+    <li><strong><code>4CC.TXSH</code> (<code>NuTextureSheet</code>):</strong> Contains a <code>NU20</code> header followed by an array of texture sheet entries mapping <code>FNV1UPPER</code> (offset basis <code>0x811C9DC5</code>, prime <code>0x199933</code>) hashes or relative <code>.tex</code> paths to UV sprite sub-rectangles for UI icons and minifigure decals.</li>
+</ul>
+</body>
+</html>

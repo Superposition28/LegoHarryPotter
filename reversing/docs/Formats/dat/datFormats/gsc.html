@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.gsc / .nux / .nx2 / .nus (NuScene Compiled Scene Geometry)</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.gsc
+    </nav>
+    <h1>.gsc / .nux / .nx2 / .nus (NuScene Compiled Scene Geometry)</h1>
+<aside class="source-notice"><p><strong>Category:</strong> 3D Graphics & Scene · <strong>Scope:</strong> Universal (All TT Engine Generations 2005–2024; .nux/.nus in LSW1 Xbox, .nx2 in LSW2 Xbox)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Format Specification · TT Games Engine</p>
+    <p>Compiled static scene geometry, room meshes, material graphs, portal bounds, and camera splines across Classic Nu2 (.nup/.nux/.nx2) and Next-Gen NXG/DX11 (_nxg.gsc, _dx11.gsc).</p>
+    <dl>
+        <dt>File Extension</dt><dd><code>.gsc</code></dd>
+        <dt>Header Signature / Magic</dt><dd><code>NU20 (0x3032554E) / .CC4+HSER+02UN / GSC0</code></dd>
+        <dt>Subsystem</dt><dd>3D Graphics & Scene</dd>
+        <dt>Cross-Game Scope</dt><dd>Universal (All TT Engine Generations 2005–2024; .nux/.nus in LSW1 Xbox, .nx2 in LSW2 Xbox)</dd>
+    </dl>
+</section>
+<h2>Overview &amp; Engine Evolution</h2>
+<p>The <code>.gsc</code> (Game Scene / NuScene) family is the primary static environment and background geometry container across Traveller's Tales LEGO titles:</p>
+<ul>
+    <li><strong>Era 1 (LSW1 2005):</strong> Stored as <code>.gsc</code> on PS2 (wrapped in <code>RNC\x02</code> compression), <code>.nux</code> / <code>.nus</code> on Original Xbox (raw <code>GSC0</code> + <code>VERS</code> chunks), and <code>.nup</code> on PC/GameCube.</li>
+    <li><strong>Era 2 (LSW2 2006 – Indy 1 2008):</strong> Stored as <code>.gsc</code> on PS2/PC/Xbox 360 and <code>.nx2</code> on Original Xbox. Begins with little-endian <code>NU20</code> or big-endian <code>02UN</code> chunk streams (<code>INFO</code>, <code>NTBL</code>, <code>TST0</code>, <code>MSH0</code>, <code>MTL0</code>, <code>SPEC</code>).</li>
+    <li><strong>Era 3–4 (NXG &amp; DX11, 2008–2019):</strong> Stored with platform suffixes (<code>_nxg.gsc</code>, <code>_wii.gsc</code>, <code>_dx11.gsc</code>). Wrapped in a FourCC resource container (<code>.CC4</code> / <code>4CC.</code> + <code>HSER</code> / <code>RESH</code>) embedding an inner <code>NU20</code> / <code>02UN</code> scene payload and followed by an out-of-band <code>StreamInfo</code> display-list and vertex/index buffer stream.</li>
+</ul>
+<h2>Binary Structure (Era 3–4 NXG / DX11 Container)</h2>
+<div class="table-scroll"><table class="format-counts">
+<thead><tr><th>Offset</th><th>Size</th><th>Type</th><th>Field</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>0x00</td><td>4</td><td>UInt32</td><td>HeaderSize</td><td>Size of outer resource wrapper before inner <code>NU20</code> stream.</td></tr>
+<tr><td>0x04</td><td>4</td><td>UInt32</td><td>Version</td><td>Container version indicator (typically <code>1</code>).</td></tr>
+<tr><td>0x08</td><td>4</td><td>Char[4]</td><td>Magic</td><td><code>02UN</code> (BE on PS3/X360) or <code>NU20</code> (LE on PC).</td></tr>
+<tr><td>0x0C</td><td>4</td><td>Int32</td><td>Nu20Version</td><td>Engine serialization version (e.g. <code>0x46</code>..<code>0x59</code>).</td></tr>
+</tbody>
+</table></div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.cd (Character Definition — EdFile StreamInfo)</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.cd
+    </nav>
+    <h1>.cd (Character Definition — EdFile StreamInfo)</h1>
+<aside class="source-notice"><p><strong>Category:</strong> Characters & Models · <strong>Scope:</strong> Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions; preceded by CHARSTXT.TXT in Era 1–2)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Format Specification · TT Games Engine</p>
+    <p>Reflected EdFile serializer container defining modular minifigure parts, meshes (.ghg), textures (.tex), physics (.cpd), and animation sets (.as).</p>
+    <dl>
+        <dt>File Extension</dt><dd><code>.cd</code></dd>
+        <dt>Header Signature / Magic</dt><dd><code>StreamInfo (0x0A len + 'StreamInfo')</code></dd>
+        <dt>Subsystem</dt><dd>Characters & Models</dd>
+        <dt>Cross-Game Scope</dt><dd>Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions; preceded by CHARSTXT.TXT in Era 1–2)</dd>
+    </dl>
+</section>
+<h2>Overview &amp; EdFile StreamInfo Format</h2>
+<p>Starting in Era 3 (NXG), character definitions moved from plaintext scripts to TT Games' reflected binary serializer (<code>EdFile</code> / <code>NuSerializer</code>). Every <code>.cd</code>, <code>.cpd</code>, <code>.as</code>, <code>.apj</code>, and <code>.led</code> file begins with a 4-byte version/type tag, a 4-byte string length (<code>0x0A</code> = 10), and the ASCII string <code>StreamInfo</code> at offset <code>0x08</code>, followed by reflected tables:</p>
+<ul>
+    <li><code>TypeList</code>: Primitive and composite data types (<code>int</code>, <code>float</code>, <code>CharString</code>, <code>NuVec</code>).</li>
+    <li><code>ClassList</code>: C++ class schemas with member names and type indices.</li>
+    <li><code>OLST</code> (Object List) &amp; <code>MOBJ</code> (Main Object): Serialized object instances.</li>
+</ul>
+</body>
+</html>

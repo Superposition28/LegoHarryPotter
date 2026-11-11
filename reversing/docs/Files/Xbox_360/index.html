@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Xbox & Xbox 360 Combined Filesystem</title>
+    <link rel="stylesheet" href="../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../index.html#Files' target='_parent'>Files</a><span>/</span>Xbox_360
+    </nav>
+    <h1>Xbox &amp; Xbox 360: Combined File &amp; Directory Layout</h1>
+<aside class="source-notice"><p><strong>Platforms:</strong> Original Xbox (XISO XDVDFS at <code>0x10000</code>) &amp; Xbox 360 (XGD2 XDVDFS at <code>0x0FD90000</code> + STFS)</p></aside>
+<section class="doc-overview">
+    <h2>1. Original Xbox &amp; Early Xbox 360 Loose XDVDFS Layout (LSW1 &amp; LSW2)</h2>
+    <p>Uniquely, <em>LEGO Star Wars</em> (2005 Xbox) and <em>LEGO Star Wars II</em> (2006 Xbox &amp; Xbox 360) do <strong>not</strong> pack their assets into <code>GAME.DAT</code>. All files sit directly inside the XDVDFS partition:</p>
+    <ul>
+        <li><strong>LSW1 Xbox (4,721 loose files):</strong> <code>default.xbe</code>, <code>chars/</code> (<code>.hgx</code>, <code>.ani</code>, <code>.bsa</code>), <code>levels/</code> (<code>.nux</code>, <code>.ter</code>, <code>.rtl</code>, <code>.ai2</code>), <code>cut/</code> (<code>.cut</code>), <code>sound/</code> (<code>.wavx</code>).</li>
+        <li><strong>LSW2 Xbox (8,329 loose files):</strong> <code>default.xbe</code>, <code>.nx2</code> scenes, <code>.hx2</code> models + <code>.hx2.htm</code> Perforce export logs, <code>.an3</code> animations, <code>.fpk</code> packages.</li>
+        <li><strong>LSW2 Xbox 360 (3,973 loose files + LIVE DLC):</strong> <code>default.xex</code>, <code>360_exlist</code> extension remapping table (<code>ter -> ctr</code>, <code>cu2 -> cc2</code>, <code>an3 -> ca3</code>, <code>vag -> xma</code>), and 57 KB STFS DLC package enabling <em>LSW1</em> save characters.</li>
+    </ul>
+    <h2>2. Xbox 360 PakDat v1.01 Layout (Era 3–4: HP 1–4, HP 5–7, Batman 2)</h2>
+    <ul>
+        <li><code>Default.xex</code>: XEX2 Xenon executable container (Title IDs <code>0x575207E6</code>, <code>0x57520812</code>, <code>0x57520817</code>).</li>
+        <li><code>GAME*.DAT</code>: 57-byte <code>PakDat v1.01</code> archives storing big-endian PowerPC assets and XMA2 (<code>.xma</code>) audio streams.</li>
+    </ul>
+</section>
+</body>
+</html>

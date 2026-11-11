@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.anm (Animation Track Sequence)</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='#home'>Documentation</a><span>/</span><a href='../../index.html'>Formats</a><span>/</span><a href='../dat.html'>.dat</a><span>/</span>.anm
+    </nav>
+    <h1>.anm (Animation Track Sequence)</h1>
+<aside class="source-notice"><p><strong>Category:</strong> Animation · Extracted from TT Games <code>.DAT</code> / <code>.datwin</code> archives</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Format Specification · TT Games Engine</p>
+    <p>Keyframe skeletal animation sequence defining bone rotations (quaternions), translations, and scale curves over time for minifigures, vehicles, and creatures.</p>
+    <dl>
+        <dt>File Extension</dt><dd><code>.anm</code></dd>
+        <dt>Header Signature / Magic</dt><dd><code>0x06000000</code></dd>
+        <dt>Subsystem</dt><dd>Animation</dd>
+    </dl>
+</section>
+<h2>Overview</h2>
+<p><code>.anm</code> files animate skeletal hierarchies defined in <code>.ghg</code> files. Standard minifigure animations (run, jump, build, attack, cast spell, idle) are shared across titles via character definition scripts.</p>
+<h2>Structure</h2>
+<p>Headers begin with frame count, sampling rate (typically 30 or 60 FPS), and track channel counts. Channels store timestamped quaternion rotation tracks <code>(x, y, z, w)</code> and vector translations.</p>
+</body>
+</html>

@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LEGO Harry Potter - Documentation Guide</title>
+    <link rel="stylesheet" href="style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='index.html#home' target='_parent'>Documentation</a><span>/</span>Guide
+    </nav>
+    <h1>Documentation Guide &amp; Format Analysis Conventions</h1>
+<aside class="source-notice"><p><strong>Project:</strong> LEGO Harry Potter Reversing &amp; Format Documentation</p></aside>
+<section class="doc-overview">
+    <h2>Project Mission &amp; Architectural Principles</h2>
+    <p>This technical reference documents binary file formats, proprietary archive packaging, compression algorithms, and filesystem structures for <strong>LEGO Harry Potter</strong> within the RemakeEngine ecosystem. It follows the reverse-engineering documentation standards established across the LEGO and Simpsons documentation repositories.</p>
+    <h2>Two Complementary Documentation Trees</h2>
+    <ol>
+        <li><strong>Format Analysis (<code>Formats/</code>):</strong> Follows binary format origins: root executable and container formats (<code>.xex</code>/<code>.xbe</code>, <code>.bin</code>/<code>ELF</code>, <code>.exe</code>, <code>.dat</code>/<code>.hdr</code>/<code>.datwin</code>) followed by formats extracted from within archives (<code>datFormats/</code>), explicitly noting which formats are universal across TT Games and which are specific to certain eras or titles.</li>
+        <li><strong>Game Files &amp; Asset Use (<code>Files/</code>):</strong> Documents directory hierarchies, cross-game format censuses, sound banks, character definitions, mission scripts, and in-game usage through a <em>combined virtual filesystem</em>.</li>
+    </ol>
+</section>
+</body>
+</html>

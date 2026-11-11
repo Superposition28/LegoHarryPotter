@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.dno (Pinner Dynamics Object — Physics & Collision Container)</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.dno
+    </nav>
+    <h1>.dno (Pinner Dynamics Object — Physics & Collision Container)</h1>
+<aside class="source-notice"><p><strong>Category:</strong> 3D Graphics & Scene · <strong>Scope:</strong> Era 3–4 (HP 1–4: 6,858, HP 5–7: 5,204, Batman 2: 3,240, Dimensions: 17,672)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Format Specification · TT Games Engine</p>
+    <p>PinnerDynamicsObj physics, collision hull, joint constraint, convex mesh, and KD-terrain descriptor container for dynamic and breakable LEGO world objects.</p>
+    <dl>
+        <dt>File Extension</dt><dd><code>.dno</code></dd>
+        <dt>Header Signature / Magic</dt><dd><code>SERIALISED (v20) / 0x00000013 / 0x00B40001</code></dd>
+        <dt>Subsystem</dt><dd>3D Graphics & Scene</dd>
+        <dt>Cross-Game Scope</dt><dd>Era 3–4 (HP 1–4: 6,858, HP 5–7: 5,204, Batman 2: 3,240, Dimensions: 17,672)</dd>
+    </dl>
+</section>
+<h2>Overview &amp; 12-Section Structure (<code>PinnerDynamicsObj.cs</code>)</h2>
+<p>Verified against <code>TTGamesExplorerRebirthLib/Formats/PinnerDynamicsObj.cs</code>: <code>.dno</code> stands for <strong>Pinner Dynamics Object</strong> (named after TT Games' internal <em>Pinner</em> physics/dynamics subsystem). Version 20 files begin with the 10-byte ASCII magic <code>SERIALISED</code> + <code>uint32 Version (20)</code> followed by 12 sequential sections:</p>
+<ol>
+    <li><code>PinnerString</code> (string table)</li>
+    <li><code>PinnerMatrix</code> (4×4 transform matrices)</li>
+    <li><code>PinnerEntity</code> (dynamic rigid-body entities)</li>
+    <li><code>PinnerMesh</code> (collision triangle meshes)</li>
+    <li><code>PinnerJoint</code> (hinge/ball/slider constraints)</li>
+    <li><code>PinnerGeom</code> (primitive collision shapes)</li>
+    <li><code>PinnerSpline</code> (path constraints)</li>
+    <li><code>PinnerController</code> (kinematic controllers)</li>
+    <li><code>PinnerTileMap</code> (grid collision tiles)</li>
+    <li><code>PinnerConvexMesh</code> (convex hull polytopes)</li>
+    <li><code>KdTerrainDescriptor</code> (KD-tree spatial terrain)</li>
+    <li>Secondary <code>PinnerMesh</code> section</li>
+</ol>
+</body>
+</html>

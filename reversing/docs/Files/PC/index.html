@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PC Combined Filesystem</title>
+    <link rel="stylesheet" href="../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../index.html#Files' target='_parent'>Files</a><span>/</span>PC
+    </nav>
+    <h1>PC (Windows Retail &amp; Steam): Combined File &amp; Directory Layout</h1>
+<aside class="source-notice"><p><strong>Platform:</strong> Microsoft Windows (32-bit <code>PE32</code> Retail/Steam &amp; 64-bit <code>PE32+</code> AMD64 Remaster)</p></aside>
+<section class="doc-overview">
+    <h2>1. Classic &amp; NXG 32-bit Windows Layout (LSW2 PC &amp; LEGO Batman 2 Steam)</h2>
+    <ul>
+        <li><strong>LEGO Star Wars II (2006 PC ISO):</strong> <code>LEGOSTA2.EXE</code> (7.49 MB, PDB <code>c:\projects\starwars\Release_2K\starwars_pc.pdb</code>) mounting <code>GAME.DAT</code>, <code>PATCH.DAT</code>, and <code>STARTUP.DAT</code>.</li>
+        <li><strong>LEGO Batman 2 (2012 Steam):</strong> <code>LEGOBatman2.exe</code> (18.69 MB) mounting <code>GAME0.DAT</code>..<code>GAME6.DAT</code> (27,481 entries, <code>PakDat v1.01</code> TOC <code>v-4</code>), alongside loose <code>FILETABLE.TXT</code> (18,915 lines), <code>TRACKEDFILELIST360.TXT</code>, <code>ICONS_TEX.PAK</code> (136 files), and <code>Audio/</code> Ogg/WAV streams.</li>
+    </ul>
+    <h2>2. 64-bit Direct3D 11 Remaster Layout (2024 LEGO Harry Potter Collection)</h2>
+    <ul>
+        <li><code>harry1.exe</code> / <code>harry2.exe</code>: 64-bit AMD64 executables with <code>shaderblob_pc.blob</code> (13.86 MB) and <code>launcher.pkiwin</code>/<code>.pkdwin</code>.</li>
+        <li><code>harry1.datwin</code>, <code>harry1b.datwin</code>, <code>harry2.datwin</code>, <code>harry2b.datwin</code>: 64-bit archives (41,389 total files, TOC <code>v-1</code> with 24-byte entries, <code>0x12345678</code> canary, and <code>LZHAM</code> compression).</li>
+    </ul>
+</section>
+</body>
+</html>

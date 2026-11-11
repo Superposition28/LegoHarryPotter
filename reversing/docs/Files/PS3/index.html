@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PlayStation Combined Filesystem</title>
+    <link rel="stylesheet" href="../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../index.html#Files' target='_parent'>Files</a><span>/</span>PS3
+    </nav>
+    <h1>PlayStation (PS2 &amp; PS3): Combined File &amp; Directory Layout</h1>
+<aside class="source-notice"><p><strong>Platforms:</strong> Sony PlayStation 2 (ISO-9660 DVD-ROM) &amp; PlayStation 3 (BLES/BLUS Blu-ray Disc)</p></aside>
+<section class="doc-overview">
+    <h2>1. PlayStation 2 Disc Layout (Era 1–2: LSW1 &amp; LSW2)</h2>
+    <ul>
+        <li><code>SYSTEM.CNF</code> &amp; <code>SLUS_210.83</code> / <code>SLUS_214.09</code>: Boot configuration and MIPS R5900 ELF executable.</li>
+        <li><code>GAME.DAT</code>: Single archive with TOC <code>Version = -1</code> (4,223 files in <em>LSW1</em> with <code>RNC\x02</code> compressed scenes/models; 8,600 files in <em>LSW2</em>).</li>
+        <li><code>IOP/MODULES/</code> &amp; <code>FMV/</code>: IOP hardware drivers (<code>.IRX</code>), streaming SPU2 ADPCM audio banks (<code>.MIB</code>/<code>.MIH</code>), and MPEG-2 <code>.PSS</code> movies.</li>
+    </ul>
+    <h2>2. PlayStation 3 Blu-ray Layout (Era 3–4: HP 1–4, HP 5–7, LEGO Dimensions)</h2>
+    <ul>
+        <li><code>PS3_DISC.SFB</code> &amp; <code>PS3_GAME/PARAM.SFO</code>: Blu-ray disc metadata and Title ID configuration.</li>
+        <li><code>PS3_GAME/USRDIR/EBOOT.BIN</code>: Signed 64-bit Cell PPU SELF executable.</li>
+        <li><code>PS3_GAME/USRDIR/GAME*.DAT</code> (and <code>.HDR</code> + <code>INSTALL0_*.DAT</code> in <em>Dimensions</em>): Multi-slice archives (57-byte <code>PakDat v1.01</code> TOC <code>v-4</code> with <code>LZ2K</code> in <em>HP</em>; TOC <code>v-7</code> with <code>DFLT</code> and <code>CMP2</code> LZMA in <em>Dimensions</em>).</li>
+    </ul>
+    <h2>Combined USRDIR Hierarchy</h2>
+    <div class="file-list-container">
+        <h3>Directory Structure (Combined)</h3>
+        <ul class="file-list-scroll">
+            <li><code>USRDIR/EBOOT.BIN</code> (Primary 64-bit PPU executable)</li>
+            <li><code>USRDIR/audio/</code> (ATRAC3plus <code>.msf</code> music &amp; cutscene tracks; <code>level_sfx</code> banks)</li>
+            <li><code>USRDIR/chars/</code> (character <code>.cd</code> definitions, <code>.ghg</code> models, <code>.an3</code>/<code>.anm</code> animations)</li>
+            <li><code>USRDIR/cut/</code> (in-game cutscenes: camera choreography <code>*_ps3.cu2</code> / <code>.cu3</code>)</li>
+            <li><code>USRDIR/framework-data/</code> &amp; <code>gui/</code> (core engine GUI definitions, <code>.ft2</code> font atlases)</li>
+            <li><code>USRDIR/levels/</code> (story levels and hubs: <code>_nxg.gsc</code> geometry, <code>.dno</code> objects, <code>.led</code> entities, <code>.ter</code> collision)</li>
+            <li><code>USRDIR/movies/</code> (high-definition <code>.fmv</code> / <code>.pam</code> Bink cutscenes)</li>
+            <li><code>USRDIR/shaders/</code> (compiled RSX <code>.ps3_shaders</code> programs)</li>
+            <li><code>USRDIR/stuff/</code> (<code>game.txt</code> parameters, <code>text.csv</code> multilingual dialogue)</li>
+        </ul>
+    </div>
+</section>
+</body>
+</html>

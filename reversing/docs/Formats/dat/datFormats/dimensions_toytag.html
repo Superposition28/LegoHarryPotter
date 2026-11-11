@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.bin / .por / .ats (LEGO Dimensions NFC Toy Tag & Portal Formats)</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.bin / .por / .ats
+    </nav>
+    <h1>.bin / .por / .ats (LEGO Dimensions NFC Toy Tag & Portal Formats)</h1>
+<aside class="source-notice"><p><strong>Category:</strong> Title-Specific (LEGO Dimensions) · <strong>Scope:</strong> LEGO Dimensions Exclusive (2015)</p></aside>
+<section class="format-summary">
+    <p class="eyebrow">Format Specification · TT Games Engine</p>
+    <p>180-byte NXP NTAG213 NFC Toy Tag dumps (.bin) encrypted with TEA (0xAA55 seed) alongside in-archive portal (.por) and ability/tag script (.ats) files.</p>
+    <dl>
+        <dt>File Extension</dt><dd><code>.bin / .por / .ats</code></dd>
+        <dt>Header Signature / Magic</dt><dd><code>NTAG213 (0x04 UID) / Portal Descriptor</code></dd>
+        <dt>Subsystem</dt><dd>Title-Specific (LEGO Dimensions)</dd>
+        <dt>Cross-Game Scope</dt><dd>LEGO Dimensions Exclusive (2015)</dd>
+    </dl>
+</section>
+<h2>1. NTAG213 Physical NFC Toy Tag Dump (<code>.bin</code>, 180 Bytes)</h2>
+<p>Verified against 47 Toy Tag dumps in <code>D:\PS3\Lego Dimensions\chars\</code> (every file is <strong>180 bytes</strong> = 45 pages × 4 bytes):</p>
+<div class="table-scroll"><table class="format-counts">
+<thead><tr><th>Pages</th><th>Byte Range</th><th>Field</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>0–2</td><td><code>0x00..0x0B</code></td><td>UID &amp; BCC</td><td>7-byte NXP hardware UID (<code>uid[0] = 0x04</code>) used to derive the per-tag 128-bit TEA key via seed <code>0xAA55</code>.</td></tr>
+<tr><td>3</td><td><code>0x0C..0x0F</code></td><td>Capability Container</td><td><code>E1 10 12 00</code> (NFC Forum Type 2 Tag, NTAG213 144-byte user area).</td></tr>
+<tr><td>36–37</td><td><code>0x90..0x97</code></td><td>Encrypted ID Block</td><td>8-byte 2-round TEA encrypted payload holding the 16-bit Character ID (Pages 36==37) or Vehicle ID + upgrades.</td></tr>
+<tr><td>38</td><td><code>0x98..0x9B</code></td><td>Tag Type Marker</td><td><code>00 00 00 00</code> for Character Minifigures; <code>00 01 00 00</code> (BE <code>0x00010000</code>) for Vehicles / Gadgets.</td></tr>
+<tr><td>43</td><td><code>0xAC..0xAF</code></td><td>PWD</td><td>32-bit password derived from UID.</td></tr>
+</tbody>
+</table></div>
+<h2>2. Archive Portal &amp; Tag Formats (<code>.por</code>, <code>.ats</code>)</h2>
+<p>Inside <em>LEGO Dimensions</em> <code>GAME*.DAT</code> and <code>INSTALL0_*.DAT</code>, <code>.por</code> (644 files) and <code>.ats</code> (1,497 files) configure Toy Pad portal vortex rendering, light-ring color protocols, and character/vehicle tag unlock scripts.</p>
+</body>
+</html>

@@ -70,7 +70,7 @@ Games/Lego_Harry_Potter/
 TT Games employs proprietary archive and compression formats across their titles. Key technical findings from format analysis:
 
 1. **PS3 & Xbox 360 `PakDat v1.01` (`GAME*.DAT`):**
-   - Header (52 bytes): `[0x00] int32 RawTocOffset` (if `< 0`, `TocOffset = (-RawTocOffset) << 8`), `[0x04] uint32 TocSize`, and `[0x08..0x33]` `BEGIN_APP_ID_STRINGPakDat v1.01END_APP_ID_STRING\0`.
+   - Header fields occupy 57 bytes: `[0x00] int32 RawTocOffset` (if `< 0`, `TocOffset = (-RawTocOffset) << 8`), `[0x04] uint32 TocSize`, and a 49-byte signature including NUL at `[0x08..0x38]`: `BEGIN_APP_ID_STRINGPakDat v1.01END_APP_ID_STRING\0`.
    - Standalone archives with a trailing TOC (`Version = -4`, `TocOffset + TocSize == FileSize`) containing 16-byte `PakDatFileEntry[N]`, 8-byte `PakDatNameNode[M]` directory tree, `StringTable[S]`, and `uint32 PathHashes[N]`.
    - Compressed entries (`CompressionType == 2`) use 32 KB chunked **`LZ2K`** compression.
 2. **PC Collection `datwin` (`*.datwin`):**
@@ -106,6 +106,8 @@ TT Games employs proprietary archive and compression formats across their titles
 ---
 
 ## Operations Overview & How To Use
+
+The new [cross-reference workflow](../../research/cross-reference/Evidence-and-commands.md) uses MoonSharp through direct Remake Engine CLI arguments. Operations 10/11 inventory TT archives and extract the Windows Collection; 12/13 inspect/extract the Collection launcher and supplied demo container; 14 compares both modules' exported inventories; 15 validates the archive parser with synthetic inputs. All newly added game scripts are under `operations/` and import the shared parent Lua implementation in a co-located LEGO checkout. Existing standalone PowerShell tools below are historical research references, not the execution path for this workflow.
 
 This module is designed to be executed through the RemakeEngine CLI or TUI.
 

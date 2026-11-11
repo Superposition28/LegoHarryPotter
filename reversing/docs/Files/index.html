@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LEGO Harry Potter - Combined Files Architecture</title>
+    <link rel="stylesheet" href="../style/main.css">
+</head>
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href='../index.html#home' target='_parent'>Documentation</a><span>/</span>Files
+    </nav>
+    <h1>LEGO Harry Potter — Game Files &amp; Combined Directory Architecture</h1>
+<aside class="source-notice"><p><strong>Architecture Concept:</strong> Unified representation of Source and Extracted Archive Data</p></aside>
+<section class="doc-overview">
+    <h2>The Combined Virtual Filesystem Concept</h2>
+    <p>In retail distributions of TT Games titles, game assets are packed inside monolithic or multi-slice archive volumes (<code>GAME*.DAT</code>, <code>INSTALL*.DAT</code>, or <code>*.datwin</code>) or stored directly in the Xbox XDVDFS partition (in <em>LSW1</em> and <em>LSW2</em> Xbox/Xbox 360). This documentation presents the game's file structure using a <strong>combined virtual filesystem</strong> where archive packages are transparently replaced by their extracted directory trees.</p>
+    <h2>Inspected LEGO Harry Potter Releases &amp; Archive Summary</h2>
+    <div class="table-scroll"><table class="format-counts">
+    <thead><tr><th>Title &amp; Platform</th><th>Build / ID</th><th>Archives</th><th>Verified File Count &amp; Highlights</th></tr></thead>
+    <tbody>
+    <tr><td><strong>Years 1–4 (2010) — PS3 EU</strong></td><td><code>BLES00752</code> (v01.02 &amp; v03.01)</td><td><code>GAME.DAT</code> + <code>GAME1.DAT</code>..<code>GAME4.DAT</code></td><td><code>19,383</code> files (<code>PakDat v1.01</code> TOC <code>v-4</code>, <code>LZ2K</code>); v01.02 and v03.01 <code>GAME*.DAT</code> are 100% SHA-256 identical.</td></tr>
+    <tr><td><strong>Years 1–4 (2010) — Xbox 360 + Demo</strong></td><td><code>0x575207E6</code></td><td><code>GAME.DAT</code> + <code>GAME1.DAT</code>..<code>GAME4.DAT</code></td><td><code>10,641</code> files; 99.6% structural parity with PS3 on <code>GAME1</code>–<code>GAME4</code>; Kiosk Demo <code>GAME.DAT</code> has <code>7,274</code> entries.</td></tr>
+    <tr><td><strong>Years 5–7 (2011) — PS3 EU</strong></td><td><code>BLES01297</code></td><td><code>GAME0.DAT</code>..<code>GAME3.DAT</code></td><td><code>17,197</code> files (<code>PakDat v1.01</code> TOC <code>v-4</code>, <code>LZ2K</code>).</td></tr>
+    <tr><td><strong>Years 5–7 (2011) — Xbox 360 + Demo</strong></td><td><code>0x57520812</code></td><td><code>GAME0.DAT</code>..<code>GAME3.DAT</code></td><td><code>14,729</code> files; Kiosk Demo <code>GAME0.DAT</code> + <code>GAME1.DAT</code> holds <code>2,906</code> entries.</td></tr>
+    <tr><td><strong>Collection (2024) — PC Steam</strong></td><td><code>harry1.exe</code> / <code>harry2.exe</code> (AMD64)</td><td><code>harry1/1b.datwin</code>, <code>harry2/2b.datwin</code></td><td><code>41,389</code> entries across 4 <code>.datwin</code> volumes (TOC <code>v-1</code>, 24B entries with <code>0x12345678</code> canary and <code>LZHAM</code>) + <code>launcher.pkiwin</code>/<code>.pkdwin</code>.</td></tr>
+    </tbody>
+    </table></div>
+    <h2>Core Subsystem Directory Tree</h2>
+    <div class="table-scroll"><table class="format-counts">
+    <thead><tr><th>Virtual Directory</th><th>Subsystem Role</th><th>Primary File Types</th></tr></thead>
+    <tbody>
+    <tr><td><code>audio/</code> / <code>IOP/</code></td><td>Voice streams, soundtrack music, sound effect dictionaries, and audio bus curves.</td><td><code>.msf</code>, <code>.xma</code>, <code>.ogg</code>, <code>.vag</code>, <code>.wavx</code>, <code>.cfg</code>, <code>.sfx</code></td></tr>
+    <tr><td><code>chars/</code></td><td>Minifigures, creatures, vehicles, character definitions, and animations.</td><td><code>.ghg</code>/<code>.hgx</code>/<code>.hx2</code>, <code>.cd</code>, <code>.cpd</code>, <code>.as</code>, <code>.an3</code>/<code>.ani</code>/<code>.anm</code>, <code>.bsa</code>, <code>.tex</code></td></tr>
+    <tr><td><code>levels/</code></td><td>Story chapters, hub worlds, collision octrees, runtime lights, and level scripts.</td><td><code>.gsc</code>/<code>.nux</code>/<code>.nx2</code>, <code>.ter</code>/<code>.ctr</code>, <code>.rtl</code>, <code>.dno</code>, <code>.led</code>, <code>.giz</code>, <code>.git</code>, <code>.scp</code>, <code>.sf</code>, <code>.lua</code></td></tr>
+    <tr><td><code>cut/</code></td><td>In-engine cutscene choreography, actor staging, camera switching, and subtitle timings.</td><td><code>.cut</code>, <code>.cu2</code>/<code>.cc2</code>, <code>.cu3</code>, <code>.sub</code></td></tr>
+    <tr><td><code>gui/</code> / <code>framework-data/</code></td><td>Menu pages, pause screens, HUD stud counters, button prompts, and font sheets.</td><td><code>.ft2</code>, <code>.gip</code>, <code>.gix</code>, <code>.gil</code>, <code>.tex</code></td></tr>
+    <tr><td><code>stuff/</code></td><td>Global configuration, gameplay constants, particle templates, splines, and localization tables.</td><td><code>text.csv</code>, <code>game.txt</code>, <code>levels.txt</code>, <code>.ptl</code>, <code>.par</code>, <code>.spl</code></td></tr>
+    <tr><td><code>scripts/</code> / <code>ai/</code></td><td>Global mission scripting, AI navigation graphs, and Lua bytecode packages.</td><td><code>.ai2</code>, <code>.aib</code>, <code>.scp</code>, <code>.sf</code>, <code>.lua</code>, <code>ai.pak</code></td></tr>
+    <tr><td><code>movies/</code> / <code>FMV/</code></td><td>Pre-rendered FMVs, company logos, attract mode gameplay reels, and end credits.</td><td><code>.fmv</code>, <code>.bik</code>, <code>.pam</code>, <code>.pss</code>, <code>.xmv</code></td></tr>
+    </tbody>
+    </table></div>
+</section>
+<h2>Platform Implementations</h2>
+<ul>
+    <li><a href="../index.html#Files-PS3" target="_parent">PlayStation (PS2 &amp; PS3) Combined Filesystem</a></li>
+    <li><a href="../index.html#Files-Xbox360" target="_parent">Xbox (Original Xbox &amp; Xbox 360) Combined Filesystem</a></li>
+    <li><a href="../index.html#Files-PC" target="_parent">PC (Windows Retail &amp; Steam Remaster) Combined Filesystem</a></li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,322 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>LEGO Harry Potter - Reversing Documentation</title>
+    <link rel="stylesheet" href="style/main.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <nav class="topbar">
+        <a class="brand" href="#home">LEGO Harry Potter Docs</a>
+        <div class="topbar-links">
+            <a href="#Files">Overview &amp; Census</a>
+            <a href="#Files-PS3">PlayStation</a>
+            <a href="#Files-Xbox360">Xbox</a>
+            <a href="#Files-PC">PC</a>
+            <a href="javascript:history.back()">Back</a>
+            <a id="up-link" href="#home">Up</a>
+        </div>
+    </nav>
+    <main class="pages">
+        <section class="page home-page home-layout" id="home">
+            <section class="format-coverage" aria-labelledby="format-coverage-title">
+                <div class="format-coverage-heading">
+                    <h1 id="format-coverage-title">LEGO Harry Potter - Pipeline Format Coverage</h1>
+                    <p>Years 1-4 (2010), Years 5-7 (2011), and 2024 Collection Remaster (PS3, Xbox 360 Retail & Demos, Steam PC x64).</p>
+                </div>
+                <p class="coverage-summary"><strong>41 tracked format families</strong> · Cross-generation coverage from Nu2 (2005) through NXG, DX11, and 64-bit Remasters (2024).</p>
+                <ul class="format-coverage-legend" id="conversion-status-legend">
+                    <li><span class="coverage-icon coverage-green"></span><strong>Green</strong> Usable specification / verified across archives</li>
+                    <li><span class="coverage-icon coverage-yellow"></span><strong>Yellow</strong> Partial implementation / validation pending</li>
+                    <li><span class="coverage-icon coverage-blue"></span><strong>Blue</strong> Executable analysis / layout verified</li>
+                    <li><span class="coverage-icon coverage-grey"></span><strong>Grey</strong> Platform support unverified</li>
+                </ul>
+                <ul class="format-coverage-list">
+                            <li class="format-coverage-item" data-format-route="Formats-dat" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="TOC v-1..v-12 & extraction verified"></span>
+            <div><strong><a href="#Formats-dat">.DAT / .HDR / CMP2 / .datwin</a></strong> <span class="coverage-status">TOC v-1..v-12 & extraction verified</span><span class="coverage-detail">TOC v-1 (LSW1/LSW2), 57B PakDat v1.01 v-4 (HP/Batman 2), v-7 .HDR + CMP2 LZMA (Dimensions), and .datwin LZHAM (PC) verified.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-bin" data-coverage-status="blue">
+            <span class="coverage-icon coverage-blue" role="img" aria-label="PS2 MIPS ELF & PS3 SELF PPU analyzed"></span>
+            <div><strong><a href="#Formats-bin">.BIN / PS2 ELF (PlayStation)</a></strong> <span class="coverage-status">PS2 MIPS ELF & PS3 SELF PPU analyzed</span><span class="coverage-detail">SLUS_210.83, SLUS_214.09 (PS2) and EBOOT.BIN (PS3 HP 1-4, HP 5-7, Dimensions) analyzed.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-xex" data-coverage-status="blue">
+            <span class="coverage-icon coverage-blue" role="img" aria-label="XBEH & XEX2 containers analyzed"></span>
+            <div><strong><a href="#Formats-xex">.xex / .xbe (Xbox & Xbox 360)</a></strong> <span class="coverage-status">XBEH & XEX2 containers analyzed</span><span class="coverage-detail">LSW1/LSW2 default.xbe, LSW2 default.xex (360_exlist), and HP 1-4/5-7 Default.xex decrypted.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-exe" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="x86 & AMD64 binaries analyzed"></span>
+            <div><strong><a href="#Formats-exe">.exe (Windows PE32 & PE32+)</a></strong> <span class="coverage-status">x86 & AMD64 binaries analyzed</span><span class="coverage-detail">LEGOSTA2.EXE (2006), LEGOBatman2.exe (2012), and harry1.exe/harry2.exe (2024) analyzed.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-gsc" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal (All TT Engine Generations 2005–2024; .nux/.nus in LSW1 Xbox, .nx2 in LSW2 Xbox)"></span>
+            <div><strong><a href="#Formats-dat-gsc">.gsc</a></strong> <span class="coverage-status">Universal (All TT Engine Generations 2005–2024; .nux/.nus in LSW1 Xbox, .nx2 in LSW2 Xbox)</span><span class="coverage-detail">Compiled static scene geometry, room meshes, material graphs, portal bounds, and camera splines across Classic Nu2 (.nup/.nux/.nx2) and Next-Gen NXG/DX11 (_nxg.gsc, _dx11.gsc).</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-ghg" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal (All TT Engine Generations 2005–2024; .hgx in LSW1 Xbox, .hx2 in LSW2 Xbox, .hgp in LSW1 PC/GCN)"></span>
+            <div><strong><a href="#Formats-dat-ghg">.ghg</a></strong> <span class="coverage-status">Universal (All TT Engine Generations 2005–2024; .hgx in LSW1 Xbox, .hx2 in LSW2 Xbox, .hgp in LSW1 PC/GCN)</span><span class="coverage-detail">Skeletal character, minifigure, creature, and vehicle mesh container storing bone hierarchies, inverse bind matrices, skinning weights, LODs, and embedded or referenced textures.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-tex" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 3–4 (2008–2024 Console & PC Titles; inline in .ghg/.gsc in Era 1–2)"></span>
+            <div><strong><a href="#Formats-dat-tex">.tex</a></strong> <span class="coverage-status">Era 3–4 (2008–2024 Console & PC Titles; inline in .ghg/.gsc in Era 1–2)</span><span class="coverage-detail">Standalone DirectDraw Surface (DDS) textures (.tex) and multi-texture dictionary containers (.nxg_textures / .dx11_textures) storing DXT1/DXT5/BC1–BC7 mipmapped surfaces.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-tsh" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)"></span>
+            <div><strong><a href="#Formats-dat-tsh">.tsh</a></strong> <span class="coverage-status">Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)</span><span class="coverage-detail">NuTextureSheet and texture sharing container (4CC.TXSH / TSHR / RHST) mapping FNV1UPPER hashes and UV sub-rectangles to shared minifigure decals and texture atlases.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-an3" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal (.ani in LSW1; .an3 in LSW2–Dimensions; .ca3 on LSW2 X360; .anm in HP/Batman 2)"></span>
+            <div><strong><a href="#Formats-dat-an3">.an3</a></strong> <span class="coverage-status">Universal (.ani in LSW1; .an3 in LSW2–Dimensions; .ca3 on LSW2 X360; .anm in HP/Batman 2)</span><span class="coverage-detail">Compressed keyframe skeletal animation tracks storing bone rotation quaternions, translation vectors, and scale curves over time.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-bsa" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 1–2 Specific (LSW1 & LSW2: 679 .bsa in LSW1, 1,999 .bsa + 184 .anl in LSW2)"></span>
+            <div><strong><a href="#Formats-dat-bsa">.bsa</a></strong> <span class="coverage-status">Era 1–2 Specific (LSW1 & LSW2: 679 .bsa in LSW1, 1,999 .bsa + 184 .anl in LSW2)</span><span class="coverage-detail">Early Nu2 morph-target / blend-shape animation (.bsa) paired 1-to-1 with skeletal clips (.ani/.an3) and animation list manifests (.anl).</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-cd" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions; preceded by CHARSTXT.TXT in Era 1–2)"></span>
+            <div><strong><a href="#Formats-dat-cd">.cd</a></strong> <span class="coverage-status">Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions; preceded by CHARSTXT.TXT in Era 1–2)</span><span class="coverage-detail">Reflected EdFile serializer container defining modular minifigure parts, meshes (.ghg), textures (.tex), physics (.cpd), and animation sets (.as).</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-cpd" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)"></span>
+            <div><strong><a href="#Formats-dat-cpd">.cpd</a></strong> <span class="coverage-status">Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)</span><span class="coverage-detail">Reflected EdFile serializer container defining character collision capsules, mass distribution, and ragdoll physics constraints.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-as" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)"></span>
+            <div><strong><a href="#Formats-dat-as">.as</a></strong> <span class="coverage-status">Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)</span><span class="coverage-detail">Reflected EdFile state-machine container binding character actions, locomotion states, combos, and spells to animation clips (.an3/.anm) and sound triggers.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-apj" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 2,520 files in Dimensions)"></span>
+            <div><strong><a href="#Formats-dat-apj">.apj</a></strong> <span class="coverage-status">Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 2,520 files in Dimensions)</span><span class="coverage-detail">Reflected EdFile animation project linking multiple animation sets (.as), rig layers, and additive blend trees.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-led" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 2,616 files in Dimensions)"></span>
+            <div><strong><a href="#Formats-dat-led">.led</a></strong> <span class="coverage-status">Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 2,616 files in Dimensions)</span><span class="coverage-detail">Reflected EdFile level entity placement container defining spawners, interactive LEGO builds, triggers, and object instances.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-ter" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal Across Era 1–4 (LSW1, LSW2, HP 1–4, HP 5–7, Batman 2, Dimensions; .ctr on LSW2 X360)"></span>
+            <div><strong><a href="#Formats-dat-ter">.ter</a></strong> <span class="coverage-status">Universal Across Era 1–4 (LSW1, LSW2, HP 1–4, HP 5–7, Batman 2, Dimensions; .ctr on LSW2 X360)</span><span class="coverage-detail">Spatial octree collision mesh and surface material flag database used for ground raycasting, footstep audio material lookup, and physics collision.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-rtl" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal Across Era 1–4 (LSW1, LSW2, HP 1–4, HP 5–7, Batman 2, Dimensions)"></span>
+            <div><strong><a href="#Formats-dat-rtl">.rtl</a></strong> <span class="coverage-status">Universal Across Era 1–4 (LSW1, LSW2, HP 1–4, HP 5–7, Batman 2, Dimensions)</span><span class="coverage-detail">Per-room runtime lighting table defining point lights, directional suns, ambient spherical harmonics, and shadow caster flags.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-ai2" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal (.ai2 in LSW1, LSW2, HP 1–4, HP 5–7, Batman 2; .aib in Batman 2 & Dimensions)"></span>
+            <div><strong><a href="#Formats-dat-ai2">.ai2</a></strong> <span class="coverage-status">Universal (.ai2 in LSW1, LSW2, HP 1–4, HP 5–7, Batman 2; .aib in Batman 2 & Dimensions)</span><span class="coverage-detail">AI navigation graph and pathfinding mesh nodes controlling NPC movement, companion following, and enemy patrol bounds.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-for" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 1–2 Specific (LSW1 & LSW2)"></span>
+            <div><strong><a href="#Formats-dat-for">.for</a></strong> <span class="coverage-status">Era 1–2 Specific (LSW1 & LSW2)</span><span class="coverage-detail">Early Star Wars level interaction formats defining Force-manipulable object rules (.for), physics constraints (.cns), and LEGO build/burst assembly scripts (.bur).</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-scp" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 1–3 (LSW1, LSW2, Indy, Batman 1, HP 1–4, HP 5–7, Batman 2)"></span>
+            <div><strong><a href="#Formats-dat-scp">.scp</a></strong> <span class="coverage-status">Era 1–3 (LSW1, LSW2, Indy, Batman 1, HP 1–4, HP 5–7, Batman 2)</span><span class="coverage-detail">Hierarchical state-machine script controlling NPC behaviors, boss phases, and level triggers using State / Conditions / Actions blocks.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-sf" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 3–4 (HP 1–4: 677, HP 5–7: 4,296, Batman 2: 5,274, Dimensions: 222)"></span>
+            <div><strong><a href="#Formats-dat-sf">.sf</a></strong> <span class="coverage-status">Era 3–4 (HP 1–4: 677, HP 5–7: 4,296, Batman 2: 5,274, Dimensions: 222)</span><span class="coverage-detail">Imperative event and puzzle scripting language used extensively in Creator/Builder/Gotham NXG titles before the Lua 5.1 transition.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-lua" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 4–5 (LEGO Dimensions: 9,858 files, LEGO Worlds, Skywalker Saga)"></span>
+            <div><strong><a href="#Formats-dat-lua">.lua</a></strong> <span class="coverage-status">Era 4–5 (LEGO Dimensions: 9,858 files, LEGO Worlds, Skywalker Saga)</span><span class="coverage-detail">Compiled Lua 5.1 bytecode (and plaintext Lua scripts) replacing legacy .scp/.sf state machines for gameplay, UI, and portal logic in Era 4+ titles.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-cu2" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal (.cut in LSW1; .cu2 in LSW2–Batman 2; .cc2 on LSW2 X360; .cu3 in Dimensions)"></span>
+            <div><strong><a href="#Formats-dat-cu2">.cu2</a></strong> <span class="coverage-status">Universal (.cut in LSW1; .cu2 in LSW2–Batman 2; .cc2 on LSW2 X360; .cu3 in Dimensions)</span><span class="coverage-detail">In-engine cinematic timeline synchronizing camera cuts, character skeletal/facial animations, lighting changes, and audio tracks.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-giz" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 2,520 files in Dimensions)"></span>
+            <div><strong><a href="#Formats-dat-giz">.giz</a></strong> <span class="coverage-status">Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 2,520 files in Dimensions)</span><span class="coverage-detail">Interactive level gizmo container storing GizObstacle, GizBuildit, GizForce, Blowup, GizmoPickup, Lever, ZipUp, HatMachine, Plug, Tube, and Turret records.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-git" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)"></span>
+            <div><strong><a href="#Formats-dat-git">.git</a></strong> <span class="coverage-status">Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)</span><span class="coverage-detail">Structured ASCII block configuring per-sector camera framing, split-screen merge thresholds, fog, bloom, and post-processing.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-dno" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 3–4 (HP 1–4: 6,858, HP 5–7: 5,204, Batman 2: 3,240, Dimensions: 17,672)"></span>
+            <div><strong><a href="#Formats-dat-dno">.dno</a></strong> <span class="coverage-status">Era 3–4 (HP 1–4: 6,858, HP 5–7: 5,204, Batman 2: 3,240, Dimensions: 17,672)</span><span class="coverage-detail">PinnerDynamicsObj physics, collision hull, joint constraint, convex mesh, and KD-terrain descriptor container for dynamic and breakable LEGO world objects.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-pak" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal (.fpk RFPK in LSW2; .pak/.pac 0x1234567A in HP 1–4, HP 5–7, Batman 2, Dimensions)"></span>
+            <div><strong><a href="#Formats-dat-pak">.pak</a></strong> <span class="coverage-status">Universal (.fpk RFPK in LSW2; .pak/.pac 0x1234567A in HP 1–4, HP 5–7, Batman 2, Dimensions)</span><span class="coverage-detail">Flat sub-archive bundling small related files (textures, AI scripts, animation caches) with a 20-byte entry table and additive 0x12345678 filename checksums.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-cbx" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 9,899 .cbx and 5,976 .cbs in Dimensions)"></span>
+            <div><strong><a href="#Formats-dat-cbx">.cbx</a></strong> <span class="coverage-status">Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 9,899 .cbx and 5,976 .cbs in Dimensions)</span><span class="coverage-detail">Proprietary 'ChatterBoX' (!B0X) EA MicroTalk-variant compressed speech/SFX audio container (.cbx, 0x1B0-sample frames) and companion phoneme/lip-sync curves (.cbs).</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-res" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 3–4 (Batman 2: 2,340 files, Dimensions: 9,854 files)"></span>
+            <div><strong><a href="#Formats-dat-res">.res</a></strong> <span class="coverage-status">Era 3–4 (Batman 2: 2,340 files, Dimensions: 9,854 files)</span><span class="coverage-detail">Per-level and per-character resource manifest enumerating dependent meshes, textures, animations, and sound banks for streaming.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-sub" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 3c–5 (Batman 2: 2,408 files, Dimensions: 15,826 files)"></span>
+            <div><strong><a href="#Formats-dat-sub">.sub</a></strong> <span class="coverage-status">Era 3c–5 (Batman 2: 2,408 files, Dimensions: 15,826 files)</span><span class="coverage-detail">Time-coded localized subtitle and phoneme trigger stream introduced when TT Games transitioned from mimed grunts to full voice acting in LEGO Batman 2 (2012).</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-shaders" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal (Era 2 .vpo/.fpo on PS3; Era 3–4 .pc_shaders/.ps3_shaders; Remaster shaderblob_pc.blob)"></span>
+            <div><strong><a href="#Formats-dat-shaders">.pc_shaders</a></strong> <span class="coverage-status">Universal (Era 2 .vpo/.fpo on PS3; Era 3–4 .pc_shaders/.ps3_shaders; Remaster shaderblob_pc.blob)</span><span class="coverage-detail">Precompiled platform GPU vertex and pixel/fragment shader libraries for Direct3D 9, Direct3D 11, Xbox 360 Xenos, and PS3 RSX.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-audio_streams" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal (Platform-Specific Codecs per Console/PC Target)"></span>
+            <div><strong><a href="#Formats-dat-audio_streams">.msf / .xma / .ogg / .vag</a></strong> <span class="coverage-status">Universal (Platform-Specific Codecs per Console/PC Target)</span><span class="coverage-detail">Streaming music, ambience, and dialogue audio containers tailored to each target platform's hardware decoder.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-cfg" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal (All TT Engine Generations 2005–2024)"></span>
+            <div><strong><a href="#Formats-dat-cfg">.cfg</a></strong> <span class="coverage-status">Universal (All TT Engine Generations 2005–2024)</span><span class="coverage-detail">Plaintext audio mix bus configurations (.cfg) and binary/scripted sound event trigger maps (.sfx).</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-ptl" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal (LSW1 2005 through LEGO Dimensions 2015)"></span>
+            <div><strong><a href="#Formats-dat-ptl">.ptl</a></strong> <span class="coverage-status">Universal (LSW1 2005 through LEGO Dimensions 2015)</span><span class="coverage-detail">Particle emitter system descriptors (.ptl) and keyframe parameter curves (.par) for sparks, magic spells, fire, smoke, and stud bursts.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-spl" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal (LSW1 2005 through LEGO Dimensions 2015)"></span>
+            <div><strong><a href="#Formats-dat-spl">.spl</a></strong> <span class="coverage-status">Universal (LSW1 2005 through LEGO Dimensions 2015)</span><span class="coverage-detail">3D Bezier/Catmull-Rom spline curves (EDSPLINE v. 03) used for camera rails, coaster tracks, vehicle paths, and stud trails.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-ft2" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal (.fnt in LSW1; .ft2 in LSW2–Dimensions)"></span>
+            <div><strong><a href="#Formats-dat-ft2">.ft2</a></strong> <span class="coverage-status">Universal (.fnt in LSW1; .ft2 in LSW2–Dimensions)</span><span class="coverage-detail">Bitmap font glyph metric table and kerning dictionary paired with controller button icon atlases.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-gip" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)"></span>
+            <div><strong><a href="#Formats-dat-gip">.gip</a></strong> <span class="coverage-status">Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)</span><span class="coverage-detail">Menu layout pages (.gip), widget indices (.gix), and shared UI element libraries (.gil) inside framework-data/ and gui/.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-fmv" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal (Platform-Specific Video Containers)"></span>
+            <div><strong><a href="#Formats-dat-fmv">.fmv</a></strong> <span class="coverage-status">Universal (Platform-Specific Video Containers)</span><span class="coverage-detail">Pre-rendered video streams used for publisher/developer logos, attract mode reels, and pre-rendered cutscenes.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-txt" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="Universal (All TT Engine Generations 2005–2024)"></span>
+            <div><strong><a href="#Formats-dat-txt">.txt</a></strong> <span class="coverage-status">Universal (All TT Engine Generations 2005–2024)</span><span class="coverage-detail">Master game configuration scripts (GAME.TXT, LEVELS.TXT, CHARS.TXT, COLLECTION.TXT, 360_exlist, FILETABLE.TXT) and multilingual localization tables (text.csv).</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-dimensions_toytag" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="LEGO Dimensions Exclusive (2015)"></span>
+            <div><strong><a href="#Formats-dat-dimensions_toytag">.bin / .por / .ats</a></strong> <span class="coverage-status">LEGO Dimensions Exclusive (2015)</span><span class="coverage-detail">180-byte NXP NTAG213 NFC Toy Tag dumps (.bin) encrypted with TEA (0xAA55 seed) alongside in-archive portal (.por) and ability/tag script (.ats) files.</span></div>
+        </li>        <li class="format-coverage-item" data-format-route="Formats-dat-worlds_formats" data-coverage-status="green">
+            <span class="coverage-icon coverage-green" role="img" aria-label="LEGO Worlds (2017) & Brick-Building Titles"></span>
+            <div><strong><a href="#Formats-dat-worlds_formats">.lxfml</a></strong> <span class="coverage-status">LEGO Worlds (2017) & Brick-Building Titles</span><span class="coverage-detail">LEGO Digital Designer (LDD) XML brick assembly blueprints (.lxfml), procedural voxel terrain chunks, and brick stud connectivity graphs.</span></div>
+        </li>
+                </ul>
+                <p><a href="#docs-guide">Documentation guide</a> · <a href="#Files">Combined Filesystem &amp; Format Census</a></p>
+            </section>
+
+            <nav class="documentation-tree" aria-labelledby="documentation-tree-title">
+                <div class="documentation-tree-heading">
+                    <h2 id="documentation-tree-title">Documentation Map</h2>
+                    <p>Select a format or directory branch to inspect byte layouts, cross-game scope, and evidence.</p>
+                </div>
+                <ul class="documentation-tree-root">
+                    <li class="documentation-tree-section documentation-tree-section-game">
+                        <a class="documentation-tree-root-link" href="#Files">
+                            <span class="documentation-tree-kicker">Directory Trees &amp; Census</span>
+                            <span class="documentation-tree-title">Combined Filesystem</span>
+                        </a>
+                        <ul class="documentation-tree-branch">
+                            <li><a class="documentation-tree-group-link" href="#Files-PS3">PlayStation (PS2 &amp; PS3)</a></li>
+                            <li><a class="documentation-tree-group-link" href="#Files-Xbox360">Xbox (Original &amp; Xbox 360)</a></li>
+                            <li><a class="documentation-tree-group-link" href="#Files-PC">PC (Windows Retail &amp; Steam)</a></li>
+                        </ul>
+                    </li>
+                    <li class="documentation-tree-section documentation-tree-section-formats">
+                        <a class="documentation-tree-root-link" href="#Formats-dat">
+                            <span class="documentation-tree-kicker">Reverse Engineering</span>
+                            <span class="documentation-tree-title">File Formats</span>
+                        </a>
+                        <ul class="documentation-tree-branch">
+                            <li>
+                                <span class="documentation-tree-group-label">Core Formats &amp; Archives</span>
+                                <ul class="documentation-tree-leaves">
+                                    <li><a class='format-status-link' href='#Formats-dat' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.DAT / .HDR / CMP2 / .datwin</span></a></li>
+<li><a class='format-status-link' href='#Formats-bin' data-coverage-status='blue'><span class='coverage-icon coverage-blue'></span><span>.BIN / PS2 ELF (PlayStation)</span></a></li>
+<li><a class='format-status-link' href='#Formats-xex' data-coverage-status='blue'><span class='coverage-icon coverage-blue'></span><span>.xex / .xbe (Xbox & Xbox 360)</span></a></li>
+<li><a class='format-status-link' href='#Formats-exe' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.exe (Windows PE32 & PE32+)</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-gsc' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.gsc</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-ghg' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.ghg</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-tex' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.tex</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-tsh' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.tsh</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-an3' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.an3</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-bsa' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.bsa</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-cd' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.cd</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-cpd' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.cpd</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-as' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.as</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-apj' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.apj</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-led' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.led</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-ter' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.ter</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-rtl' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.rtl</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-ai2' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.ai2</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-for' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.for</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-scp' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.scp</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-sf' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.sf</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-lua' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.lua</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-cu2' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.cu2</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-giz' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.giz</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-git' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.git</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-dno' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.dno</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-pak' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.pak</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-cbx' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.cbx</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-res' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.res</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-sub' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.sub</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-shaders' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.pc_shaders</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-audio_streams' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.msf / .xma / .ogg / .vag</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-cfg' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.cfg</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-ptl' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.ptl</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-spl' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.spl</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-ft2' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.ft2</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-gip' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.gip</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-fmv' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.fmv</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-txt' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.txt</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-dimensions_toytag' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.bin / .por / .ats</span></a></li>
+<li><a class='format-status-link' href='#Formats-dat-worlds_formats' data-coverage-status='green'><span class='coverage-icon coverage-green'></span><span>.lxfml</span></a></li>
+
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </section>
+
+        <!-- Root Format Iframes -->
+        <iframe id="Formats-xex" class="page" src="./Formats/xex/index.html" loading="lazy" title="Xbox & Xbox 360 Executables"></iframe>
+        <iframe id="Formats-bin" class="page" src="./Formats/bin/index.html" loading="lazy" title="PlayStation Executables"></iframe>
+        <iframe id="Formats-exe" class="page" src="./Formats/exe/index.html" loading="lazy" title="PC Windows Executables"></iframe>
+        <iframe id="Formats-dat" class="page" src="./Formats/dat/dat.html" loading="lazy" title="TT Archive Formats (.DAT)"></iframe>
+
+        <!-- datFormats Extracted Format Iframes -->
+        <iframe id='Formats-dat-gsc' class='page' src='./Formats/dat/datFormats/gsc.html' loading='lazy' title='.gsc / .nux / .nx2 / .nus (NuScene Compiled Scene Geometry)'></iframe>
+<iframe id='Formats-dat-ghg' class='page' src='./Formats/dat/datFormats/ghg.html' loading='lazy' title='.ghg / .hgx / .hx2 / .hgp (Game Hierarchical Geometry / Skeletal Model)'></iframe>
+<iframe id='Formats-dat-tex' class='page' src='./Formats/dat/datFormats/tex.html' loading='lazy' title='.tex / .nxg_textures (DirectDraw Surface & Texture Dictionary)'></iframe>
+<iframe id='Formats-dat-tsh' class='page' src='./Formats/dat/datFormats/tsh.html' loading='lazy' title='.tsh (NuTextureSheet / Texture Share Atlas Lookup Table)'></iframe>
+<iframe id='Formats-dat-an3' class='page' src='./Formats/dat/datFormats/an3.html' loading='lazy' title='.an3 / .ca3 / .ani / .anm (Skeletal Animation Clip)'></iframe>
+<iframe id='Formats-dat-bsa' class='page' src='./Formats/dat/datFormats/bsa.html' loading='lazy' title='.bsa / .anl (Blend Shape / Lip-Sync & Animation List)'></iframe>
+<iframe id='Formats-dat-cd' class='page' src='./Formats/dat/datFormats/cd.html' loading='lazy' title='.cd (Character Definition — EdFile StreamInfo)'></iframe>
+<iframe id='Formats-dat-cpd' class='page' src='./Formats/dat/datFormats/cpd.html' loading='lazy' title='.cpd (Character Physics Descriptor — EdFile StreamInfo)'></iframe>
+<iframe id='Formats-dat-as' class='page' src='./Formats/dat/datFormats/as.html' loading='lazy' title='.as (Action Script / Animation Set — EdFile StreamInfo)'></iframe>
+<iframe id='Formats-dat-apj' class='page' src='./Formats/dat/datFormats/apj.html' loading='lazy' title='.apj (Animation Project Container — EdFile StreamInfo)'></iframe>
+<iframe id='Formats-dat-led' class='page' src='./Formats/dat/datFormats/led.html' loading='lazy' title='.led (Level Entity Definition — EdFile StreamInfo)'></iframe>
+<iframe id='Formats-dat-ter' class='page' src='./Formats/dat/datFormats/ter.html' loading='lazy' title='.ter / .ctr (Terrain & Collision Octree Mesh)'></iframe>
+<iframe id='Formats-dat-rtl' class='page' src='./Formats/dat/datFormats/rtl.html' loading='lazy' title='.rtl (Runtime Point & Directional Light List)'></iframe>
+<iframe id='Formats-dat-ai2' class='page' src='./Formats/dat/datFormats/ai2.html' loading='lazy' title='.ai2 / .aib (AI Navigation Waypoint & Pathfinding Mesh)'></iframe>
+<iframe id='Formats-dat-for' class='page' src='./Formats/dat/datFormats/for.html' loading='lazy' title='.for / .cns / .bur (Era 1–2 Force, Constraint & Build Rules)'></iframe>
+<iframe id='Formats-dat-scp' class='page' src='./Formats/dat/datFormats/scp.html' loading='lazy' title='.scp (State-Machine AI & Mission Script)'></iframe>
+<iframe id='Formats-dat-sf' class='page' src='./Formats/dat/datFormats/sf.html' loading='lazy' title='.sf / .isf (Script Function / Imperative Event Script)'></iframe>
+<iframe id='Formats-dat-lua' class='page' src='./Formats/dat/datFormats/lua.html' loading='lazy' title='.lua (Compiled Lua 5.1 Bytecode & Gameplay Scripts)'></iframe>
+<iframe id='Formats-dat-cu2' class='page' src='./Formats/dat/datFormats/cu2.html' loading='lazy' title='.cut / .cu2 / .cc2 / .cu3 (Cutscene Choreography Timeline)'></iframe>
+<iframe id='Formats-dat-giz' class='page' src='./Formats/dat/datFormats/giz.html' loading='lazy' title='.giz (Gizmo & Interactive Obstacle Placement)'></iframe>
+<iframe id='Formats-dat-git' class='page' src='./Formats/dat/datFormats/git.html' loading='lazy' title='.git (GitOptions Camera & Sector Environment Settings)'></iframe>
+<iframe id='Formats-dat-dno' class='page' src='./Formats/dat/datFormats/dno.html' loading='lazy' title='.dno (Pinner Dynamics Object — Physics & Collision Container)'></iframe>
+<iframe id='Formats-dat-pak' class='page' src='./Formats/dat/datFormats/pak.html' loading='lazy' title='.pak / .pac / .fpk (Flat Resource Sub-Archive)'></iframe>
+<iframe id='Formats-dat-cbx' class='page' src='./Formats/dat/datFormats/cbx.html' loading='lazy' title='.cbx / .cbs (ChatterBoX Voice/SFX Audio & Lip-Sync Stream)'></iframe>
+<iframe id='Formats-dat-res' class='page' src='./Formats/dat/datFormats/res.html' loading='lazy' title='.res (Resource Manifest & Asset Dependency List)'></iframe>
+<iframe id='Formats-dat-sub' class='page' src='./Formats/dat/datFormats/sub.html' loading='lazy' title='.sub (Localized Subtitle & Lip-Sync Timing Stream)'></iframe>
+<iframe id='Formats-dat-shaders' class='page' src='./Formats/dat/datFormats/shaders.html' loading='lazy' title='.pc_shaders / .ps3_shaders / .fpo / .vpo / .blob (Compiled GPU Shaders)'></iframe>
+<iframe id='Formats-dat-audio_streams' class='page' src='./Formats/dat/datFormats/audio_streams.html' loading='lazy' title='.vag / .wavx / .wavm / .msf / .xma / .ogg (Platform Audio Streams)'></iframe>
+<iframe id='Formats-dat-cfg' class='page' src='./Formats/dat/datFormats/cfg.html' loading='lazy' title='.cfg / .sfx (Audio Bus & Sound Effect Event Mapping)'></iframe>
+<iframe id='Formats-dat-ptl' class='page' src='./Formats/dat/datFormats/ptl.html' loading='lazy' title='.ptl / .par (Particle System & Emitter Keyframe Curves)'></iframe>
+<iframe id='Formats-dat-spl' class='page' src='./Formats/dat/datFormats/spl.html' loading='lazy' title='.spl / .fsp (EDSPLINE 3D Curve & Rail Paths)'></iframe>
+<iframe id='Formats-dat-ft2' class='page' src='./Formats/dat/datFormats/ft2.html' loading='lazy' title='.ft2 / .fnt (Bitmap Font Texture & Glyph Metric Atlas)'></iframe>
+<iframe id='Formats-dat-gip' class='page' src='./Formats/dat/datFormats/gip.html' loading='lazy' title='.gip / .gix / .gil (GUI Page, Index & Library Containers)'></iframe>
+<iframe id='Formats-dat-fmv' class='page' src='./Formats/dat/datFormats/fmv.html' loading='lazy' title='.fmv / .bik / .pam / .pss / .xmv / .sfd (Full Motion Video)'></iframe>
+<iframe id='Formats-dat-txt' class='page' src='./Formats/dat/datFormats/txt.html' loading='lazy' title='.txt / .csv (Plaintext Engine Configuration & Localization Tables)'></iframe>
+<iframe id='Formats-dat-dimensions_toytag' class='page' src='./Formats/dat/datFormats/dimensions_toytag.html' loading='lazy' title='.bin / .por / .ats (LEGO Dimensions NFC Toy Tag & Portal Formats)'></iframe>
+<iframe id='Formats-dat-worlds_formats' class='page' src='./Formats/dat/datFormats/worlds_formats.html' loading='lazy' title='.lxfml / .g1m / .g1t / .chunk (LEGO Worlds & NTT Voxel / Brick Formats)'></iframe>
+
+
+        <!-- Files Section Iframes -->
+        <iframe id="Files" class="page" src="./Files/index.html" loading="lazy" title="Combined Filesystem Overview"></iframe>
+        <iframe id="Files-PS3" class="page" src="./Files/PS3/index.html" loading="lazy" title="PlayStation Combined Filesystem"></iframe>
+        <iframe id="Files-Xbox360" class="page" src="./Files/Xbox_360/index.html" loading="lazy" title="Xbox Combined Filesystem"></iframe>
+        <iframe id="Files-PC" class="page" src="./Files/PC/index.html" loading="lazy" title="PC Combined Filesystem"></iframe>
+
+        <!-- Documentation Guide Iframe -->
+        <iframe id="docs-guide" class="page" src="./docs.html" loading="lazy" title="Documentation Guide"></iframe>
+    </main>
+
+    <script>
+        (function() {
+            var upLink = document.getElementById("up-link");
+            function getCurrentId() {
+                var hash = window.location.hash || "";
+                return hash.replace(/^#/, "") || "";
+            }
+            function updateUpLink() {
+                var currentId = getCurrentId();
+                if (!currentId || currentId === "home") {
+                    upLink.setAttribute("href", "#home");
+                } else if (currentId.indexOf("Formats-dat-") === 0) {
+                    upLink.setAttribute("href", "#Formats-dat");
+                } else if (currentId.indexOf("Formats-") === 0) {
+                    upLink.setAttribute("href", "#home");
+                } else if (currentId.indexOf("Files-") === 0) {
+                    upLink.setAttribute("href", "#Files");
+                } else {
+                    upLink.setAttribute("href", "#home");
+                }
+            }
+            window.addEventListener("hashchange", updateUpLink);
+            updateUpLink();
+        })();
+    </script>
+</body>
+</html>
