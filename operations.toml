@@ -111,3 +111,11 @@ script = "{{Game_Root}}/operations/lhp_dat.bms"
 input = "{{Game_Root}}/Source/Orginals/Xbox_360"
 output = "{{Game_Root}}/GameFiles/LHP-XBOX"
 extension = ".dat"
+
+[[operation]]
+id = 20
+Name = "Extract All Assets"
+run-all = false
+depends-on = []
+script_type = "lua"
+script = "{{Project_Root}}/EngineApps/Games/Lego/operations/ExtractModuleAssets.lua"
