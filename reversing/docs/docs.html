@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -13,13 +13,27 @@
     <h1>Documentation Guide &amp; Format Analysis Conventions</h1>
 <aside class="source-notice"><p><strong>Project:</strong> LEGO Harry Potter Reversing &amp; Format Documentation</p></aside>
 <section class="doc-overview">
-    <h2>Project Mission &amp; Architectural Principles</h2>
-    <p>This technical reference documents binary file formats, proprietary archive packaging, compression algorithms, and filesystem structures for <strong>LEGO Harry Potter</strong> within the RemakeEngine ecosystem. It follows the reverse-engineering documentation standards established across the LEGO and Simpsons documentation repositories.</p>
-    <h2>Two Complementary Documentation Trees</h2>
+    <h2>1. Game-Scoped Documentation Rule</h2>
+    <p>This documentation suite covers formats, archives, and extracted assets specific to <strong>LEGO Harry Potter</strong> (<em>Years 1–4</em> using NXG <code>HSEM</code> <code>v0x04</code>/<code>v0x05</code>, <em>Years 5–7</em> using <code>HSEM</code> <code>v0x2E</code>/<code>v0x2F</code>, console <code>PakDat v1.01</code> <code>LZ2K</code>, and the 2024 PC Collection <code>.datwin</code> <code>LZHAM</code> releases). It follows the two-tier LEGO reversing documentation hierarchy:</p>
+    <ul>
+        <li><strong>Scope of This Game Documentation:</strong> Pages under <code>Formats/</code> document <strong>only</strong> the format versions present in <em>LEGO Harry Potter</em> releases. Earlier Classic <code>Nu2</code> or later Era 4/5 TT Games variants not shipped in <em>LEGO Harry Potter</em> are kept to minimal notes so an implementer can write a parser exclusively for <em>LEGO Harry Potter</em> without supporting other games.</li>
+        <li><strong>Parent Shared LEGO Documentation (<code>../../reversing/docs/Travellers_Tales/</code>):</strong> Combines format variants across all Traveller's Tales titles and engine generations. Consult the parent docs when cross-title compatibility or full historical lineage is required.</li>
+    </ul>
+
+    <h2>2. Two Complementary Documentation Trees</h2>
     <ol>
-        <li><strong>Format Analysis (<code>Formats/</code>):</strong> Follows binary format origins: root executable and container formats (<code>.xex</code>/<code>.xbe</code>, <code>.bin</code>/<code>ELF</code>, <code>.exe</code>, <code>.dat</code>/<code>.hdr</code>/<code>.datwin</code>) followed by formats extracted from within archives (<code>datFormats/</code>), explicitly noting which formats are universal across TT Games and which are specific to certain eras or titles.</li>
-        <li><strong>Game Files &amp; Asset Use (<code>Files/</code>):</strong> Documents directory hierarchies, cross-game format censuses, sound banks, character definitions, mission scripts, and in-game usage through a <em>combined virtual filesystem</em>.</li>
+        <li><strong>Format Analysis (<code>Formats/</code>):</strong> Follows binary format origins from executable and archive containers (<code>.xex</code>, <code>.bin</code>/<code>ELF</code>, <code>.exe</code>, <code>.dat</code>/<code>.datwin</code>) to extracted formats (<code>datFormats/</code>).</li>
+        <li><strong>Game Files &amp; Asset Use (<code>Files/</code>):</strong> Documents directory hierarchies, asset inventories across PS3/Xbox 360/PC Collection, sound banks, character definitions, and level scripts through a <em>combined virtual filesystem</em>.</li>
     </ol>
+
+    <h2>3. Expected Level of Detail (Standalone Clean-Room Standard)</h2>
+    <p>Every understood format page in this module must be a complete, standalone specification capable of guiding a clean-room parser or converter implementation for <em>LEGO Harry Potter</em> without inspecting RemakeEngine source code. Format pages must include:</p>
+    <ul>
+        <li>Exact signatures, version constants, and mixed-endianness rules (big-endian console/<code>HSEM</code> tables vs. little-endian PC Collection float vertex data).</li>
+        <li>Full byte-offset structure tables, attribute encoding tables, and mathematical decoding formulas.</li>
+        <li>Shared-buffer back-reference resolution, shadow-pass skipping, LOD/breakup filtering, and winding rules.</li>
+        <li>Complete, end-to-end pseudocode covering binary parsing through final triangle reconstruction.</li>
+    </ul>
 </section>
 </body>
 </html>
