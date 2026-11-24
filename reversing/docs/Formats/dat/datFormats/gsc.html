@@ -30,7 +30,8 @@
 <tr><td><strong><code>vb_count</code> &amp; VB Slots</strong></td><td>Explicit <code>uint32be vb_count</code> when <code>ver &lt; 0x2E</code> or <code>HasExplicitVbc</code> matches; else <code>1</code>. Per slot: <code>pres &gt;= 0x80000000</code> skips 8 B and stores back-ref ID <code>pres &amp; 0xFFFF</code>; <code>pres == 0</code> skips 4 B; inline VB reads <code>flags</code>, <code>nv</code>, attribute decl (<code>16×2B</code> sequential for <code>0x04/0x05</code>; <code>n_attr×3B</code> for <code>0x2E/0x2F</code>), then <code>nv * stride</code> bytes + 4-byte offset.</td></tr>
 <tr><td><strong><code>unk1</code> &amp; Index Buffer</strong></td><td>Read <code>uint32be unk1</code>, <code>uint32be ib_pres</code>. <code>ib_pres &gt;= 0x80000000</code> skips 4 B and reuses pooled IB <code>ib_pres &amp; 0xFFFF</code>; else reads <code>ib_flags</code>, <code>ic</code>, <code>isz</code> (<code>0-&gt;2</code>) and <code>ic * isz</code> big-endian indices. When <code>unk1 != 0</code>, skip shadow/depth pass (12 B + 0/4 B align).</td></tr>
 <tr><td><strong>26 B Draw Slice</strong></td><td><code>ioff</code> (<code>u32be</code>), <code>icnt</code> (<code>u32be</code>), <code>vbase</code> (<code>u32be</code>), <code>vcnt</code> (<code>u16be</code> @ +0x10), <code>prim_tp</code> (<code>u16be</code> @ +0x12: <code>0</code>=List, <code>1</code>=Strip), <code>blen</code> (<code>u32be</code> @ +0x16) + <code>blen</code> bytes. Trailer to next mesh: <code>8</code> B (<code>0x04/0x05</code>) or <code>44</code> B (<code>0x2E/0x2F</code>), verified via <code>IsHsemMeshStart</code>.</td></tr>
-<tr><td><strong>Attributes &amp; Winding</strong></td><td><code>TYPE_SIZES = [0, 4, 8, 12, 16, 4, 8, 4, 4, 4, 4, 2]</code>. If <code>vb0</code> omits normal/UV and <code>vb1.nv == vb0.nv</code>, read from <code>vb1</code>. Auto-detect LE/BE floats across 16 sample verts; decode <code>UByteN4</code> normals as <code>(b / 127.5) - 1.0</code>. Indices in <code>cur_ib[ioff : ioff + icnt]</code> are 0-based relative to <code>vbase</code> and CCW-wound (flip to CW for Godot <code>SurfaceTool</code>).</td></tr>
+<tr><td><strong>Attributes &amp; Winding</strong></td><td><code>TYPE_SIZES = [0, 4, 8, 12, 16, 4, 8, 4, 4, 4, 4, 2]</code>. Roles: <code>0</code>=Pos, <code>1</code>=Normal, <code>2</code>=VertexColor (<code>tp in {7,8,9}</code>, <code>0x7F = 1.0</code>, all-zero -&gt; white), <code>5</code>=UV0. If <code>vb0</code> omits normal/color/UV and <code>vb1.nv == vb0.nv</code>, read from <code>vb1</code>. Auto-detect LE/BE floats across 16 sample verts; decode <code>UByteN4</code> normals as <code>(b / 127.5) - 1.0</code>. Indices in <code>cur_ib[ioff : ioff + icnt]</code> are 0-based relative to <code>vbase</code> and CCW-wound (flip to CW for Godot <code>SurfaceTool</code>).</td></tr>
+<tr><td><strong>Materials, <code>ATEM</code>, <code>PSID</code> &amp; <code>LTMU</code></strong></td><td><code>FinalAlbedo = MaterialColor * VertexColor * DiffuseTexture_DDS</code>. Extract 128 B <code>"DDS \x7c\x00\x00\x00"</code> slices from <code>[0..hsem_pos]</code> and <code>[psid..EOF]</code> (patching <code>dwPitchOrLinearSize @ +0x14</code> -&gt; <code>mip0_bytes</code> if <code>DDSD_LINEARSIZE</code> is set with an inflated pitch), render diffuse opaque; filter non-diffuse <code>ATEM</code> paths (<code>\</code> -&gt; <code>/</code>, <code>/undersides/</code>, <code>mask_</code>, <code>sbmask_</code>, <code>/normals/</code>, <code>_n.nut</code>, <code>_nrm.nut</code>, <code>specular</code>, <code>dummylightmap</code>, <code>capenormal</code>); map <code>mesh_idx -&gt; mtl_idx</code> via <code>PSID</code> <code>0xB300</code>; decode <code>LTMU</code> (<code>l_ver &lt;= 0x20</code>: <code>7f7f7fff*3</code>, <code>mo+0x61 tid</code>, <code>mo+0x70 BGRA</code>, <code>mo+0x262 f32be[3]</code>; <code>l_ver &gt; 0x20</code>: <code>00000004*10</code>, 16 slots, diffuse <code>t0</code> when <code>t0 != t4</code>).</td></tr>
 </tbody>
 </table></div>
 
@@ -67,6 +68,7 @@ function AccumAttr(attr_def, tp, off, state, sequential_if_zero):
     actual_off = state.stride if (sequential_if_zero and off == 0 and state.stride &gt; 0) else off
     if attr_def == 0 and state.pos_type &lt; 0:  state.pos_type = tp;  state.pos_off = actual_off
     elif attr_def == 1 and state.norm_type &lt; 0: state.norm_type = tp; state.norm_off = actual_off
+    elif attr_def == 2 and state.col_type &lt; 0:  state.col_type = tp;  state.col_off = actual_off
     elif attr_def == 5 and state.uv_type &lt; 0:   state.uv_type = tp;   state.uv_off = actual_off
     end = max((state.stride + sz) if sequential_if_zero else 0, actual_off + sz)
     if end &gt; state.stride: state.stride = end
@@ -91,14 +93,14 @@ function DecodeTriangles(raw, vcnt, is_strip, clockwise_target):
 function ParseLhpGsc(bytes, clockwise_target=false):
     hsem = FindTag(bytes[0 : min(len(bytes), 524288)], "HSEM")
     if hsem &lt; 0: return []
-    buf = bytes[hsem : min(len(bytes), hsem + 16*1024*1024)]
-    p = 4; ver = ReadU32BE(buf, p); p += 4
+    buf = bytes[0 : min(len(bytes), 64*1024*1024)]
+    p = hsem + 4; ver = ReadU32BE(buf, p); p += 4
     if buf[p : p+4] == "ROTV": p += 4
     mesh_count = ReadU32BE(buf, p); p += 4
     if mesh_count == 0 or mesh_count &gt; 4096: return []
 
-    limit = FirstFoundTag(buf, p, "LTMU", "PSID", default=len(buf))
-    psid = FindTagFrom(buf, p, "PSID")
+    ltmu = FindTagFrom(buf, p, "LTMU"); psid = FindTagFrom(buf, p, "PSID")
+    limit = ltmu if ltmu &gt; p else (psid if psid &gt; p else len(buf))
     n_logh = max(1, CountTagOccurrencesFrom(buf, psid, "LOGH")) if psid &gt;= 0 else 1
 
     all_vbs = []; all_ibs = []; rid_to_vb = {}; rid_to_ib = {}; submeshes = []
@@ -116,7 +118,7 @@ function ParseLhpGsc(bytes, clockwise_target=false):
                 p += 8; vb_specs.append(("ref", slot, pres &amp; 0xFFFF))
             elif pres != 0:
                 _flags = ReadU32BE(buf, p); nv = ReadU32BE(buf, p+4); p += 8
-                state = {pos_type:-1, pos_off:0, norm_type:-1, norm_off:0, uv_type:-1, uv_off:0, stride:0}
+                state = {pos_type:-1, pos_off:0, norm_type:-1, norm_off:0, col_type:-1, col_off:0, uv_type:-1, uv_off:0, stride:0}
                 if ver &lt; 0x2E:
                     for s in 0 .. 15: AccumAttr(s, buf[p], buf[p+1], state, true); p += 2
                 else:
@@ -163,7 +165,7 @@ function ParseLhpGsc(bytes, clockwise_target=false):
             else: resolved.append(null)
 
         if vcnt &gt;= 3 and icnt &gt;= 3 and cur_ib != null and len(resolved) &gt; 0 and resolved[0] != null:
-            submeshes.append({vb0:resolved[0], vb1:(resolved[1] if len(resolved)&gt;1 else null),
+            submeshes.append({mesh_idx:m, vb0:resolved[0], vb1:(resolved[1] if len(resolved)&gt;1 else null),
                               ib:cur_ib, vbase:vbase, vcnt:vcnt, ioff:ioff, icnt:icnt, prim_tp:prim_tp})
 
         p_after = p + 26 + blen
@@ -177,21 +179,29 @@ function ParseLhpGsc(bytes, clockwise_target=false):
                     if IsHsemMeshStart(buf, cand, ver): p = cand; advanced = true; break
             if not advanced: break
 
+    dds_slices  = ExtractHsemDdsSlices(buf, hsem, psid)      // patches DDSD_LINEARSIZE pitch @ +0x14 -> mip0_bytes
+    nut_names   = ParseHsemAtemNames(buf, hsem, psid)
+    mesh_to_mtl = ParseHsemPsidMap(buf, psid)
+    ltmu_mtls   = ParseHsemLtmuMaterials(buf, ltmu, psid, len(dds_slices), nut_names)
     lod0 = submeshes[0 : ceil(len(submeshes) / n_logh)]
     result = []; seen_bboxes = {}
     for sm in lod0:
         vb0 = sm.vb0; vb1 = sm.vb1; st0 = vb0.state
         use_le = DetectLittleEndianF32(buf, vb0.data_pos, sm.vbase, sm.vcnt, vb0.stride, st0.pos_off, st0.pos_type)
         norm_vb = vb1 if (vb1 != null and vb1.nv == vb0.nv and vb1.state.norm_type &gt;= 0) else vb0
+        col_vb  = vb1 if (vb1 != null and vb1.nv == vb0.nv and vb1.state.col_type  &gt;= 0) else vb0
         uv_vb   = vb1 if (vb1 != null and vb1.nv == vb0.nv and vb1.state.uv_type   &gt;= 0) else vb0
         positions = [DecodePos(buf, vb0.data_pos + (sm.vbase+i)*vb0.stride + st0.pos_off, st0.pos_type, use_le) for i in 0 .. sm.vcnt-1]
         normals   = [Normalize3(DecodeNorm(buf, norm_vb.data_pos + (sm.vbase+i)*norm_vb.stride + norm_vb.state.norm_off, norm_vb.state.norm_type)) for i in 0 .. sm.vcnt-1]
+        colors    = DecodeVertexColorAttr2(buf, col_vb, sm.vbase, sm.vcnt)
         uvs       = [DecodeUV(buf, uv_vb.data_pos + (sm.vbase+i)*uv_vb.stride + uv_vb.state.uv_off, uv_vb.state.uv_type) for i in 0 .. sm.vcnt-1]
         tris      = DecodeTriangles(sm.ib[sm.ioff : sm.ioff + sm.icnt], sm.vcnt, (sm.prim_tp == 1), clockwise_target)
         if len(tris) &lt; 3: continue
         bbox = (sm.vcnt, len(tris)/3, QuantizedMinMax(positions))
         if bbox not in seen_bboxes:
-            seen_bboxes.add(bbox); result.append((positions, normals, uvs, tris))
+            seen_bboxes.add(bbox)
+            mtl_col, tid = ltmu_mtls[mesh_to_mtl[sm.mesh_idx]] if sm.mesh_idx in mesh_to_mtl else (White, -1)
+            result.append((positions, normals, colors, uvs, tris, mtl_col, dds_slices[tid] if tid &gt;= 0 else null))
     return result</code></pre>
 </body>
 </html>
