@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.por (TROP Portals) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.por (TROP Portals)</nav>
+    <h1>.POR (TROP Room Visibility &amp; Streaming Portals)</h1>
+    <aside class="source-notice">
+        <p><strong>Dissected Directly:</strong> <em>Clone Wars</em> (3), <em>PotC</em> (18), <em>HP 5–7</em> (23), <em>BM2</em> (11), <em>LOTR</em> (8), <em>Marvel 1</em> (9, <code>7asgardb.por</code>, 1,046 B), <em>Hobbit</em> (11); confirmed <code>0</code> files in <em>Dimensions</em>.</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Visibility &amp; Culling · Clone Wars through The Hobbit</p>
+        <p>Binary portal plane volumes (big-endian magic "TROP" = "PORT" reversed) dividing rooms and hub zones for visibility culling. Present CW through Hobbit; 0 files in Dimensions.</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.por</code></dd>
+            <dt>Signature</dt>
+            <dd><code>"TROP"</code> (<code>0x54524F50</code>, reversed <code>PORT</code>) at <code>+0x08</code>, version <code>2</code></dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/por.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
+    </nav>
+    <section id="overview" class="doc-overview">
+        <h2>Binary Header (Observed in <code>7asgardb.por</code>, 1,046 B)</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>.por TROP Container Layout</caption>
+                <thead>
+                    <tr>
+                        <th>Offset</th>
+                        <th>Size</th>
+                        <th>Type</th>
+                        <th>Field</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>0x00</code></td>
+                        <td>4</td>
+                        <td><code>u32be</code></td>
+                        <td><code>payload_sz</code></td>
+                        <td>Remaining file size minus 4 (<code>0x0412</code> = 1,042 B).</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x04</code></td>
+                        <td>4</td>
+                        <td><code>u32be</code></td>
+                        <td><code>hdr_ver</code></td>
+                        <td>Observed <code>1</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x08</code></td>
+                        <td>4</td>
+                        <td><code>char[4]</code></td>
+                        <td><code>magic</code></td>
+                        <td><code>"TROP"</code> (byte-swapped <code>"PORT"</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x0C</code></td>
+                        <td>4</td>
+                        <td><code>u32be</code></td>
+                        <td><code>trop_ver</code></td>
+                        <td>Observed <code>2</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x10+</code></td>
+                        <td>var</td>
+                        <td><code>f32be[] / ASCII</code></td>
+                        <td><code>portals</code></td>
+                        <td>Portal quad bounds/planes and room name strings (e.g. <code>7asgardb</code>).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/gsc.html"><code>.gsc Scenes</code></a> — Rooms stream/cull across TROP portal quads matching level folder name.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <p><em>None documented (leaf or standalone file).</em></p>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>Absent in <em>LEGO Dimensions</em>:</strong> Despite old docs claiming 644 files in Dimensions, our full census confirms <code>0 .por</code> files in Dimensions (culling moved into <code>.gsc</code>/<code>.res</code>).</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParsePor(buf):
+    if buf[8:12] != b&quot;TROP&quot;: raise NotTrop
+    return {payload_sz: ReadU32BE(buf, 0), trop_ver: ReadU32BE(buf, 12)}</code></pre>
+    </section>
+
+</body>
+
+</html>

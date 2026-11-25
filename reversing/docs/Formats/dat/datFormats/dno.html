@@ -1,42 +1,94 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.dno (Pinner Dynamics Object — Physics & Collision Container)</title>
+    <title>.dno (PinnerDynamicsObj) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.dno
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.dno (PinnerDynamicsObj)</nav>
+    <h1>.DNO (PinnerDynamicsObj Rigid-Body &amp; Smashables)</h1>
+    <aside class="source-notice">
+        <p><strong>Version Evolution Confirmed:</strong> Dissected across <em>Indy 2</em> (318), <em>HP 1–4</em> (353), <em>CW</em> (337), <em>PotC</em> (322), <em>HP 5–7</em> (633), <em>BM2</em> (646), <em>LOTR</em> (742), <em>Marvel 1</em> (641), <em>Hobbit</em> (875), and <em>Dimensions</em> (1,444).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Physics &amp; Destruction · Era 3a–4 (Indy 2 through Dimensions)</p>
+        <p>Binary dynamics definitions encoding convex smashables, vehicles, and water surfaces via PinnerDynamicsObj serialization.</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.dno</code></dd>
+            <dt>Pre-2011 Magic</dt>
+            <dd><code>u32be 0x12..0x13</code> + <code>"PinnerDynamicsObj"</code> (<em>Indy 2</em>, <em>HP 1–4</em>)</dd>
+            <dt>2011+ Magic</dt>
+            <dd><code>u32be payload_sz</code> + <code>"SERIALISED\0"</code> + class type + dynamics structs</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/dno.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.dno (Pinner Dynamics Object — Physics & Collision Container)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> 3D Graphics & Scene · <strong>Scope:</strong> Era 3–4 (HP 1–4: 6,858, HP 5–7: 5,204, Batman 2: 3,240, Dimensions: 17,672)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>PinnerDynamicsObj physics, collision hull, joint constraint, convex mesh, and KD-terrain descriptor container for dynamic and breakable LEGO world objects.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.dno</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>SERIALISED (v20) / 0x00000013 / 0x00B40001</code></dd>
-        <dt>Subsystem</dt><dd>3D Graphics & Scene</dd>
-        <dt>Cross-Game Scope</dt><dd>Era 3–4 (HP 1–4: 6,858, HP 5–7: 5,204, Batman 2: 3,240, Dimensions: 17,672)</dd>
-    </dl>
-</section>
-<h2>Overview &amp; 12-Section Structure (<code>PinnerDynamicsObj.cs</code>)</h2>
-<p>Verified against <code>TTGamesExplorerRebirthLib/Formats/PinnerDynamicsObj.cs</code>: <code>.dno</code> stands for <strong>Pinner Dynamics Object</strong> (named after TT Games' internal <em>Pinner</em> physics/dynamics subsystem). Version 20 files begin with the 10-byte ASCII magic <code>SERIALISED</code> + <code>uint32 Version (20)</code> followed by 12 sequential sections:</p>
-<ol>
-    <li><code>PinnerString</code> (string table)</li>
-    <li><code>PinnerMatrix</code> (4×4 transform matrices)</li>
-    <li><code>PinnerEntity</code> (dynamic rigid-body entities)</li>
-    <li><code>PinnerMesh</code> (collision triangle meshes)</li>
-    <li><code>PinnerJoint</code> (hinge/ball/slider constraints)</li>
-    <li><code>PinnerGeom</code> (primitive collision shapes)</li>
-    <li><code>PinnerSpline</code> (path constraints)</li>
-    <li><code>PinnerController</code> (kinematic controllers)</li>
-    <li><code>PinnerTileMap</code> (grid collision tiles)</li>
-    <li><code>PinnerConvexMesh</code> (convex hull polytopes)</li>
-    <li><code>KdTerrainDescriptor</code> (KD-tree spatial terrain)</li>
-    <li>Secondary <code>PinnerMesh</code> section</li>
-</ol>
+    <section id="overview" class="doc-overview">
+        <h2>Header Variant Matrix (Crucial 2011 Split)</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Pre-2011 Direct Header vs 2011+ SERIALISED Envelope</caption>
+                <thead>
+                    <tr>
+                        <th>Period / Titles</th>
+                        <th>Offset 0x00</th>
+                        <th>Envelope / Body</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><em>Indy 2</em> (2009), <em>HP 1–4</em> (2010)</td>
+                        <td><code>u32be 0x12</code> or <code>0x13</code></td>
+                        <td>Starts directly with version integer + <code>"PinnerDynamicsObj"</code>/<code>"WaterDyno"</code> without any <code>"SERIALISED"</code> wrapper.</td>
+                    </tr>
+                    <tr>
+                        <td><em>Clone Wars</em> (2011) &rarr; <em>Dimensions</em> (2015)</td>
+                        <td><code>u32be payload_sz</code> + <code>"SERIALISED\0"</code></td>
+                        <td><code>+0x00 u32be payload_sz</code>, <code>+0x04 "SERIALISED\0"</code>, <code>u32be 20</code> (sub-version), <code>"WaterDyno"</code> / <code>"PinnerDynamicsObj"</code> + mass, friction, collision bounds.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/led.html"><code>.led / .gsc</code></a> — Breakable LEGO objects and water bodies reference matching .dno files.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <p><em>None documented (leaf or standalone file).</em></p>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>Pre-2011 Parser Trap:</strong> Parsers expecting <code>"SERIALISED"</code> at <code>+0x04</code> reject <em>Indy 2</em> and <em>HP 1–4</em> <code>.dno</code> files; always branch on whether bytes <code>4..14</code> equal <code>b"SERIALISED"</code>.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseDnoHeader(buf):
+    if buf[4:14] == b&quot;SERIALISED&quot;:
+        sz = ReadU32BE(buf, 0)
+        sub_ver = ReadU32BE(buf, 15)
+        return {envelope: &quot;SERIALISED&quot;, size: sz, sub_ver: sub_ver}
+    return {envelope: &quot;Direct&quot;, ver: ReadU32BE(buf, 0)}</code></pre>
+    </section>
+
 </body>
+
 </html>

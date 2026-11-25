@@ -1,27 +1,124 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.msf (Sony CellOS Multi-Stream Audio)</title>
+    <title>.msf (PS3 ATRAC3+/PCM Audio) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='#home'>Documentation</a><span>/</span><a href='../../index.html'>Formats</a><span>/</span><a href='../dat.html'>.dat</a><span>/</span>.msf
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.msf (PS3 ATRAC3+/PCM Audio)</nav>
+    <h1>.MSF (PlayStation 3 MSFC Hardware Audio Containers)</h1>
+    <aside class="source-notice">
+        <p><strong>Verified Across All 12 Inspected PS3 Discs:</strong> e.g. <em>Marvel 1</em> (<code>dx_loki_overhere2_mex.msf</code>, 30,880 B), <em>Dimensions</em> (6,096 files).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · PS3 Audio · Every PS3 Title (261–6,096 files/disc)</p>
+        <p>Sony PS3 libmsf audio stream container (magic "MSFC" = 0x4D534643) wrapping hardware-decoded ATRAC3plus, MP3, or big-endian PCM music, SFX, and voiceover.</p>
+        <dl>
+            <dt>Extension &amp; Magic</dt>
+            <dd><code>.msf</code> &middot; <code>"MSFC"</code> (<code>0x4D534643</code>)</dd>
+            <dt>Header</dt>
+            <dd>64-byte big-endian Sony MSFC header followed by coded audio frames</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/msf.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.msf (Sony CellOS Multi-Stream Audio)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Audio · Extracted from TT Games <code>.DAT</code> / <code>.datwin</code> archives</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Sony PlayStation 3 streaming audio container holding ATRAC3plus or PCM compressed background music and cutscene voice tracks.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.msf</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>MSF\x01 (0x4D534601)</code></dd>
-        <dt>Subsystem</dt><dd>Audio</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>PS3 hardware audio format. Decoded natively on Cell SPU / RSX via <code>cellAudio</code> stubs. Supported by <code>vgmstream</code> for conversion to WAV.</p>
+    <section id="overview" class="doc-overview">
+        <h2>Binary 64-Byte Header Layout (Big-Endian)</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>PS3 MSFC (.msf) Header Fields</caption>
+                <thead>
+                    <tr>
+                        <th>Offset</th>
+                        <th>Size</th>
+                        <th>Type</th>
+                        <th>Field</th>
+                        <th>Observed Example (dx_loki_overhere2_mex.msf)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>0x00</code></td>
+                        <td>4</td>
+                        <td><code>char[4]</code></td>
+                        <td><code>magic</code></td>
+                        <td><code>"MSFC"</code> (<code>0x4D534643</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x04</code></td>
+                        <td>4</td>
+                        <td><code>u32be</code></td>
+                        <td><code>codec_id</code></td>
+                        <td><code>0</code> PCM BE, <code>1</code> PCM LE, <code>3</code> MP3 (observed), <code>4..6</code> ATRAC3plus.</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x08</code></td>
+                        <td>4</td>
+                        <td><code>u32be</code></td>
+                        <td><code>channels</code></td>
+                        <td><code>1</code> (mono) or <code>2</code> (stereo).</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x0C</code></td>
+                        <td>4</td>
+                        <td><code>u32be</code></td>
+                        <td><code>data_size</code></td>
+                        <td>Audio payload bytes (<code>30816 = 30880 - 64</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x10</code></td>
+                        <td>4</td>
+                        <td><code>u32be</code></td>
+                        <td><code>sample_rate</code></td>
+                        <td>e.g. <code>44100</code> Hz (<code>0xAC44</code>) or <code>48000</code> Hz.</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x14..0x3F</code></td>
+                        <td>44</td>
+                        <td><code>u32be[]</code></td>
+                        <td><code>flags / loop_pts</code></td>
+                        <td>Loop markers &amp; reserved padding (`0xFFFFFFFF` = no loop).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/sfx.html"><code>.sfx / audio.cfg</code></a> — Referenced for SFX, ambience, VO, and level music.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <p><em>None documented (leaf or standalone file).</em></p>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li>Equivalent Sony container to Xbox 360 <code>.xma</code> and PC <code>.ogg/.wav</code>; convert directly via <code>vgmstream</code> / FFmpeg.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseMsf(buf):
+    if buf[0:4] != b&quot;MSFC&quot;: raise NotMsf
+    codec, ch, sz, rate = ReadU32BE4(buf, 4)
+    return {codec: codec, channels: ch, rate: rate, payload: buf[64 : 64 + sz]}</code></pre>
+    </section>
+
 </body>
+
 </html>

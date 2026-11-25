@@ -1,33 +1,110 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Windows Executables (.exe)</title>
+    <title>.exe (Windows PE32 / PE32+) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span>.exe
-    </nav>
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span>.exe (Windows PE32 / PE32+)</nav>
     <h1>PC Windows Executables (.exe — PE32 x86 &amp; PE32+ AMD64)</h1>
-<aside class="source-notice"><p><strong>Platform:</strong> Microsoft Windows (Retail Disc &amp; Steam) · 32-bit x86 (<code>PE32</code>) &amp; 64-bit AMD64 (<code>PE32+</code>)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Windows Portable Executables · Direct3D 9 &amp; Direct3D 11</p>
-    <p>Native Windows executables spanning Era 2 (<code>LEGOSTA2.EXE</code>), Era 3c (<code>LEGOBatman2.exe</code>), and the 2024 Double Eleven 64-bit remasters (<code>harry1.exe</code>, <code>harry2.exe</code>).</p>
-    <dl>
-        <dt>Header Magic</dt><dd><code>MZ</code> (<code>0x5A4D</code>), <code>PE\0\0</code> (<code>0x00004550</code>)</dd>
-        <dt>Inspected Executables</dt><dd><code>LEGOSTA2.EXE</code> (2006 x86), <code>LEGOBatman2.exe</code> (2012 x86), <code>harry1.exe</code> &amp; <code>harry2.exe</code> (2024 AMD64)</dd>
-    </dl>
-</section>
-<h2>Inspected Windows Executables</h2>
-<div class="table-scroll"><table class="format-counts">
-<thead><tr><th>Title</th><th>Executable</th><th>Size &amp; Arch</th><th>Compiler / PDB &amp; Embedded Signatures</th></tr></thead>
-<tbody>
-<tr><td><em>LEGO Star Wars II</em> (2006 PC ISO)</td><td><code>LEGOSTA2.EXE</code></td><td><code>7,493,144</code> B (<code>PE32</code> x86)</td><td>Timestamp <code>2006-09-26 17:21:58 UTC</code>; PDB: <code>c:\projects\starwars\Release_2K\starwars_pc.pdb</code>; mounts <code>GAME.DAT</code>, <code>PATCH.DAT</code>, <code>STARTUP.DAT</code>; SecuROM v7 <code>.securom</code> section.</td></tr>
-<tr><td><em>LEGO Batman 2: DC Super Heroes</em> (2012 Steam)</td><td><code>LEGOBatman2.exe</code></td><td><code>18,690,560</code> B (<code>PE32</code> x86)</td><td>Timestamp <code>2012-05-25 13:57:20 UTC</code>; mounts <code>GAME0.DAT</code>..<code>GAME6.DAT</code> (<code>PakDat v1.01</code> TOC <code>v-4</code>); contains <code>LZ2K</code>, <code>DXBC</code>, <code>FMOD</code>, and <code>StreamInfo</code> reflection tables.</td></tr>
-<tr><td><em>LEGO Harry Potter Collection</em> (2024 Steam)</td><td><code>harry1.exe</code> / <code>harry2.exe</code></td><td><code>13.09 MB</code> / <code>14.43 MB</code> (<code>PE32+</code> AMD64)</td><td><code>x64FinalD11Static</code>; mounts <code>.datwin</code> (TOC <code>v-1</code> with <code>0x12345678</code> canary and <code>LZHAM</code>) and <code>.pkiwin</code>/<code>.pkdwin</code> (zlib).</td></tr>
-</tbody>
-</table></div>
+    <aside class="source-notice">
+        <p><strong>Inspected Directly:</strong> Verified on <em>LSW2</em> PC ISO, <em>TCS</em> Steam, <em>LEGO Batman 2</em> Steam, and <em>LEGO HP Collection</em> (2024).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Windows PE · Direct3D 9 &amp; Direct3D 11</p>
+        <p>Native Windows game executables spanning Era 2 x86 (LEGOSTA2.EXE, TCS, LEGOBatman2.exe) and 2024 Double Eleven x64 remasters (harry1.exe, harry2.exe).</p>
+        <dl>
+            <dt>PE Magic</dt>
+            <dd><code>MZ</code> (<code>0x5A4D</code>) &rarr; <code>PE\0\0</code> (<code>0x00004550</code>)</dd>
+            <dt>Architectures</dt>
+            <dd>x86 <code>PE32</code> (Era 1–4) &middot; AMD64 <code>PE32+</code> (Remasters &amp; Era 5+)</dd>
+            <dt>Audio Middleware</dt>
+            <dd><code>BINKW32.DLL</code> (<code>.fmv</code>) + FMOD / DirectSound / XAudio2</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../reversing/docs/Travellers_Tales/Formats/exe/index.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
+    </nav>
+    <section id="overview" class="doc-overview">
+        <h2>Inspected Windows Executables</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>PE Executables Observed in PC Builds</caption>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Binary</th>
+                        <th>Size &amp; Arch</th>
+                        <th>Compiler / Archive Bindings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><em>LEGO Star Wars II</em> (2006 PC)</td>
+                        <td><code>LEGOSTA2.EXE</code></td>
+                        <td><code>7,493,144</code> B (<code>PE32</code>)</td>
+                        <td><code>c:\projects\starwars\Release_2K\starwars_pc.pdb</code>; SecuROM v7; mounts <code>GAME.DAT</code>, <code>PATCH.DAT</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO Star Wars: TCS</em> (Steam)</td>
+                        <td><code>LEGOStarWarsSaga.exe</code></td>
+                        <td><code>PE32</code> x86</td>
+                        <td>Mounts <code>MkDat v4.0</code> (<code>v-3</code>, 12,174 entries) with ascending TOC hash table.</td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO Batman 2</em> (2012 Steam)</td>
+                        <td><code>LEGOBatman2.exe</code></td>
+                        <td><code>18,690,560</code> B (<code>PE32</code>)</td>
+                        <td>Mounts <code>GAME0..6.DAT</code> (<code>PakDat v1.01</code> TOC <code>v-4</code>); contains <code>LZ2K</code>, <code>DXBC</code>, <code>StreamInfo</code> RTTI.</td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO HP Collection</em> (2024)</td>
+                        <td><code>harry1.exe</code> / <code>harry2.exe</code></td>
+                        <td><code>13.09 MB</code> / <code>14.43 MB</code> (<code>PE32+</code>)</td>
+                        <td><code>x64FinalD11Static</code>; mounts <code>.datwin</code> (TOC <code>v-1</code>, <code>LZHAM</code>) + <code>.pkiwin/.pkdwin</code> (zlib).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><code>Windows Directory / Steam</code> — Launches engine, opens GAME*.DAT or .datwin, and initializes D3D9/D3D11 + FMOD.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../Formats/dat/dat.html"><code>.DAT / .datwin</code></a> — Primary data containers opened from current working directory.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li>Retail 2006 <code>LEGOSTA2.EXE</code> ships SecuROM-encrypted <code>.securom</code> sections; PDB strings and DAT archive tables remain in plaintext <code>.rdata</code>.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function IdentifyPeTarget(pe_bytes):
+    lfanew = ReadU32LE(pe_bytes, 0x3C)
+    if pe_bytes[lfanew : lfanew+4] != b&quot;PE\0\0&quot;: return &quot;Invalid&quot;
+    machine = ReadU16LE(pe_bytes, lfanew + 4)
+    return &quot;PE32+ AMD64&quot; if machine == 0x8664 else &quot;PE32 x86&quot;</code></pre>
+    </section>
+
 </body>
+
 </html>

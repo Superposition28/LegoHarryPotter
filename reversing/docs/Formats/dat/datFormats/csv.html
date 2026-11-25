@@ -1,27 +1,94 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.csv (Localization Strings Table)</title>
+    <title>.csv / .cqf / .gra (Strings &amp; Tables) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='#home'>Documentation</a><span>/</span><a href='../../index.html'>Formats</a><span>/</span><a href='../dat.html'>.dat</a><span>/</span>.csv
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.csv / .cqf / .gra (Strings &amp; Tables)</nav>
+    <h1>.CSV, .CQF &amp; .GRA (Localization Strings &amp; Scatter/Data Tables)</h1>
+    <aside class="source-notice">
+        <p><strong>Dissected Directly:</strong> <em>TCS</em> <code>.gra</code> (18 files, e.g. <code>anakinsflight_outro2.gra</code>) &amp; <code>.cqf</code>; <em>BM2</em> 121 <code>.csv</code>; <em>Dimensions</em> 6 <code>.csv</code>.</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Localization &amp; Data · Universal</p>
+        <p>CSV subtitle/localization spreadsheets (.csv), classic collectable/query tables (.cqf in TCS), and Era 2 grass/scatter density blobs (.gra in TCS).</p>
+        <dl>
+            <dt>Extensions</dt>
+            <dd><code>.csv</code>, <code>.cqf</code> (<em>TCS</em>), <code>.gra</code> (<em>LSW1–TCS</em>)</dd>
+            <dt>&lt;code&gt;.gra&lt;/code&gt; Header</dt>
+            <dd><code>+0x00 u32le cnt</code>, <code>f32le min/max</code>, ASCII preset (<code>"grassSpecial"</code>), packed blade matrices</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/csv.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.csv (Localization Strings Table)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> UI & Localization · Extracted from TT Games <code>.DAT</code> / <code>.datwin</code> archives</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Multilingual dialogue and interface strings mapped by unique text label IDs across all supported language columns.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.csv</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>Plaintext CSV / "LABEL"</code></dd>
-        <dt>Subsystem</dt><dd>UI & Localization</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>Primary localization file (e.g. <code>text.csv</code>). Columns: <code>LABEL</code>, <code>PLATFORM</code>, <code>ENGLISH</code>, <code>FRENCH</code>, <code>GERMAN</code>, <code>SPANISH</code>, <code>ITALIAN</code>, <code>DANISH</code>, etc.</p>
+    <section id="overview" class="doc-overview">
+        <p><code>.csv</code> stores localized UI/subtitle strings referenced by <code>.sub</code> and HUD screens, whereas <code>.gra</code> (<em>TCS</em>) is a binary grass-blade scatter table starting with <code>u32le 9</code>, float density parameters (<code>15.0f, 25.0f</code>), and surface names like <code>grassSpecial</code>.</p>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>.csv / .cqf / .gra Sub-Formats</caption>
+                <thead>
+                    <tr>
+                        <th>Extension</th>
+                        <th>Observed Titles</th>
+                        <th>Header / Structure</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>.csv</code></td>
+                        <td>Universal (<code>1..121</code>)</td>
+                        <td>UTF-8/ASCII comma-separated string tables referenced by <code>.sub</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.gra</code></td>
+                        <td><em>TCS</em> (18 files)</td>
+                        <td>Binary foliage scatter: <code>+0x00 u32le 9</code>, <code>f32le</code> bounds (`15.0, 25.0`), preset name (`grassSpecial`).</td>
+                    </tr>
+                    <tr>
+                        <td><code>.cqf</code></td>
+                        <td><em>TCS</em> (1 file)</td>
+                        <td>Legacy query/table manifest.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><code>.sub / .git / .gsc</code> — Cutscenes look up localization keys by ID in matching .csv files.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <p><em>None documented (leaf or standalone file).</em></p>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong><code>.sub</code> Pairs:</strong> Cutscene subtitle files name their companion <code>.csv</code> on line 2 (`StringsFile "Sabertooth_CCTV_Cam.csv"`).</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseSubRefCsv(sub_text):
+    for line in sub_text.splitlines():
+        if line.startswith(&quot;StringsFile&quot;): return line.split(&#x27;&quot;&#x27;)[1]</code></pre>
+    </section>
+
 </body>
+
 </html>

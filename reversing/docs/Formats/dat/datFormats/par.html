@@ -1,27 +1,102 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.par (Particle Emitter Parameters)</title>
+    <title>.par (Part Hierarchies) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='#home'>Documentation</a><span>/</span><a href='../../index.html'>Formats</a><span>/</span><a href='../dat.html'>.dat</a><span>/</span>.par
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.par (Part Hierarchies)</nav>
+    <h1>.PAR (Object Assembly &amp; Breakable Part Hierarchies)</h1>
+    <aside class="source-notice">
+        <p><strong>Dissected Directly:</strong> <em>Marvel 1</em> (<code>builderhubshootinggallery.par</code>, 1,551 B) and verified across <em>TCS</em> through <em>Dimensions</em> (131 files).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Interactive Objects · All Eras (24–133 files/title)</p>
+        <p>Binary part tree mapping named scene/model parts (ROOT, part_root, board, HUW) to physics/interaction states.</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.par</code></dd>
+            <dt>Header</dt>
+            <dd><code>u32le hdr_val (0x14)</code>, <code>u32le count</code>, null-terminated <code>"ROOT\0..."</code> records + <code>"HUW"</code> markers</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/par.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.par (Particle Emitter Parameters)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> VFX & Particles · Extracted from TT Games <code>.DAT</code> / <code>.datwin</code> archives</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Keyframe parameter curve data controlling particle emission rates, alpha fade-outs, and rotational turbulence.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.par</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>PART_key (0x14000000)</code></dd>
-        <dt>Subsystem</dt><dd>VFX & Particles</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>Stores keyframe curve tables evaluated by the particle shader pipeline at runtime.</p>
+    <section id="overview" class="doc-overview">
+        <h2>Binary Structure (Observed in <code>.par</code>)</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>.par Header &amp; Node Records</caption>
+                <thead>
+                    <tr>
+                        <th>Offset</th>
+                        <th>Size</th>
+                        <th>Type</th>
+                        <th>Field</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>0x00</code></td>
+                        <td>4</td>
+                        <td><code>u32le</code></td>
+                        <td><code>version_or_sz</code></td>
+                        <td>Header constant / version tag (e.g. <code>0x14</code> = 20).</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x04</code></td>
+                        <td>4</td>
+                        <td><code>u32le</code></td>
+                        <td><code>root_count</code></td>
+                        <td>Root assembly group count.</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x08+</code></td>
+                        <td>var</td>
+                        <td><code>ASCII</code> + <code>"HUW"</code></td>
+                        <td><code>PartRecords</code></td>
+                        <td>Null-terminated node names (<code>ROOT</code>, <code>part_root</code>, <code>part_rpart_root1</code>) separated by binary transform/flag structs and <code>"HUW"</code> separators.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/ghg.html"><code>.gsc / .ghg / .dno</code></a> — Binds submesh part names to buildable/breakable sub-assemblies.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <p><em>None documented (leaf or standalone file).</em></p>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>Mixed Unresolved Floats:</strong> The exact byte meaning of fields between ASCII part names and <code>"HUW"</code> markers has only been partially mapped (hinge limits/snap offsets).</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseParStrings(buf):
+    v0, cnt = ReadU32LE2(buf, 0)
+    return {header_v: v0, count: cnt, markers: FindAll(buf, b&quot;HUW&quot;)}</code></pre>
+    </section>
+
 </body>
+
 </html>

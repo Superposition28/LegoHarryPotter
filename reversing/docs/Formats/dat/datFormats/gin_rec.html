@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>.gin / .rec / .bur / .cns / .ats — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
+    <link rel="stylesheet" href="../../../style/main.css">
+</head>
+
+<body class="doc-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.gin / .rec / .bur / .cns / .ats</nav>
+    <h1>.GIN, .REC, .BUR, .CNS, .ATS &amp; .TGD (Auxiliary Gameplay Formats)</h1>
+    <aside class="source-notice">
+        <p><strong>Clarifies Old <code>.ats</code> Confusion:</strong> In TT LEGO games, <code>.ats</code> is an ATrack/Audio-Collectable file present from <em>TCS</em> (31 files) through <em>Marvel 1</em> (2 files) &mdash; <code>0</code> files exist in <em>LEGO Dimensions</em>.</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Auxiliary Subsystems · Classic through Era 3c</p>
+        <p>Consolidated specification for secondary single-purpose binary and text assets: .gin/.ats/.tgd collectables &amp; tracks, .rec replays, .bur camera rails/burns, and .cns collision normals.</p>
+        <dl>
+            <dt>Extensions</dt>
+            <dd><code>.gin</code> (<em>TCS–PotC</em>), <code>.rec</code> (<em>Indy 2</em> 72), <code>.bur</code> (<em>TCS–Indy 2</em>), <code>.cns</code> (<em>LSW1–TCS</em>), <code>.ats</code> (<em>TCS–Hobbit</em>), <code>.tgd</code> (<em>CW/PotC</em>)</dd>
+            <dt>Verified Headers</dt>
+            <dd><code>.bur</code> = <code>u32le 5</code> + floats (100–132 B) &middot; <code>.cns</code> = <code>u32le 1/9</code> + <code>24B</code> collision normals</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/gin_rec.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
+    </nav>
+    <section id="overview" class="doc-overview">
+        <h2>Auxiliary Format Matrix</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Inspected Auxiliary Gameplay Formats</caption>
+                <thead>
+                    <tr>
+                        <th>Extension</th>
+                        <th>Observed Counts / Titles</th>
+                        <th>Header / Contents</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>.bur</code></td>
+                        <td><em>TCS</em> 191, <em>BM1</em> 120, <em>Indy 2</em> 4</td>
+                        <td><code>+0x00 u32le 5</code>, <code>u32le idx</code>, 23–31 <code>f32le</code> camera/burn track vectors (100 B in <em>TCS</em>, 132 B in <em>BM1</em>).</td>
+                    </tr>
+                    <tr>
+                        <td><code>.cns</code></td>
+                        <td><em>LSW1</em> Xbox, <em>TCS</em> 136</td>
+                        <td><code>+0x00 u32le version</code> (<code>9</code> LSW1, <code>1</code> TCS), <code>u32le count</code> (<code>38</code> LSW1, <code>215</code> TCS), fixed 16B packed normal/bound records.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.gin</code> / <code>.ats</code> / <code>.tgd</code></td>
+                        <td><code>.gin</code> 122–256 (<em>TCS–PotC</em>); <code>.ats</code> 2–31; <code>.tgd</code> 1</td>
+                        <td>Small per-level/global config &amp; collectable/track metadata lists.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.rec</code></td>
+                        <td><em>Indy 2</em> 72 files</td>
+                        <td>Ghost / vehicle time-trial or demo replay input recordings unique to <em>Indiana Jones 2</em>.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/scp.html"><code>.led / .scp</code></a> — Loaded per level directory alongside .rtl and .anm.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <p><em>None documented (leaf or standalone file).</em></p>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>Zero-Occurrence Myth Correction:</strong> <code>.ats</code> is NOT a <em>Dimensions</em> ToyTag file (it has 0 occurrences in <em>Dimensions</em>).</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseBurOrCns(buf, ext):
+    if ext == &quot;.bur&quot;: return {ver: ReadU32LE(buf,0), floats: ReadF32LEArray(buf, 8, (len(buf)-8)//4)}
+    if ext == &quot;.cns&quot;: return {ver: ReadU32LE(buf,0), count: ReadU32LE(buf,4)}</code></pre>
+    </section>
+
+</body>
+
+</html>

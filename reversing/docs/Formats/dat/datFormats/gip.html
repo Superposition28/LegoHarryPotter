@@ -1,28 +1,87 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.gip / .gix / .gil (GUI Page, Index & Library Containers)</title>
+    <title>.gip (Plaintext GUI Pages) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.gip
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.gip (Plaintext GUI Pages)</nav>
+    <h1>.GIP (Plaintext GUI Page &amp; Widget Hierarchy)</h1>
+    <aside class="source-notice">
+        <p><strong>Myth Corrected Directly:</strong> Old docs described <code>.gip/.gix/.gil</code> as binary. Direct inspection proves they are 100% plaintext ASCII DSL!</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · User Interface · Era 3a–3b (Indy 2 through PotC)</p>
+        <p>Plaintext hierarchical UI page definitions (begin page Name "...") specifying widget rects, font bindings, and localized string IDs from .git files.</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.gip</code> (46 in <em>Indy 2</em>, 41 in <em>HP 1–4</em>, 33 in <em>CW</em>, 39 in <em>PotC</em>)</dd>
+            <dt>Syntax</dt>
+            <dd>Plaintext <code>begin page Name "..."</code> blocks</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/gip.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.gip / .gix / .gil (GUI Page, Index & Library Containers)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> UI & Localization · <strong>Scope:</strong> Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Menu layout pages (.gip), widget indices (.gix), and shared UI element libraries (.gil) inside framework-data/ and gui/.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.gip</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>GUI Binary / XML Layout</code></dd>
-        <dt>Subsystem</dt><dd>UI & Localization</dd>
-        <dt>Cross-Game Scope</dt><dd>Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>Drives front-end menus, character selection wheels, pause screens, and HUD overlays in NXG and DX11 titles.</p>
+    <section id="overview" class="doc-overview">
+        <p>Plaintext block syntax defining UI page trees, buttons, transitions, and texture references prior to full <code>.gix/.gil</code> and <code>.baml</code> consolidation.</p>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>.gip Observed Counts &amp; Plaintext Tokens</caption>
+                <thead>
+                    <tr>
+                        <th>Token / Game</th>
+                        <th>Usage / Counts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>begin page Name "..."</code></td>
+                        <td>Opening page block delimiter verified in plaintext <code>.gip</code> files.</td>
+                    </tr>
+                    <tr>
+                        <td>Observed counts</td>
+                        <td><em>Indy 2</em>: <code>46</code> &middot; <em>HP 1–4</em>: <code>41</code> &middot; <em>CW</em>: <code>33</code> &middot; <em>PotC</em>: <code>39</code>.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/git.html"><code>.gix / .gil Master GUI</code></a> — Pages included from root GUI project definition.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/ft2.html"><code>.ft2 / .git</code></a> — Binds UI font sheets and localized strings.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li>Retired after <em>PotC</em> (2011).</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseGip(text):
+    return RegexFindAll(r&#x27;begin page Name &quot;([^&quot;]+)&quot;&#x27;, text)</code></pre>
+    </section>
+
 </body>
+
 </html>

@@ -1,28 +1,92 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.sf / .isf (Script Function / Imperative Event Script)</title>
+    <title>.sf (ScriptFu State Machines) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.sf
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.sf (ScriptFu State Machines)</nav>
+    <h1>.SF (ScriptFu Character &amp; Gameplay State-Machine Language)</h1>
+    <aside class="source-notice">
+        <p><strong>Dissected Directly:</strong> <em>HP 5–7</em> (1,756), <em>BM2</em> (<code>ferriswheel.sf</code>, 738 files), <em>LOTR</em> (513), <em>Marvel 1</em> (1,021), <em>Hobbit</em> (568), and <em>Dimensions</em> (<code>winkieguardgoon.sf</code>, 850 files).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Gameplay Scripting · Era 3b–4 (HP 5–7 through Dimensions)</p>
+        <p>C-like event and state-machine scripting language (Character me(...); state Init() { Conditions{} Actions{} }; RegisterEvent(...)) driving character behaviors, bosses, and hub interactables.</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.sf</code></dd>
+            <dt>Encoding</dt>
+            <dd>Plaintext C-style DSL (<code>state</code>, <code>Conditions</code>, <code>Actions</code>, <code>RegisterEvent</code>)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/sf.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.sf / .isf (Script Function / Imperative Event Script)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Gameplay & AI · <strong>Scope:</strong> Era 3–4 (HP 1–4: 677, HP 5–7: 4,296, Batman 2: 5,274, Dimensions: 222)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Imperative event and puzzle scripting language used extensively in Creator/Builder/Gotham NXG titles before the Lua 5.1 transition.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.sf</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>Plaintext / Tokenized Script Function</code></dd>
-        <dt>Subsystem</dt><dd>Gameplay & AI</dd>
-        <dt>Cross-Game Scope</dt><dd>Era 3–4 (HP 1–4: 677, HP 5–7: 4,296, Batman 2: 5,274, Dimensions: 222)</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>Peaks in <em>LEGO Harry Potter: Years 5–7</em> (4,296 files) and <em>LEGO Batman 2</em> (5,274 files), controlling hub events, puzzle logic, and boss encounters.</p>
+    <section id="overview" class="doc-overview">
+        <div class="callout"><strong>ScriptFu Debut:</strong> <em>HP 5–7</em> introduces <code>1,756 .sf</code> files, shrinking legacy <code>.scp</code> from <code>1,868</code> (<em>HP 1–4</em>) to <code>32</code>.</div>
+        <h2>Observed Language Grammar (<code>ferriswheel.sf</code> &amp; <code>winkieguardgoon.sf</code>)</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>ScriptFu Keywords &amp; Constructs</caption>
+                <thead>
+                    <tr>
+                        <th>Construct</th>
+                        <th>Example Observed in Source</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Event registration</td>
+                        <td><code>RegisterEvent("GameObjectKilled", "OnKilled", GetCharacter());</code></td>
+                    </tr>
+                    <tr>
+                        <td>Global/Character vars</td>
+                        <td><code>Character me(GetCharacter());</code> / <code>Text g_throwableItemType("WinkieSpear");</code></td>
+                    </tr>
+                    <tr>
+                        <td>Finite state blocks</td>
+                        <td><code>state Init() { Conditions { } Actions { SendToLevelAddon(...); goto Update(); } }</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/cd.html"><code>.led / .cd</code></a> — Assigned as AI behavior controller per character or level addon.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/an3.html"><code>.an3 / .an4 / .sfx</code></a> — Invokes animations (g_blockAnim1) and sound cues.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>Compiler Target Unconfirmed:</strong> Shipped as raw plaintext source inside <code>.DAT</code> and compiled/interpreted at load time by the host engine; no precompiled bytecode <code>.sf</code> observed on PS3.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ExtractSfStates(text):
+    return RegexFindAll(r&quot;state\s+([A-Za-z0-9_]+)\s*\(&quot;, text)</code></pre>
+    </section>
+
 </body>
+
 </html>

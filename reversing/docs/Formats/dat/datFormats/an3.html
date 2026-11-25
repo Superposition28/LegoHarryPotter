@@ -1,33 +1,126 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.an3 / .ca3 / .ani / .anm (Skeletal Animation Clip)</title>
+    <title>.an3 / .an4 / .ani / .krw — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.an3
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.an3 / .an4 / .ani / .krw</nav>
+    <h1>.AN3 / .AN4 / .ANI / .ANL / .KRW (Skeletal &amp; Creature Animations)</h1>
+    <aside class="source-notice">
+        <p><strong>Deflate_v1.0 Bug Solved &amp; Verified:</strong> Pure-Python <code>tt_decompress</code> decodes <code>.an4</code> files cleanly (resolving the <code>FIXME</code> noted in <code>TTGames-Explorer-Rebirth/Deflatev1.cs</code>) via raw Deflate bit-2 toggle (<code>payload[0] ^= 0x04</code>).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Animation Curves · Classic ANI4/9 &amp; Era 4 Deflate_v1.0 (.an4)</p>
+        <p>Skeletal keyframe tracks from LSW1 (.ani) and LSW2/BM1 (.an3: ANI4 / ANI9), Era 4 Deflate_v1.0 compressed .an4 (28,552 in Dimensions), and LWRK Krawly animations (.krw).</p>
+        <dl>
+            <dt>Extensions</dt>
+            <dd><code>.ani</code> (LSW1), <code>.an3</code> (LSW2–BM1 + packed in Era 3–4 <code>.pak/.pac</code>), <code>.an4</code> (Marvel 1–Dim), <code>.anl</code> (text list), <code>.krw</code> (Krawly)</dd>
+            <dt>Signatures</dt>
+            <dd><code>"4INA"</code> (<code>0x34494E41</code>) &middot; <code>"ANI9"</code> &middot; <code>"Deflate_v1.0"</code> &rarr; <code>0x0E..0x11</code> &middot; <code>"LWRK"</code></dd>
+            <dt>Counts (Dimensions)</dt>
+            <dd><code>28,552 .an4</code> + <code>86 .krw</code></dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/an3.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.an3 / .ca3 / .ani / .anm (Skeletal Animation Clip)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Animation · <strong>Scope:</strong> Universal (.ani in LSW1; .an3 in LSW2–Dimensions; .ca3 on LSW2 X360; .anm in HP/Batman 2)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Compressed keyframe skeletal animation tracks storing bone rotation quaternions, translation vectors, and scale curves over time.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.an3</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>AN3! / 6INA / 8INA / ANM</code></dd>
-        <dt>Subsystem</dt><dd>Animation</dd>
-        <dt>Cross-Game Scope</dt><dd>Universal (.ani in LSW1; .an3 in LSW2–Dimensions; .ca3 on LSW2 X360; .anm in HP/Batman 2)</dd>
-    </dl>
-</section>
-<h2>Evolution Across TT Games</h2>
-<ul>
-    <li><code>.ani</code> (<strong>LSW1 2005</strong>): <code>ANI4</code> / <code>ANI6</code> keyframe curves; verified byte-identical between PS2 (<code>GAME.DAT</code>) and Original Xbox (<code>chars\amidala\explode.ani</code> = 11,922 B).</li>
-    <li><code>.an3</code> (<strong>LSW2 2006 – LEGO Dimensions 2015</strong>): Introduced in <em>LSW2</em> (2,440 files in PS2 GAME.DAT and Xbox XISO) and retained through <em>Dimensions</em> (19,580 files) and the 2024 <em>Harry Potter Collection</em> (bundled inside <code>_an3_ps4.pak</code>). Uses <code>6INA</code> / <code>8INA</code> / <code>AN3!</code> headers with quantized curve evaluation.</li>
-    <li><code>.ca3</code> (<strong>LSW2 Xbox 360</strong>): Big-endian Xbox 360 animation counterpart mapped in <code>360_exlist</code> (n3 -> ca3).</li>
-    <li><code>.anm</code> (<strong>HP 1–4, HP 5–7, Batman 2</strong>): High-precision animation clips used alongside <code>.an3</code> for complex character and creature rigs.</li>
-</ul>
+    <section id="overview" class="doc-overview">
+        <h2>Animation Format Evolution &amp; Verified Headers</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Skeletal Animation Variants (2005–2015)</caption>
+                <thead>
+                    <tr>
+                        <th>Format</th>
+                        <th>Magic &amp; Header Layout</th>
+                        <th>Compression</th>
+                        <th>Confirmed Games</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>.ani</code></td>
+                        <td><code>u32le ver(2)</code>, <code>u16le 0x20</code>, pointer pairs, float duration</td>
+                        <td>Raw</td>
+                        <td><em>LSW1</em> Xbox</td>
+                    </tr>
+                    <tr>
+                        <td><code>.an3</code> (<code>ANI4</code>)</td>
+                        <td><code>"4INA"</code>, joint count, frame count, keyframe offset, packed int16/float curves</td>
+                        <td>Raw (or <code>LZ2K</code> in DAT)</td>
+                        <td><em>LSW2</em> Xbox, <em>BM1</em>/<em>Era 3–4</em> inside <code>.pak/.pac</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>.an3</code> (<code>ANI9</code>)</td>
+                        <td><code>u32be size</code> + <code>"ANI9"</code> + <code>00 1C 00 20</code> bone count + <code>ASCII</code> clip name at <code>+0x54</code></td>
+                        <td>Raw</td>
+                        <td><em>BM1</em> (2,577 files, e.g. <code>block_ps3.an3</code>)</td>
+                    </tr>
+                    <tr>
+                        <td><code>.an4</code></td>
+                        <td><code>32B "Deflate_v1.0\0..."</code> + <code>u32le usz</code> at <code>+0x20</code> + modified raw Deflate at <code>+0x24</code></td>
+                        <td><code>Deflate_v1.0</code> (<code>payload[0]^=0x04</code>)</td>
+                        <td><em>Marvel 1</em> (inside <code>.pak</code>), <em>Hobbit</em> (4,180), <em>Dimensions</em> (28,552). Decompresses to <code>u32be 0x0E..0x11</code>, <code>u32be usz</code>, <code>u16be 1</code>, <code>u16be hdr</code> + packed curves.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.krw</code></td>
+                        <td><code>u32be sz</code>, <code>u32be 1</code>, <code>"LWRK"</code>, <code>u32be 4</code>, <code>"ROTV"</code> procedural creature keyframes</td>
+                        <td><code>DFLT</code> in DAT</td>
+                        <td><em>Hobbit</em> (77), <em>Dimensions</em> (86, e.g. <code>slimer_run_krawly</code>)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <h2>Exact <code>Deflate_v1.0</code> (<code>.an4</code>) Decoding Rule</h2>
+        <p>The C# <code>TTGames-Explorer-Rebirth</code> reference tool stalled on <code>.an4</code> because standard Zlib rejects the first deflate block header byte. Empirical verification across <em>Hobbit</em> and <em>Dimensions</em> confirms TT Games stores an unframed RFC 1951 Deflate stream at <code>+0x24</code> whose first byte needs bit 2 inverted (<code>payload[0] ^= 0x04</code>) if direct raw Deflate fails.</p>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/pak.html"><code>.pak / .pac</code></a> — Era 3–4 characters bundle .an3 / .an4 clips inside IDLE_*.pak / *_anm.pac packs.</li>
+                <li><a href="../../../Formats/dat/datFormats/as.html"><code>.as AnimState / .cd</code></a> — State graphs select clip filenames by action ID (e.g. idle, run, attack).</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/ghg.html"><code>.ghg Skeletons</code></a> — Applies keyframe rotations/translations to GSNH/HSEM joints.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>Text <code>.anl</code> Manifests:</strong> <em>LSW2</em> Xbox ships plaintext <code>anims.anl</code> files (<code>INCLUDE chars\CommonAnims\ride_b...</code>) referencing shared <code>.an3</code> paths.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function DecodeAn4(raw):
+    if raw[0:12] != b&quot;Deflate_v1.0&quot;: return raw
+    usz = ReadU32LE(raw, 0x20)
+    payload = raw[0x24:]
+    try:
+        dec = RawInflate(payload)
+    except:
+        payload_fixed = Copy(payload); payload_fixed[0] ^= 0x04
+        dec = RawInflate(payload_fixed)
+    dec = dec[:usz]
+    ver, inner_usz = ReadU32BE2(dec, 0)
+    return {version: ver, data: dec}</code></pre>
+    </section>
+
 </body>
+
 </html>

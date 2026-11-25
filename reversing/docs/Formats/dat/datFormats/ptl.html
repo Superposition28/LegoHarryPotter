@@ -1,28 +1,104 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.ptl / .par (Particle System & Emitter Keyframe Curves)</title>
+    <title>.ptl (Particle Systems) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.ptl
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.ptl (Particle Systems)</nav>
+    <h1>.PTL (VFX Particle Emitter Systems)</h1>
+    <aside class="source-notice">
+        <p><strong>Dissected Directly:</strong> <em>Marvel 1</em> (<code>vfx_7asgardb.ptl</code>, 1,800 B) and present in every inspected title from <em>TCS</em> (241) to <em>Dimensions</em> (479).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Visual Effects · All Eras (37–479 files/title)</p>
+        <p>Binary emitter configuration tables storing named particle effects, spawn counts, lifetimes, and linked texture/shader references.</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.ptl</code></dd>
+            <dt>Header</dt>
+            <dd><code>u32le header_flags</code>, <code>u32le</code>, <code>u32le emitter_count</code>, followed by named emitter blocks (<code>"7VB_SPRAY2"</code>, <code>"LLF"</code>...)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/ptl.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.ptl / .par (Particle System & Emitter Keyframe Curves)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> VFX & Particles · <strong>Scope:</strong> Universal (LSW1 2005 through LEGO Dimensions 2015)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Particle emitter system descriptors (.ptl) and keyframe parameter curves (.par) for sparks, magic spells, fire, smoke, and stud bursts.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.ptl</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>0x32000000 (.ptl) / PART_key (.par)</code></dd>
-        <dt>Subsystem</dt><dd>VFX & Particles</dd>
-        <dt>Cross-Game Scope</dt><dd>Universal (LSW1 2005 through LEGO Dimensions 2015)</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>Present across all generations from <em>LSW1</em> (104 <code>.ptl</code> files) through <em>HP 1–4</em> (410 <code>.ptl</code>, 2,140 <code>.par</code>) and <em>LEGO Dimensions</em> (2,653 <code>.ptl</code> files).</p>
+    <section id="overview" class="doc-overview">
+        <h2>Binary Structure (Observed in <code>vfx_7asgardb.ptl</code>)</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>.ptl Emitter Header</caption>
+                <thead>
+                    <tr>
+                        <th>Offset</th>
+                        <th>Size</th>
+                        <th>Type</th>
+                        <th>Field</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>0x00</code></td>
+                        <td>4</td>
+                        <td><code>u32le</code></td>
+                        <td><code>ver_or_sz</code></td>
+                        <td>Observed <code>0x4B</code> (75) in Era 4.</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x04</code></td>
+                        <td>4</td>
+                        <td><code>u32le</code></td>
+                        <td><code>reserved</code></td>
+                        <td><code>0</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x08</code></td>
+                        <td>4</td>
+                        <td><code>u32le</code></td>
+                        <td><code>emitter_count</code></td>
+                        <td>Count of named emitters (e.g. <code>4</code>: <code>7VB_SPRAY1..4</code>).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/gsc.html"><code>.gsc / .sf / .scp</code></a> — Levels and VFX characters spawn emitters by name.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/tex.html"><code>.tex / .nxg_textures</code></a> — Particle sprites use named textures from VFX scene archives.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>Multi-Era Internal Field Drift:</strong> Emitter record stride grows between Era 2 (<em>TCS</em>) and Era 4 (<em>Dimensions</em>); exact scalar offset table varies by <code>u32le[0]</code> version.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParsePtlHeader(buf):
+    v, z, n = ReadU32LE3(buf, 0)
+    return {version: v, emitter_count: n}</code></pre>
+    </section>
+
 </body>
+
 </html>

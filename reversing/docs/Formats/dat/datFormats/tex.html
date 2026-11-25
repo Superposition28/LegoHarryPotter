@@ -1,28 +1,116 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.tex / .nxg_textures (DirectDraw Surface & Texture Dictionary)</title>
+    <title>.tex / .dds / .nxg_textures — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.tex
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.tex / .dds / .nxg_textures</nav>
+    <h1>.TEX / .DDS / .NXG_TEXTURES (Bitmap &amp; Texture Containers)</h1>
+    <aside class="source-notice">
+        <p><strong>Empirically Dissected:</strong> Raw headers dumped from <em>LSW2</em> X360, <em>TCS</em> PS3, <em>Batman 1</em> PS3, <em>Indy 2–Batman 2</em> PS3, <em>Marvel 1</em> PS3, and <em>Dimensions</em> PS3.</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Graphics Textures · DirectDraw Surface, CellGcm &amp; CC4 Containers</p>
+        <p>Standalone textures across all eras: Era 2 PS3 CellGcmTexture (.tex), Era 2 X360 tiled DXT (.tex), Era 3–4 raw DDS 0x20534444 (.tex), and Era 4 Marvel 1–Dimensions .nxg_textures (.CC4HSER + .CC4TSXT).</p>
+        <dl>
+            <dt>Extensions</dt>
+            <dd><code>.dds</code>, <code>.tex</code>, <code>.nxg_textures</code>, <code>.txm</code> (Hobbit)</dd>
+            <dt>Signatures</dt>
+            <dd><code>"DDS "</code> (<code>0x20534444</code>) &middot; PS3 CellGcm BE &middot; <code>.CC4HSER</code>/<code>.CC4TSXT</code>/<code>#CONVDAT</code></dd>
+            <dt>Counts (Dimensions)</dt>
+            <dd><code>6,036 .tex</code> + <code>4,833 .nxg_textures</code></dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/tex.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.tex / .nxg_textures (DirectDraw Surface & Texture Dictionary)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Textures & Materials · <strong>Scope:</strong> Era 3–4 (2008–2024 Console & PC Titles; inline in .ghg/.gsc in Era 1–2)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Standalone DirectDraw Surface (DDS) textures (.tex) and multi-texture dictionary containers (.nxg_textures / .dx11_textures) storing DXT1/DXT5/BC1–BC7 mipmapped surfaces.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.tex</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>DDS (0x20534444) / .CC4+HSER+02UN</code></dd>
-        <dt>Subsystem</dt><dd>Textures & Materials</dd>
-        <dt>Cross-Game Scope</dt><dd>Era 3–4 (2008–2024 Console & PC Titles; inline in .ghg/.gsc in Era 1–2)</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>In Era 1–2 (<em>LSW1</em>, <em>LSW2</em>), level and character textures are embedded directly inside <code>.gsc</code>/<code>.nux</code>/<code>.nx2</code> and <code>.ghg</code>/<code>.hgx</code>/<code>.hx2</code> files. Starting with Era 3 (<em>NXG</em>), textures are split into standalone <code>.tex</code> files (raw <code>DDS </code> surfaces with 124-byte headers) or bundled into <code>.nxg_textures</code> dictionaries containing a <code>NU20</code> metadata table followed by concatenated DDS streams.</p>
+    <section id="overview" class="doc-overview">
+        <h2>Platform Variant Matrix &amp; Byte Layouts</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Inspected .tex / .nxg_textures Header Layouts Across Generations</caption>
+                <thead>
+                    <tr>
+                        <th>Title / Era</th>
+                        <th>Format</th>
+                        <th>Verified Byte Offsets</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><em>TCS</em> PS3 (Era 2)</td>
+                        <td>CellGcm <code>.tex</code> (BE)</td>
+                        <td><code>+0x00 u32be data_sz (0x300)</code>, <code>+0x04 u32be W (32)</code>, <code>+0x08 u32be H (32)</code>, <code>+0x20 u32be mips (1)</code>, <code>+0x24 u8 gcm_fmt (0x86 = DXT1)</code>, <code>+0x28 u16be W, H</code>, pixel data at <code>+0x38..</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><em>Batman 1</em> PS3 (Era 2)</td>
+                        <td>CellGcm <code>.tex</code> + Path</td>
+                        <td><code>+0x00 u32be size (0x3B8)</code>, <code>+0x04 W, H</code>, <code>+0x0C char[48]</code> source path (<code>"localdata/LEGO_B..."</code>), <code>+0x3C u32be 1</code>, <code>+0x40 u32be data_off (0xC0)</code>, <code>+0x44 fmt (6)</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><em>LSW2</em> X360 (Era 2)</td>
+                        <td>Xenon Tiled <code>.tex</code></td>
+                        <td><code>+0x00 u32be data_sz</code>, <code>+0x04 W, H</code>, <code>+0x0C D3D/GPU descriptor</code> (<code>1a 20 01 54</code>), swizzled X360 DXT1/3/5 mip data.</td>
+                    </tr>
+                    <tr>
+                        <td><em>Indy 2..Dimensions</em> PS3 (Era 3–4)</td>
+                        <td>Standard <code>.tex</code> = <code>DDS </code></td>
+                        <td>Starts directly with 128-byte Microsoft <code>"DDS "</code> header (<code>dwHeight</code>, <code>dwWidth</code>, <code>FourCC</code> <code>DXT1/3/5</code>/<code>NVTT</code>/<code>NU2T</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><em>Marvel 1..Dimensions</em> (Era 4)</td>
+                        <td><code>.nxg_textures</code></td>
+                        <td>Outer <code>.CC4HSERHSER</code> (v8) + <code>"ROTV"</code> + dev branch/user + source <code>.nus</code> path &rarr; nested <code>.CC4TSXT</code> + <code>"TSXT"</code> + <code>"#CONVDAT"</code>.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/gsc.html"><code>.gsc / .ghg Scenes &amp; Models</code></a> — Material LTMU/NU2T slots and Era 4 paired base-path asset lookups.</li>
+                <li><code>.res Resource Manifests</code> — Preloaded by NuFileTree in Hobbit &amp; Dimensions.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <p><em>None documented (leaf or standalone file).</em></p>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>PS3 <code>CellGcmTexture</code> Unswizzling:</strong> Non-DXT uncompressed formats in Era 2 PS3 <code>.tex</code> use Morton Z-order swizzling unless bit 5 (<code>0x20</code>, linear) is set in <code>gcm_fmt</code>.</li>
+            <li><strong>DXT Linear Pitch Repair:</strong> As in <code>.ghg</code>/<code>.gsc</code>, recompute DXT mip0 pitch when converting Era 3–4 DDS textures.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function DecodeTex(buf):
+    if buf[0:4] == b&quot;DDS &quot;:
+        return PatchPitchAndDecodeDDS(buf)
+    if buf[4:8] == b&quot;.CC4&quot;:
+        // Era 4 .nxg_textures (.CC4HSER -&gt; .CC4TSXT + #CONVDAT): scan embedded DDS or TSXT slices
+        return ExtractTsxtTextures(buf)
+    // Era 2 PS3 CellGcm .tex
+    w = ReadU32BE(buf, 4); h = ReadU32BE(buf, 8)
+    has_path = (buf[0x0C] &gt;= 0x20 and buf[0x0C] &lt; 0x7F)
+    pix_off = ReadU32BE(buf, 0x40) if has_path else 0x40
+    return {width: w, height: h, payload: buf[pix_off:]}</code></pre>
+    </section>
+
 </body>
+
 </html>

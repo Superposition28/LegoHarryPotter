@@ -1,28 +1,90 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.cpd (Character Physics Descriptor — EdFile StreamInfo)</title>
+    <title>.cpd (Character Parts) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.cpd
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.cpd (Character Parts)</nav>
+    <h1>.CPD (EdFile Character Part &amp; Customizer Definition)</h1>
+    <aside class="source-notice">
+        <p><strong>Dissected Across 5 PS3 Titles:</strong> <em>HP 5–7</em> (217), <em>BM2</em> (178), <em>LOTR</em> (145), <em>Marvel 1</em> (241, <code>streaminfo_off=0 v25</code>), <em>Hobbit</em> (178), <em>Dimensions</em> (1,273).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · EdFile Reflection · Era 3b–4 (HP 5–7 through Dimensions)</p>
+        <p>Binary EdFile (StreamInfo v23..v30 without outer .CC4HSER) defining attachable hats, capes, weapons, and minifigure customizer swap slots.</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.cpd</code></dd>
+            <dt>Format</dt>
+            <dd>Unwrapped <code>EdFile</code> (<code>StreamInfo v23..30</code> starting at offset <code>0</code> + <code>OLST</code>)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/cpd.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.cpd (Character Physics Descriptor — EdFile StreamInfo)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Characters & Models · <strong>Scope:</strong> Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Reflected EdFile serializer container defining character collision capsules, mass distribution, and ragdoll physics constraints.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.cpd</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>StreamInfo (EdFile Serializer)</code></dd>
-        <dt>Subsystem</dt><dd>Characters & Models</dd>
-        <dt>Cross-Game Scope</dt><dd>Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>Serialized with the <code>StreamInfo</code> reflection header. Configures collision shapes and physical reaction parameters for characters and vehicles.</p>
+    <section id="overview" class="doc-overview">
+        <p>Unlike <code>.cd</code> and <code>.as</code>, <code>.cpd</code> keeps <code>StreamInfo</code> directly at file offset <code>0x00</code> even in <em>Marvel 1</em>, <em>Hobbit</em>, and <em>Dimensions</em>. Parse identically via <a href="cd.html">EdFile reflection</a>.</p>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Observed .cpd StreamInfo Versions &amp; Counts</caption>
+                <thead>
+                    <tr>
+                        <th>Game</th>
+                        <th>Count</th>
+                        <th>Envelope / StreamInfo Ver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><em>HP 5–7</em> / <em>BM2</em> / <em>LOTR</em></td>
+                        <td><code>217 / 178 / 145</code></td>
+                        <td>Unwrapped at <code>0x00</code> (<code>v23..v25</code>)</td>
+                    </tr>
+                    <tr>
+                        <td><em>Marvel 1</em> / <em>Hobbit</em> / <em>Dimensions</em></td>
+                        <td><code>241 / 178 / 1,273</code></td>
+                        <td>Unwrapped at <code>0x00</code> (<code>v25 / v27 / v30</code>)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/cd.html"><code>.cd Character Def</code></a> — Referenced as customizable / swappable socket part presets.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/ghg.html"><code>.ghg Models</code></a> — Prop/hat/weapon static or rigged mesh paths.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li>Zero occurrences prior to <em>HP 5–7</em> (2011).</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseCpd(buf):
+    return ParseEdFileHeader(buf)   // cc4=false, streaminfo at 0x00</code></pre>
+    </section>
+
 </body>
+
 </html>

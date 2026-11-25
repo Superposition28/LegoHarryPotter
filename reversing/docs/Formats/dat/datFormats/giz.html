@@ -1,35 +1,94 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.giz (Gizmo & Interactive Obstacle Placement)</title>
+    <title>.giz / .pgiz (World Gizmos) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.giz
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.giz / .pgiz (World Gizmos)</nav>
+    <h1>.GIZ / .PGIZ (World Gizmos, Token Spawns &amp; ComplexGizmo)</h1>
+    <aside class="source-notice">
+        <p><strong>Transition Pinpointed Empirically:</strong> <em>TCS–LOTR</em> use fixed-width string sections; <em>Marvel 1</em> (547) onward use <code>.CC4HSERHSER</code> <code>ComplexGizmo</code> referencing level <code>.led</code> files.</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Interactive Gameplay · Classic String Sections → Era 4 .CC4HSER</p>
+        <p>World interactive gizmo tables (switches, vehicle pads, studs, collectible tokens). Transitioned sharply between LOTR (str32) and Marvel 1 (.CC4HSER ComplexGizmo referencing .led).</p>
+        <dl>
+            <dt>Extensions</dt>
+            <dd><code>.giz</code> (all PS3 titles), <code>.pgiz</code> (<em>TCS</em> 1 file)</dd>
+            <dt>Classic Format</dt>
+            <dd><code>u32le count</code> + fixed 32-byte ASCII section headers (<em>TCS–LOTR</em>)</dd>
+            <dt>Era 4 Format</dt>
+            <dd><code>.CC4HSERHSER</code> + <code>"ROTV"</code> + linked <code>.led</code> path + <code>"ComplexGizmo"</code> records (<em>Marvel 1–Dim</em>)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/giz.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.giz (Gizmo & Interactive Obstacle Placement)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Level Design & AI · <strong>Scope:</strong> Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 2,520 files in Dimensions)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Interactive level gizmo container storing GizObstacle, GizBuildit, GizForce, Blowup, GizmoPickup, Lever, ZipUp, HatMachine, Plug, Tube, and Turret records.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.giz</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>GizObstacle (0x0B000000)</code></dd>
-        <dt>Subsystem</dt><dd>Level Design & AI</dd>
-        <dt>Cross-Game Scope</dt><dd>Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 2,520 files in Dimensions)</dd>
-    </dl>
-</section>
-<h2>Overview &amp; Sub-Chunk Schema</h2>
-<p>Binary container storing interactive level gizmos per level sub-area. Each section is prefixed by a length-prefixed ASCII type identifier followed by structured placement records:</p>
-<ul>
-    <li><code>GizObstacle</code>: Interactive obstacles, gates, and hazard volumes.</li>
-    <li><code>GizBuildit</code>: Multi-brick bouncing LEGO build-it assembly spots.</li>
-    <li><code>GizForce</code>: Jedi Force / Harry Potter Wingardium Leviosa telekinesis targets.</li>
-    <li><code>Blowup</code>: Silver/Gold LEGO destructible props and stud drop tables.</li>
-    <li><code>GizmoPickup</code>, <code>Lever</code>, <code>ZipUp</code> (grapple points), <code>HatMachine</code>, <code>Plug</code>, <code>Tube</code>, and <code>Turret</code>.</li>
-</ul>
+    <section id="overview" class="doc-overview">
+        <h2>Two-Generation Binary Split</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>.giz Legacy vs Era 4 ComplexGizmo</caption>
+                <thead>
+                    <tr>
+                        <th>Generation</th>
+                        <th>Titles</th>
+                        <th>Header &amp; Content</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Classic (Era 2–3c)</td>
+                        <td><em>TCS</em> (264) &rarr; <em>LOTR</em> (278)</td>
+                        <td><code>u32le</code> count + 32-byte fixed ASCII section tags, world coordinates, and gizmo parameter structs.</td>
+                    </tr>
+                    <tr>
+                        <td>Era 4 (<code>.CC4HSER</code>)</td>
+                        <td><em>Marvel 1</em> (547), <em>Hobbit</em> (416), <em>Dimensions</em> (523)</td>
+                        <td>Outer <code>u32be sz</code> + <code>.CC4HSERHSER</code> + target <code>.led</code> string (e.g. <code>builderhubwebs_temp.led</code>) + <code>"ROTV"</code> + repeated <code>ComplexGizmo</code> instance blocks.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/led.html"><code>.led / Level Loaders</code></a> — Loaded per hub district/room (e.g. vehtoken19.giz).</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/led.html"><code>.led Editor Scene</code></a> — Era 4 .giz embeds explicit parent .led filename references.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li>Do not assume <code>u32le</code> count at <code>0x00</code> for <em>Marvel 1+</em>; inspect bytes <code>4..8 == b".CC4"</code> first.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseGiz(buf):
+    if buf[4:8] == b&quot;.CC4&quot;:
+        return {era: &quot;CC4HSER&quot;, count: CountTag(buf, b&quot;ComplexGizmo&quot;)}
+    return {era: &quot;Classic&quot;, section_count: ReadU32LE(buf, 0)}</code></pre>
+    </section>
+
 </body>
+
 </html>

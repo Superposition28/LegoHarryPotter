@@ -1,32 +1,100 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.cut / .cu2 / .cc2 / .cu3 (Cutscene Choreography Timeline)</title>
+    <title>.cu2 / .cu3 / .cbs / .cut — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.cu2
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.cu2 / .cu3 / .cbs / .cut</nav>
+    <h1>.CUT / .CU2 / .CC2 / .CBS / .CU3 (Cutscene &amp; Facial Animation Timelines)</h1>
+    <aside class="source-notice">
+        <p><strong>Micro-Probed Across All Eras:</strong> Clarifies <code>.cbs</code> in <em>TCS</em> (2,307 files), <em>BM1</em> (1,862), and <em>CW</em> as Nu2 blend-shape/curve files (<code>00 00 00 02</code>) &mdash; NOT ChatterBoX audio (<code>.cbx</code>)!</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Cutscenes &amp; Lip-Sync · All Eras</p>
+        <p>Binary camera, actor, and facial/lip-sync keyframe timelines spanning Nu2 .cut/.cu2/.cc2/.cbs (00 00 02 05 / 00 00 00 02) and Era 3c–4 .cu3 (01 00 00 00 + DINA).</p>
+        <dl>
+            <dt>Extensions</dt>
+            <dd><code>.cut</code> (LSW1), <code>.cu2/.cc2</code> (LSW2–HP57), <code>.cbs</code> (TCS/BM1), <code>.cu3</code> (BM2–Dim)</dd>
+            <dt>Headers</dt>
+            <dd>Nu2 pointer table (<code>00 00 02 05</code> / <code>00 00 00 02</code> BE/LE) &middot; Era 4 <code>.cu3</code> (<code>01 00 00 00</code> + <code>"DINA"</code>)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/cu2.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.cut / .cu2 / .cc2 / .cu3 (Cutscene Choreography Timeline)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Cinematics · <strong>Scope:</strong> Universal (.cut in LSW1; .cu2 in LSW2–Batman 2; .cc2 on LSW2 X360; .cu3 in Dimensions)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>In-engine cinematic timeline synchronizing camera cuts, character skeletal/facial animations, lighting changes, and audio tracks.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.cu2</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>0x0000020D / 0x0000020E / RNC\x02</code></dd>
-        <dt>Subsystem</dt><dd>Cinematics</dd>
-        <dt>Cross-Game Scope</dt><dd>Universal (.cut in LSW1; .cu2 in LSW2–Batman 2; .cc2 on LSW2 X360; .cu3 in Dimensions)</dd>
-    </dl>
-</section>
-<h2>Evolution</h2>
-<ul>
-    <li><code>.cut</code> (<strong>LSW1 2005</strong>): 184 files in PS2/Xbox archives (<code>RNC\x02</code> compressed on PS2).</li>
-    <li><code>.cu2</code> / <code>.cc2</code> (<strong>LSW2 2006 – Batman 2 2012</strong>): 76 files in <em>LSW2</em> (mapped to <code>.cc2</code> on Xbox 360 in <code>360_exlist</code>), 401 files in <em>HP 1–4</em>, 250 in <em>HP 5–7</em>, and 245 in <em>Batman 2</em>. Uses platform suffixes (<code>_ps3.cu2</code>, <code>_360.cu2</code>, <code>_ps4.cu2</code>).</li>
-    <li><code>.cu3</code> (<strong>LEGO Dimensions 2015</strong>): 190 files upgraded to the v3 cutscene timeline format.</li>
-</ul>
+    <section id="overview" class="doc-overview">
+        <h2>Timeline Variant Comparison</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Cutscene &amp; Blend-Shape Binary Headers</caption>
+                <thead>
+                    <tr>
+                        <th>Extension</th>
+                        <th>Titles</th>
+                        <th>Header Layout</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>.cut</code> / <code>.cu2</code> / <code>.cc2</code></td>
+                        <td><em>LSW1</em> .. <em>HP 5–7</em></td>
+                        <td>Nu2 cutscene container: 4B version (<code>0x02050000</code> BE or LE) + pointer fixup table (<code>26 ec 00 00</code> etc.) pointing to camera splines, actor tracks, and dialogue triggers.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.cbs</code></td>
+                        <td><em>TCS</em> (2,307), <em>BM1</em> (1,862), <em>CW</em> (1)</td>
+                        <td>Character Blend Shape / lip-sync timeline sharing the exact Nu2 pointer-fixup architecture (<code>+0x00 u32be 2</code> + packed frame/weight keys at <code>+0x90..</code>). Often confused with <code>.cbx</code> speech audio.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.cu3</code></td>
+                        <td><em>BM2</em> (206), <em>LOTR</em> (259), <em>Marvel 1</em> (312), <em>Hobbit</em> (339), <em>Dim</em> (448)</td>
+                        <td><code>+0x00 u32be 1</code>, <code>+0x04 f32be duration_flags</code>, <code>+0x08 f32be fps (30.0)</code>, <code>+0x18 u32be file_size</code>, section offset table (<code>+0x20..</code>), and embedded <code>"DINA"</code> cutscene animation stream.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/led.html"><code>.scp / .sf / .led</code></a> — Triggered at level intro/outro or mid-level gates.</li>
+                <li><a href="../../../Formats/dat/datFormats/cd.html"><code>.cd / .cbs</code></a> — Character dialogue events bind .cbs lip-sync tracks.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><code>.sub / .subopt</code> — Synchronized subtitle timing files in cut/<scene>/.</li>
+                <li><code>.msf / .xma / .cbx</code> — Voiceover audio tracks played during cutscene playback.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong><code>.cu3</code> Minus-1 Header Variant:</strong> Some <em>Marvel 1</em> loading-screen <code>.cu3</code> files (<code>01_grandcentral_ls_nxg.cu3</code>) open with <code>0xFFFFFFFF</code> (signed <code>-1</code>) followed by <code>u32be 1</code>, <code>0x12</code>, <code>"DINA"</code>.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function IdentifyTimeline(buf):
+    w0 = ReadU32BE(buf, 0)
+    if w0 == 1 or w0 == 0xFFFFFFFF:
+        return {kind: &quot;CU3&quot;, dina_off: FindTag(buf, b&quot;DINA&quot;), len: len(buf)}
+    return {kind: &quot;NU2_Timeline&quot;, ver_be: w0, len: len(buf)}</code></pre>
+    </section>
+
 </body>
+
 </html>

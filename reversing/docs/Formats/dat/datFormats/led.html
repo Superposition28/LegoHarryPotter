@@ -1,28 +1,91 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.led (Level Entity Definition — EdFile StreamInfo)</title>
+    <title>.led (EdFile Level Data) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.led
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.led (EdFile Level Data)</nav>
+    <h1>.LED (EdFile Level Editor &amp; Entity Placement Graphs)</h1>
+    <aside class="source-notice">
+        <p><strong>Dissected Across All 10 NXG PS3 Builds:</strong> <em>Indy 2</em> (513) through <em>Hobbit</em> (6,926) and <em>Dimensions</em> (6,764).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · EdFile Reflection · Era 3a–4 (Indy 2 through Dimensions)</p>
+        <p>Level scene graph serialized with EdFile (up to 6,926 files in Hobbit), storing placed instances, spawns, camera rails, gizmo triggers, and room state.</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.led</code></dd>
+            <dt>Format</dt>
+            <dd>Unwrapped <code>EdFile</code> (<code>StreamInfo v17..v30</code> at offset <code>0x00</code> + <code>TypeList</code> + <code>ClassList</code> + <code>OLST</code>)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/led.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.led (Level Entity Definition — EdFile StreamInfo)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Level Design & AI · <strong>Scope:</strong> Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 2,616 files in Dimensions)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Reflected EdFile level entity placement container defining spawners, interactive LEGO builds, triggers, and object instances.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.led</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>StreamInfo (EdFile Serializer)</code></dd>
-        <dt>Subsystem</dt><dd>Level Design & AI</dd>
-        <dt>Cross-Game Scope</dt><dd>Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 2,616 files in Dimensions)</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>Serialized via <code>StreamInfo</code>. Places dynamic gameplay objects, stud paths, and interactive gizmo hooks into level sub-areas.</p>
+    <section id="overview" class="doc-overview">
+        <p><code>.led</code> is the single largest EdFile asset type in Era 3–4 games, tying 3D static geometry (<a href="gsc.html">.gsc</a>) to gameplay entities, switches (<a href="giz.html">.giz</a>), ScriptFu/SCP logic (<a href="sf.html">.sf</a> / <a href="scp.html">.scp</a>), and cutscenes.</p>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Observed .led Level Editor Counts &amp; Schemas</caption>
+                <thead>
+                    <tr>
+                        <th>Era / Titles</th>
+                        <th>PS3 Count Range</th>
+                        <th>Schema Layout</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><em>Indy 2</em> .. <em>HP 5–7</em></td>
+                        <td><code>513..2,098</code></td>
+                        <td>Unwrapped <code>StreamInfo v17..23</code> + <code>OLST</code> scene entity tree.</td>
+                    </tr>
+                    <tr>
+                        <td><em>BM2</em> .. <em>Dimensions</em></td>
+                        <td><code>2,262..6,926</code></td>
+                        <td>Unwrapped <code>StreamInfo v24..30</code> (even when <code>.cd/.as</code> use <code>.CC4HSER</code>).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/gsc.html"><code>.gsc / Area Loaders</code></a> — Mounted per room folder alongside _nxg.gsc.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/cd.html"><code>.cd / .ghg</code></a> — Places enemy/NPC/vehicle spawners.</li>
+                <li><a href="../../../Formats/dat/datFormats/giz.html"><code>.giz / .dno / .sf / .scp</code></a> — Connects interactive bricks, physics objects, and triggers.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li>Keeping <code>StreamInfo</code> unwrapped at <code>0x00</code> allows fast header peeking even when <code>.res</code> wraps everything else in <code>.CC4HSER</code>.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseLed(buf):
+    return ParseEdFileHeader(buf)</code></pre>
+    </section>
+
 </body>
+
 </html>

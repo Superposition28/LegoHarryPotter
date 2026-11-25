@@ -1,28 +1,112 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.as (Action Script / Animation Set — EdFile StreamInfo)</title>
+    <title>.as (EdFile AnimState) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.as
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.as (EdFile AnimState)</nav>
+    <h1>.AS (EdFile StreamInfo Animation State Graphs)</h1>
+    <aside class="source-notice">
+        <p><strong>Dissected Across 10 PS3 Titles:</strong> <em>Indy 2</em> (587) through <em>Dimensions</em> (8,124 files).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · EdFile Reflection · Era 3a–4 (Indy 2 through Dimensions)</p>
+        <p>Binary EdFile-serialized animation state machine graph (StreamInfo v17..v30 + .CC4HSER wrapper in Era 4) wiring locomotion states to .an3/.an4 clips.</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.as</code></dd>
+            <dt>Envelope</dt>
+            <dd>Raw <code>StreamInfo</code> (Indy 2–BM2/LOTR) or nested inside <code>.CC4HSERHSER</code> (Marvel 1–Dim)</dd>
+            <dt>StreamInfo Vers</dt>
+            <dd><code>v17..18</code> (Indy 2) &rarr; <code>v22</code> (CW/PotC) &rarr; <code>v25</code> (BM2/LOTR/Marvel 1) &rarr; <code>v27</code> (Hobbit) &rarr; <code>v30</code> (Dim)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/as.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.as (Action Script / Animation Set — EdFile StreamInfo)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Animation · <strong>Scope:</strong> Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Reflected EdFile state-machine container binding character actions, locomotion states, combos, and spells to animation clips (.an3/.anm) and sound triggers.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.as</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>StreamInfo (EdFile Serializer)</code></dd>
-        <dt>Subsystem</dt><dd>Animation</dd>
-        <dt>Cross-Game Scope</dt><dd>Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>Uses the <code>StreamInfo</code> reflection schema (<code>TypeList</code>, <code>ClassList</code>, <code>OLST</code>, <code>MOBJ</code>) to map gameplay state transitions and input events to skeletal animation clips.</p>
+    <section id="overview" class="doc-overview">
+        <h2>EdFile StreamInfo Container Structure</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>EdFile Reflected Header Layout (Shared by .as, .cd, .cpd, .apj, .cpj, .led)</caption>
+                <thead>
+                    <tr>
+                        <th>Chunk / Tag</th>
+                        <th>Offset Pattern</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Optional <code>.CC4HSER</code></td>
+                        <td><code>+0x00 u32be sz, .CC4HSERHSER</code></td>
+                        <td>Added in Era 4 (<em>Marvel 1</em>–<em>Dim</em>) on <code>.as</code> &amp; <code>.cd</code> at offset <code>0</code> before <code>StreamInfo</code> (e.g. <code>streaminfo_off=417</code> in <em>Marvel 1</em>).</td>
+                    </tr>
+                    <tr>
+                        <td><code>"StreamInfo\0"</code></td>
+                        <td><code>-8 u32le sz, -4 u32le 11</code></td>
+                        <td>Header size + <code>u32le ver (17..30)</code> immediately after NUL.</td>
+                    </tr>
+                    <tr>
+                        <td><code>"TypeList\0"</code></td>
+                        <td>Primitive sizes</td>
+                        <td><code>u32le count</code> of reflected C++ primitives (<code>Char=1, Short=2, Int=4, Int64=8, Float=4</code>...).</td>
+                    </tr>
+                    <tr>
+                        <td><code>"ClassList\0"</code></td>
+                        <td>Engine classes</td>
+                        <td>Named C++ classes, parent class IDs, and property field descriptors.</td>
+                    </tr>
+                    <tr>
+                        <td><code>"OLST"</code></td>
+                        <td>Object List</td>
+                        <td>Big-endian serialized object instance graph with animation state nodes and clip filenames.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/cd.html"><code>.cd / .res</code></a> — Character definition selects primary .as state file.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/an3.html"><code>.an3 / .an4 / .pac</code></a> — References individual clip filenames and blended transitions.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>Mixed Endianness Inside <code>EdFile</code>:</strong> <code>StreamInfo</code>/<code>TypeList</code>/<code>ClassList</code> reflection dictionary is Little-Endian, whereas outer <code>.CC4HSER</code> (and inner <code>OLST</code> values on PS3/X360) use Big-Endian.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseEdFileHeader(buf):
+    si = FindTag(buf, b&quot;StreamInfo\0&quot;)
+    if si &lt; 8: raise NotEdFile
+    ver = ReadU32LE(buf, si + 11)
+    tl = FindTagFrom(buf, si, b&quot;TypeList\0&quot;)
+    ol = FindTagFrom(buf, si, b&quot;OLST&quot;)
+    return {cc4: buf[4:8] == b&quot;.CC4&quot;, streaminfo_ver: ver, typelist_off: tl, olst_off: ol}</code></pre>
+    </section>
+
 </body>
+
 </html>

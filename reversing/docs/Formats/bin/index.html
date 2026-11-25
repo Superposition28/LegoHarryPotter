@@ -1,36 +1,250 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PlayStation Executables (.BIN / ELF)</title>
+    <title>EBOOT.BIN / ELF / NDS / GBA — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span>.bin
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span>EBOOT.BIN / ELF / NDS / GBA</nav>
+    <h1>PlayStation &amp; Nintendo Handheld Executables (PS3 SELF, PS2 ELF, NDS NitroFS &amp; GBA)</h1>
+    <aside class="source-notice">
+        <p><strong>Verified Across PS3, PS2, NDS &amp; GBA:</strong> Sizes, <code>PARAM.SFO</code> Title IDs, PS2 <code>SYSTEM.CNF</code>, and Nintendo cartridge headers measured directly from extracted disc/ROM images.</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Console &amp; Handheld Executables · PS3 CellOS, PS2 EE, NDS ARM9 &amp; GBA ARM7</p>
+        <p>Boot executables and ROM images inspected across PS3 (EBOOT.BIN SELF), PS2 (SLUS_210.83 / SLUS_214.09 EE ELF + IOP IRX drivers), Nintendo DS (AL7E NitroFS), and GBA (BLWE).</p>
+        <dl>
+            <dt>Signatures</dt>
+            <dd><code>SCE\0</code> (PS3 SELF) &middot; <code>\x7FELF</code> (PS2 EE ELF) &middot; NitroFS FNT/FAT (NDS) &middot; ARM7 ROM (GBA)</dd>
+            <dt>PS2 IOP Modules</dt>
+            <dd><code>SYSTEM.CNF</code>, <code>SYS/NUSND3G.IRX</code> (TT NuSound IOP driver), <code>MODHSYN.IRX</code></dd>
+            <dt>PS3 Size Range</dt>
+            <dd><code>5,766,536</code> B (<em>TCS</em>) up to <code>32,733,296</code> B (<em>Dimensions</em>); PS2 ELFs 3.18–3.81 MB</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../reversing/docs/Travellers_Tales/Formats/bin/index.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>PlayStation Executables (.BIN / EBOOT.BIN &amp; PS2 ELF)</h1>
-<aside class="source-notice"><p><strong>Platforms:</strong> Sony PlayStation 3 (<code>SCE\0</code> SELF PPU ELF64 BE) &amp; PlayStation 2 (MIPS R5900 ELF32 LE)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">PlayStation Executable Containers · PS2 IOP/EE &amp; PS3 CellOS</p>
-    <p>Sony PlayStation executables across generations: PS2 Emotion Engine 32-bit MIPS ELF binaries (<code>SLUS_*</code> / <code>SLES_*</code>) and PS3 signed 64-bit Cell PPU SELF executables (<code>PS3_GAME/USRDIR/EBOOT.BIN</code>).</p>
-    <dl>
-        <dt>Header Signatures</dt><dd><code>SCE\0</code> + <code>\x7FELF</code> at <code>0x90</code> (PS3 SELF) · <code>\x7FELF</code> (PS2 MIPS R5900 LE)</dd>
-        <dt>Inspected PS2 Builds</dt><dd><em>LSW1</em> (<code>SLUS_210.83</code>, 3.16 MB), <em>LSW2</em> (<code>SLUS_214.09</code>, <code>SLES_542.21</code>, <code>SLED_543.15</code>, <code>SLPM_665.72</code>, 3.63 MB)</dd>
-        <dt>Inspected PS3 Builds</dt><dd><em>HP 1–4</em> (<code>BLES00752</code> v01.02 &amp; v03.01), <em>HP 5–7</em> (<code>BLES01297</code>), <em>LEGO Dimensions</em> (<code>BLES02158</code> &amp; <code>BLUS31456</code>, 15.86 MB)</dd>
-    </dl>
-</section>
-<h2>Inspected PlayStation Executables</h2>
-<div class="table-scroll"><table class="format-counts">
-<thead><tr><th>Title &amp; Disc ID</th><th>Executable</th><th>Size</th><th>Architecture &amp; Archive Role</th></tr></thead>
-<tbody>
-<tr><td><em>LEGO Star Wars: The Video Game</em> (PS2 USA v2.00)</td><td><code>SLUS_210.83</code></td><td><code>3,163,692</code> B</td><td>MIPS R5900 ELF32; mounts <code>GAME.DAT</code> (TOC <code>v-1</code>) and decompresses <code>RNC\x02</code> streams.</td></tr>
-<tr><td><em>LEGO Star Wars II</em> (PS2 USA / EU / Demo / JP)</td><td><code>SLUS_214.09</code></td><td><code>3,630,368</code> B</td><td>MIPS R5900 ELF32; mounts 1.74 GB <code>GAME.DAT</code> (TOC <code>v-1</code>, 8,600 files).</td></tr>
-<tr><td><em>LEGO Harry Potter: Years 1–4</em> (PS3 EU)</td><td><code>EBOOT.BIN</code></td><td><code>8,809,856</code> B</td><td>Cell PPU ELF64; mounts <code>GAME.DAT</code> + <code>GAME1.DAT</code>..<code>GAME4.DAT</code> (<code>PakDat v1.01</code> TOC <code>v-4</code>, <code>LZ2K</code>).</td></tr>
-<tr><td><em>LEGO Harry Potter: Years 5–7</em> (PS3 EU)</td><td><code>EBOOT.BIN</code></td><td><code>6,708,864</code> B</td><td>Cell PPU ELF64; mounts <code>GAME0.DAT</code>..<code>GAME3.DAT</code> (<code>PakDat v1.01</code> TOC <code>v-4</code>, <code>LZ2K</code>).</td></tr>
-<tr><td><em>LEGO Dimensions</em> (PS3 EU <code>BLES02158</code> / US <code>BLUS31456</code>)</td><td><code>EBOOT.BIN</code></td><td><code>15,857,088</code> B</td><td>Cell PPU ELF64; mounts <code>GAME*.HDR</code>/<code>.DAT</code> (TOC <code>v-7</code>, <code>DFLT</code>) + <code>CMP2</code> LZMA <code>INSTALL0_*.DAT</code> and USB Toy Pad hid driver.</td></tr>
-</tbody>
-</table></div>
+    <section id="overview" class="doc-overview">
+        <h2>Inspected PS3, PS2 &amp; Nintendo Handheld Binaries</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>PS3 EBOOT.BIN, PS2 EE ELF &amp; Handheld ROM Census</caption>
+                <thead>
+                    <tr>
+                        <th>Title / System</th>
+                        <th>ID / Boot</th>
+                        <th>APP / Ver</th>
+                        <th>Size</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><em>LSW1</em> PS2</td>
+                        <td><code>SLUS_210.83</code></td>
+                        <td><code>VER 2.00</code></td>
+                        <td><code>3,182,600</code> B</td>
+                        <td><code>BOOT2 = cdrom0:\SLUS_210.83;1</code>; mounts <code>GAME.DAT</code> (<code>v-1</code>) + <code>SYS/NUSND3G.IRX</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><em>LSW2</em> PS2</td>
+                        <td><code>SLUS_214.09</code></td>
+                        <td><code>VER 1.01</code></td>
+                        <td><code>3,806,548</code> B</td>
+                        <td><code>BOOT2 = cdrom0:\SLUS_214.09;1</code>; mounts <code>GAME.DAT</code> (<code>v-1</code>, 8,600 entries).</td>
+                    </tr>
+                    <tr>
+                        <td><em>LSW1</em> GBA</td>
+                        <td><code>BLWE</code> (<code>LEGOSTARWARS</code>)</td>
+                        <td><code>rev 0x00</code></td>
+                        <td><code>16,777,216</code> B</td>
+                        <td>Griptonite/Amaze ARM7TDMI flat ROM (Maker <code>4F</code> Eidos/TT).</td>
+                    </tr>
+                    <tr>
+                        <td><em>LSW2</em> NDS</td>
+                        <td><code>AL7E</code> (<code>LEGOSW2</code>)</td>
+                        <td><code>rev 0x01</code></td>
+                        <td><code>33,554,432</code> B</td>
+                        <td>Amaze NitroFS ROM (<code>FNT/FAT</code> = 5 entries: <code>rom.bin</code> 19.2 MB, <code>SoundData.rom</code> 3.6 MB, <code>.nbfc/.nbfp</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO Star Wars: TCS</em></td>
+                        <td><code>BLUS30079</code></td>
+                        <td><code>01.00 / 01.9300</code></td>
+                        <td><code>5,766,536</code> B</td>
+                        <td>Mounts single <code>GAME.DAT</code> (<code>MkDat V3.26</code>)</td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO Batman 1</em></td>
+                        <td><code>BLES00332</code></td>
+                        <td><code>01.01 / 02.4200</code></td>
+                        <td><code>6,576,992</code> B</td>
+                        <td>Mounts <code>GAME.DAT</code> + <code>ANI9</code>/<code>NU20</code> runtime</td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO Indiana Jones 2</em></td>
+                        <td><code>BLES00763</code></td>
+                        <td><code>01.00 / 03.0100</code></td>
+                        <td><code>10,829,848</code> B</td>
+                        <td>Adds <code>OFNI</code>/<code>HSEM</code> &amp; <code>EdFile v17..18</code></td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO Harry Potter 1–4</em></td>
+                        <td><code>BLES00720</code></td>
+                        <td><code>03.00 / 03.6000</code></td>
+                        <td><code>10,967,064</code> B</td>
+                        <td>Mounts 7-volume <code>PakDat v1.01</code></td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO Star Wars III</em></td>
+                        <td><code>BLES00934</code></td>
+                        <td><code>02.00 / 03.6000</code></td>
+                        <td><code>14,510,080</code> B</td>
+                        <td>Includes Lua 5.1 VM &amp; <code>SERIALISED</code> Dyno</td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO PotC</em></td>
+                        <td><code>BLES01239</code></td>
+                        <td><code>01.00 / 03.6000</code></td>
+                        <td><code>13,140,064</code> B</td>
+                        <td>Mounts 6 vols (<code>GAME0..4</code>)</td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO HP 5–7</em></td>
+                        <td><code>BLES01348</code></td>
+                        <td><code>01.00 / 03.7300</code></td>
+                        <td><code>13,621,064</code> B</td>
+                        <td>Adds ScriptFu (<code>.sf</code>) compiler/VM</td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO Batman 2</em></td>
+                        <td><code>BLES01613</code></td>
+                        <td><code>01.00 / 04.1100</code></td>
+                        <td><code>16,516,280</code> B</td>
+                        <td>Adds <code>!B0X</code> codec, <code>.cu3</code>, <code>CC4IATT</code></td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO LOTR</em></td>
+                        <td><code>BLUS30963</code></td>
+                        <td><code>01.00 / 04.2500</code></td>
+                        <td><code>19,023,640</code> B</td>
+                        <td>Switches archive compression to <code>DFLT</code></td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO Marvel 1</em></td>
+                        <td><code>BLUS31161</code></td>
+                        <td><code>01.00 / 04.4600</code></td>
+                        <td><code>24,187,056</code> B</td>
+                        <td>Bridges into <code>DXTV</code>, <code>.an4</code>, <code>VNTT/SFTT/LGTT</code></td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO The Hobbit</em></td>
+                        <td><code>BLES01998</code></td>
+                        <td><code>01.00 / 04.5500</code></td>
+                        <td><code>26,444,040</code> B</td>
+                        <td>Mounts 5 <code>.HDR/.DAT</code> + 15.36 GB <code>PAD.DAT</code></td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO Dimensions</em></td>
+                        <td><code>BLUS31473</code></td>
+                        <td><code>01.00 / 04.7500</code></td>
+                        <td><code>32,733,296</code> B</td>
+                        <td>7 <code>.HDR/.DAT</code> + 3 <code>CMP2</code> LZMA + USB ToyPad</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <h2>SELF &amp; PARAM.SFO Header Layout</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>PARAM.SFO (\x00PSF) &amp; SCE/SELF Header Fields</caption>
+                <thead>
+                    <tr>
+                        <th>Offset</th>
+                        <th>Size</th>
+                        <th>Type</th>
+                        <th>Field</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>SELF+0x00</code></td>
+                        <td>4</td>
+                        <td><code>char[4]</code></td>
+                        <td><code>magic</code></td>
+                        <td><code>"SCE\0"</code> (big-endian PS3 Signed ELF header, followed by version/keys/ELF header offset).</td>
+                    </tr>
+                    <tr>
+                        <td><code>SFO+0x00</code></td>
+                        <td>4</td>
+                        <td><code>char[4]</code></td>
+                        <td><code>sfo_magic</code></td>
+                        <td><code>0x00 0x50 0x53 0x46</code> (<code>\x00PSF</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><code>SFO+0x08</code></td>
+                        <td>4 / 4 / 4</td>
+                        <td><code>u32le[3]</code></td>
+                        <td><code>key_off, data_off, count</code></td>
+                        <td>Offsets to UTF-8 key table, data payload table, and entry count.</td>
+                    </tr>
+                    <tr>
+                        <td><code>SFO+0x14+i*16</code></td>
+                        <td>16</td>
+                        <td><code>struct</code></td>
+                        <td><code>SfoEntry</code></td>
+                        <td><code>k_rel(u16), fmt(u16: 0x0204 str / 0x0404 u32), d_len(u32), d_max(u32), d_rel(u32)</code>.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><code>ISO-9660 / PKG</code> — PS3 discs boot PS3_GAME/USRDIR/EBOOT.BIN; PSN releases wrap encrypted NPDRM SELF.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../Formats/dat/dat.html"><code>.DAT / .HDR Archives</code></a> — Bootstraps virtual filesystem and mounts localized audio/patch volumes.</li>
+                <li><a href="../../Formats/dat/datFormats/cd.html"><code>EdFile / Reflection Engine</code></a> — Built-in StreamInfo class registry initializes RTTI factories at boot.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li>Retail disc <code>EBOOT.BIN</code> SELF payloads are NPDRM/ECDSA-signed by Sony; inspection via <code>PARAM.SFO</code> + ISO directory walk does not require breaking disc keys because Redump PS3 ISOs store unencrypted <code>PARAM.SFO</code> and <code>GAME*.DAT</code> data files.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseParamSfo(buf):
+    if buf[0:4] != b&quot;\x00PSF&quot;: return {}
+    ver, key_off, data_off, cnt = ReadU32LE4(buf, 4)
+    out = {}
+    for i in 0 .. cnt - 1:
+        k_rel, fmt, d_len, d_max, d_rel = ReadStructure(&quot;&lt;HHIII&quot;, buf, 20 + i*16)
+        k = ReadNullAscii(buf, key_off + k_rel)
+        raw = buf[data_off + d_rel : data_off + d_rel + d_len]
+        out[k] = raw.rstrip(b&quot;\0&quot;).decode(&quot;utf-8&quot;) if fmt == 0x0204 else ReadU32LE(raw, 0)
+    return out</code></pre>
+    </section>
+
 </body>
+
 </html>

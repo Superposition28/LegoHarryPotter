@@ -1,33 +1,98 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.fmv / .bik / .pam / .pss / .xmv / .sfd (Full Motion Video)</title>
+    <title>.fmv (Bink Video) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.fmv
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.fmv (Bink Video)</nav>
+    <h1>.FMV (RAD Bink Pre-Rendered Video Cutscenes)</h1>
+    <aside class="source-notice">
+        <p><strong>Observed Directly:</strong> <em>HP 1–4</em> (6), <em>CW</em> (7), <em>PotC</em> (6), <em>HP 5–7</em> (4), <em>BM2</em> (8), <em>LOTR</em> (8), <em>Marvel 1</em> (3), <em>Hobbit</em> (18), <em>Dimensions</em> (47).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Full-Motion Video · HP 1–4 through LEGO Dimensions</p>
+        <p>Standard RAD Game Tools Bink Video 1/2 containers (magic "BIKi" / "KB2...") renamed to .fmv inside mounted archives or FMV/ disc folders.</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.fmv</code></dd>
+            <dt>Signature</dt>
+            <dd><code>"BIKi"</code> / <code>"BIK..."</code> (Bink 1) or <code>"KB2..."</code> (Bink 2)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/fmv.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.fmv / .bik / .pam / .pss / .xmv / .sfd (Full Motion Video)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Cinematics · <strong>Scope:</strong> Universal (Platform-Specific Video Containers)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Pre-rendered video streams used for publisher/developer logos, attract mode reels, and pre-rendered cutscenes.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.fmv</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>FMV! / BIKi / KB2 / PAM / XMV</code></dd>
-        <dt>Subsystem</dt><dd>Cinematics</dd>
-        <dt>Cross-Game Scope</dt><dd>Universal (Platform-Specific Video Containers)</dd>
-    </dl>
-</section>
-<h2>Platform Video Formats</h2>
-<ul>
-    <li><strong>PS2:</strong> <code>.pss</code> (MPEG-2 PlayStation Stream).</li>
-    <li><strong>Original Xbox:</strong> <code>.xmv</code> (Microsoft Xbox Media Video) &amp; <code>.wmv</code>.</li>
-    <li><strong>GameCube:</strong> <code>.sfd</code> (Sofdec MPEG-1) / <code>.thp</code>.</li>
-    <li><strong>PS3 / Xbox 360 / PC:</strong> RAD Game Tools Bink Video (<code>.fmv</code> with <code>FMV!</code> wrapper, <code>.bik</code> with <code>BIKi</code>/<code>KB2</code>, and Sony <code>.pam</code>).</li>
-</ul>
+    <section id="overview" class="doc-overview">
+        <p><code>.fmv</code> files are unmodified RAD Bink streams playable/demuxable directly by FFmpeg after extraction from <code>.DAT</code> or disc <code>FMV/</code> directories (stored uncompressed codec <code>0</code> for streaming playback).</p>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Bink Video (.fmv) Header Offsets</caption>
+                <thead>
+                    <tr>
+                        <th>Offset</th>
+                        <th>Size</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>0x00</code></td>
+                        <td>4</td>
+                        <td><code>char[4]</code></td>
+                        <td><code>"BIKi"</code> / <code>"BIK..."</code> (Bink 1) or <code>"KB2..."</code> (Bink 2).</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x04</code></td>
+                        <td>4</td>
+                        <td><code>u32le</code></td>
+                        <td>File size minus 8 bytes.</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x08..0x27</code></td>
+                        <td>32</td>
+                        <td><code>u32le[]</code></td>
+                        <td>Frame count, largest frame size, width, height, FPS numerator/denominator, and audio track count.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/cfg.html"><code>.scp / .lua / Level Sequence</code></a> — Triggered during intro/story chapter transitions.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <p><em>None documented (leaf or standalone file).</em></p>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li>Also occasionally accompanied by <code>.pam</code> Sony PSMF video in <em>Batman 1</em> (6 files).</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function IdentifyFmv(buf):
+    tag = buf[0:4].decode(&quot;ascii&quot;, &quot;replace&quot;)
+    return {bink_magic: tag, file_size_minus8: ReadU32LE(buf, 4)}</code></pre>
+    </section>
+
 </body>
+
 </html>

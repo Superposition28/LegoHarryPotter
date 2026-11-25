@@ -1,28 +1,90 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.apj (Animation Project Container — EdFile StreamInfo)</title>
+    <title>.apj / .cpj (EdFile Projects) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.apj
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.apj / .cpj (EdFile Projects)</nav>
+    <h1>.APJ / .CPJ (EdFile Project Manifests)</h1>
+    <aside class="source-notice">
+        <p><strong>Verified Directly:</strong> <em>Indy 2</em> (1 <code>.apj</code>), <em>HP 1–4</em> (10), <em>CW</em> (9), <em>PotC</em> (7), <em>HP 5–7</em> (9), <em>BM2</em> (8), <em>LOTR</em> (10 <code>.cpj</code>), <em>Marvel 1</em> (14 <code>.cpj</code>, <code>v25</code>), <em>Hobbit</em> (16 <code>.cpj</code>, <code>v27</code>), <em>Dimensions</em> (24 <code>.cpj</code>, <code>v30</code>).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · EdFile Reflection · Era 3a–4 (.apj → .cpj rename in LOTR/Marvel 1)</p>
+        <p>Project-level EdFile manifests collecting shared character rigs, project settings, and animation lists. Renamed from .apj (Indy 2–BM2) to .cpj (LOTR–Dimensions; Dimensions carries both).</p>
+        <dl>
+            <dt>Extensions</dt>
+            <dd><code>.apj</code> (Era 3a–3c) &middot; <code>.cpj</code> (Era 3c–4)</dd>
+            <dt>Format</dt>
+            <dd>Unwrapped <code>EdFile</code> (<code>StreamInfo v17..v30</code> at <code>0x00</code> + <code>OLST</code>)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/apj.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.apj (Animation Project Container — EdFile StreamInfo)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Animation · <strong>Scope:</strong> Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 2,520 files in Dimensions)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Reflected EdFile animation project linking multiple animation sets (.as), rig layers, and additive blend trees.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.apj</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>StreamInfo (EdFile Serializer)</code></dd>
-        <dt>Subsystem</dt><dd>Animation</dd>
-        <dt>Cross-Game Scope</dt><dd>Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions: 2,520 files in Dimensions)</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>Grows significantly in <em>LEGO Batman 2</em> (244 files) and <em>LEGO Dimensions</em> (2,520 files) to orchestrate multi-layered facial, gadget, and vehicle animations.</p>
+    <section id="overview" class="doc-overview">
+        <p>Direct probing of <code>zeus_minifig.cpj</code> (156,616 B, <em>Dimensions</em>) confirms standard <code>StreamInfo v30</code> + <code>TypeList</code> (<code>Char, Short, Int, Int64, Float...</code>) + <code>ClassList</code> + <code>OLST</code> starting at byte <code>0x00</code>.</p>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Observed .apj -&gt; .cpj Project Manifests</caption>
+                <thead>
+                    <tr>
+                        <th>Extension</th>
+                        <th>Titles &amp; Counts</th>
+                        <th>StreamInfo Version</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>.apj</code></td>
+                        <td><em>Indy 2</em> (1), <em>HP 1–4</em> (10), <em>CW</em> (9), <em>PotC</em> (7), <em>HP 5–7</em> (9), <em>BM2</em> (8)</td>
+                        <td><code>v17..v25</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>.cpj</code></td>
+                        <td><em>LOTR</em> (10), <em>Marvel 1</em> (14), <em>Hobbit</em> (16), <em>Dimensions</em> (24)</td>
+                        <td><code>v25..v30</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/cd.html"><code>Build / Character Tooling</code></a> — Master project rigs shared across minifigure libraries.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/cd.html"><code>.cd / .as</code></a> — Shared templates and global animation banks.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li>Extension changed from <code>.apj</code> (Animation Project) to <code>.cpj</code> (Character Project) starting with <em>LOTR</em> (2012).</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseApjOrCpj(buf):
+    return ParseEdFileHeader(buf)</code></pre>
+    </section>
+
 </body>
+
 </html>

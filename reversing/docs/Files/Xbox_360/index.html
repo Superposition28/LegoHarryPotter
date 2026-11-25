@@ -1,30 +1,49 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Xbox & Xbox 360 Combined Filesystem</title>
+    <title>LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection (Xbox / Xbox 360)</title>
     <link rel="stylesheet" href="../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../index.html#Files' target='_parent'>Files</a><span>/</span>Xbox_360
-    </nav>
-    <h1>Xbox &amp; Xbox 360: Combined File &amp; Directory Layout</h1>
-<aside class="source-notice"><p><strong>Platforms:</strong> Original Xbox (XISO XDVDFS at <code>0x10000</code>) &amp; Xbox 360 (XGD2 XDVDFS at <code>0x0FD90000</code> + STFS)</p></aside>
-<section class="doc-overview">
-    <h2>1. Original Xbox &amp; Early Xbox 360 Loose XDVDFS Layout (LSW1 &amp; LSW2)</h2>
-    <p>Uniquely, <em>LEGO Star Wars</em> (2005 Xbox) and <em>LEGO Star Wars II</em> (2006 Xbox &amp; Xbox 360) do <strong>not</strong> pack their assets into <code>GAME.DAT</code>. All files sit directly inside the XDVDFS partition:</p>
-    <ul>
-        <li><strong>LSW1 Xbox (4,721 loose files):</strong> <code>default.xbe</code>, <code>chars/</code> (<code>.hgx</code>, <code>.ani</code>, <code>.bsa</code>), <code>levels/</code> (<code>.nux</code>, <code>.ter</code>, <code>.rtl</code>, <code>.ai2</code>), <code>cut/</code> (<code>.cut</code>), <code>sound/</code> (<code>.wavx</code>).</li>
-        <li><strong>LSW2 Xbox (8,329 loose files):</strong> <code>default.xbe</code>, <code>.nx2</code> scenes, <code>.hx2</code> models + <code>.hx2.htm</code> Perforce export logs, <code>.an3</code> animations, <code>.fpk</code> packages.</li>
-        <li><strong>LSW2 Xbox 360 (3,973 loose files + LIVE DLC):</strong> <code>default.xex</code>, <code>360_exlist</code> extension remapping table (<code>ter -> ctr</code>, <code>cu2 -> cc2</code>, <code>an3 -> ca3</code>, <code>vag -> xma</code>), and 57 KB STFS DLC package enabling <em>LSW1</em> save characters.</li>
-    </ul>
-    <h2>2. Xbox 360 PakDat v1.01 Layout (Era 3–4: HP 1–4, HP 5–7, Batman 2)</h2>
-    <ul>
-        <li><code>Default.xex</code>: XEX2 Xenon executable container (Title IDs <code>0x575207E6</code>, <code>0x57520812</code>, <code>0x57520817</code>).</li>
-        <li><code>GAME*.DAT</code>: 57-byte <code>PakDat v1.01</code> archives storing big-endian PowerPC assets and XMA2 (<code>.xma</code>) audio streams.</li>
-    </ul>
-</section>
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../Files/index.html">Files</a><span>/</span>Xbox / Xbox 360</nav>
+    <h1>Xbox / Xbox 360 Filesystem &amp; Binary Notes</h1>
+    <aside class="source-notice">
+        <p><strong>Platform Inventory:</strong> Scoped to Xbox / Xbox 360 builds of LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection.</p>
+    </aside>
+    <section class="doc-overview">
+        <p>Inspected Xbox / Xbox 360 source builds and container structures for LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection.</p>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Xbox / Xbox 360 Inspected Source Images &amp; Archives</caption>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Build / IDs</th>
+                        <th>Container &amp; TOC</th>
+                        <th>Observed Formats / Counts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>LEGO Harry Potter: Years 1–4 (2010)</td>
+                        <td>USA/EU ISO (7.48 GB) · Default.xex (9,838,592 B, Title ID 0x575207E6) · GAME + GAME1..6.DAT</td>
+                        <td>TOC v-4 (7 vols, PakDat v1.01) · LZ2K / Raw</td>
+                        <td>.xma, .gsc, .ghg, .tex, .led, .scp, .cd, .dno, .as, .pac</td>
+                    </tr>
+                    <tr>
+                        <td>LEGO Harry Potter: Years 5–7 (2011)</td>
+                        <td>USA ISO (8.33 GB) · Default.xex (11,640,832 B, Title ID 0x57520812) · GAME + GAME0.DAT</td>
+                        <td>TOC v-4 (2 large vols, PakDat v1.01) · LZ2K / Raw</td>
+                        <td>.xma, .sf, .led, .tex, .gsc, .cd, .dno, .as, .pac, .cpd</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </body>
+
 </html>

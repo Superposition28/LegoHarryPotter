@@ -1,28 +1,104 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.ft2 / .fnt (Bitmap Font Texture & Glyph Metric Atlas)</title>
+    <title>.ft2 / .fnt / .cft / .qfn — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.ft2
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.ft2 / .fnt / .cft / .qfn</nav>
+    <h1>.FT2 / .FNT / .CFT / .QFN / .UFN (Font &amp; Glyph Metric Tables)</h1>
+    <aside class="source-notice">
+        <p><strong>Dissected Directly:</strong> <em>TCS</em> <code>.fnt/.cft/.qfn/.ufn</code>, <em>BM1</em> <code>.fnt/.cft</code>, and <em>Indy 2..Dimensions</em> <code>.ft2</code> (e.g. <code>buttons_ps3_nxg.ft2</code>, 263,178 B).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Typography &amp; HUD Icons · All Eras</p>
+        <p>Binary glyph-metric tables and embedded font texture sheets spanning classic .fnt/.cft/.qfn/.ufn (LSW1–BM1) through modern .ft2 TNFN containers (Indy 2–Dimensions).</p>
+        <dl>
+            <dt>Extensions</dt>
+            <dd><code>.ft2</code> (9–10/game), <code>.fnt</code>, <code>.cft</code>, <code>.qfn</code>, <code>.ufn</code> (Era 2)</dd>
+            <dt>Signatures</dt>
+            <dd><code>"TNFN"</code> + <code>"ROTV"</code> + <code>"DDS "</code> (<code>.ft2</code>) &middot; Raw BE/LE glyph structs (<code>.fnt/.cft/.qfn/.ufn</code>)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/ft2.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.ft2 / .fnt (Bitmap Font Texture & Glyph Metric Atlas)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> UI & Localization · <strong>Scope:</strong> Universal (.fnt in LSW1; .ft2 in LSW2–Dimensions)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Bitmap font glyph metric table and kerning dictionary paired with controller button icon atlases.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.ft2</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>TNFN (0x4E464E54) / FNT</code></dd>
-        <dt>Subsystem</dt><dd>UI & Localization</dd>
-        <dt>Cross-Game Scope</dt><dd>Universal (.fnt in LSW1; .ft2 in LSW2–Dimensions)</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>Uses magic <code>TNFN</code> (<code>NFNT</code>) to define glyph UV rectangles, baseline offsets, and kerning pairs for HUD text and localized subtitles.</p>
+    <section id="overview" class="doc-overview">
+        <h2>Font Format Family Comparison</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Inspected Font Files</caption>
+                <thead>
+                    <tr>
+                        <th>Extension</th>
+                        <th>Era</th>
+                        <th>Binary Structure</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>.fnt</code></td>
+                        <td>Era 2 (<em>TCS</em>, <em>BM1</em>)</td>
+                        <td>Big-endian glyph sheet (`sysfont_360.fnt`, `batman_font_ps3.fnt`): table offsets at `+0x00/+0x08`, float metrics (42.x/16.x px) at `+0x24`, UV quads + bitmap payload.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.cft</code></td>
+                        <td>Era 2 (<em>TCS</em>, <em>BM1</em>)</td>
+                        <td>ASCII/Latin1 character lookup table mapping byte codepoints <code>0x00..0xFF</code> to glyph indices (<code>0xFF</code> = missing).</td>
+                    </tr>
+                    <tr>
+                        <td><code>.qfn</code> / <code>.ufn</code></td>
+                        <td>Era 2 (<em>TCS</em>)</td>
+                        <td>Button/Unicode glyph atlases sharing <code>+0x10</code> hash/page metrics and IEEE float rect coordinates for HUD prompt glyphs.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.ft2</code></td>
+                        <td>Era 3a–4 (<em>Indy 2..Dim</em>)</td>
+                        <td>Header: <code>u32be metrics_sz</code>, <code>u32be 1</code>, <code>"TNFN"</code>, <code>u32be ver(3)</code>, <code>"ROTV"</code> glyph rect table, followed by embedded <code>"DDS "</code> (NVTT DXT5 / NU2T) atlas bitmap.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/gip.html"><code>.gip / .gix / .baml</code></a> — UI text layers select named font handles backed by .ft2 / .fnt.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/tex.html"><code>.dds Texture Payload</code></a> — Embedded DDS bitmap inside .ft2 TNFN containers.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>Button Icons via Fonts:</strong> Prior to <code>.tsh</code> in <em>Hobbit</em>/<em>Dimensions</em>, controller face buttons were stored as glyph entries in <code>buttons_*.ft2</code> / <code>.qfn</code>.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseFt2(buf):
+    hdr_sz = ReadU32BE(buf, 0)
+    if buf[8:12] != b&quot;TNFN&quot;: raise NotFt2
+    ver = ReadU32BE(buf, 12)
+    dds_off = FindTag(buf, b&quot;DDS &quot;)
+    return {version: ver, dds: PatchPitchAndDecodeDDS(buf[dds_off:]) if dds_off &gt;= 0 else null}</code></pre>
+    </section>
+
 </body>
+
 </html>

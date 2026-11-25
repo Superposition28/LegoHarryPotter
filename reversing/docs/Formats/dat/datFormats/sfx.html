@@ -1,27 +1,103 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.sfx (Sound Effects Event Map)</title>
+    <title>.sfx (Sound Event Maps) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='#home'>Documentation</a><span>/</span><a href='../../index.html'>Formats</a><span>/</span><a href='../dat.html'>.dat</a><span>/</span>.sfx
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.sfx (Sound Event Maps)</nav>
+    <h1>.SFX (Binary Sound Effect Cue &amp; Bank Tables)</h1>
+    <aside class="source-notice">
+        <p><strong>Micro-Probed Directly Across 3 Generations:</strong> <em>TCS</em> PS3 (`new_town.sfx`), <em>BM1</em> (`batcave_a.sfx`), and <em>BM2</em> (`buildercore.sfx`).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Audio Events · All Eras (TCS through Dimensions)</p>
+        <p>Binary sound-cue string tables mapping gameplay action names (grow_18, mainLift_1, FireWorkP1Rocket1) to sound-bank slot flags and attenuation floats.</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.sfx</code></dd>
+            <dt>Header Versions</dt>
+            <dd><code>u32be 2</code> (<em>TCS</em> BE) &middot; <code>u32le 3</code> (<em>BM1</em>) &middot; <code>u32le 5</code> (<em>BM2</em>)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/sfx.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.sfx (Sound Effects Event Map)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Audio · Extracted from TT Games <code>.DAT</code> / <code>.datwin</code> archives</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Event mapping binding in-game triggers (footstep, wand zap, stud pickup, brick click) to specific audio samples.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.sfx</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>0x05000000</code></dd>
-        <dt>Subsystem</dt><dd>Audio</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>Links sound event identifiers to sample index numbers within sound banks (<code>.bsa</code> / <code>.cbx</code> / <code>Audio\_SoundFX\</code>).</p>
+    <section id="overview" class="doc-overview">
+        <h2>Binary Layout Comparison (<em>TCS</em> BE vs <em>BM1</em>/<em>BM2</em> LE)</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>.sfx Binary Cue Table Layouts</caption>
+                <thead>
+                    <tr>
+                        <th>Game / Version</th>
+                        <th>Header Fields (0x00..0x0B)</th>
+                        <th>Cue Record Layout</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><em>TCS</em> (<code>v2</code> BE)</td>
+                        <td><code>u32be 2</code>, <code>u32be cue_count (0x81)</code>, <code>u32be val (0xB7)</code></td>
+                        <td><code>u16be slen</code> + ASCII cue name + <code>u8</code> bank/category ID (<code>1, 2</code>...).</td>
+                    </tr>
+                    <tr>
+                        <td><em>BM1</em> (<code>v3</code> LE)</td>
+                        <td><code>u32le 3</code>, <code>u32le list_count (14)</code>, <code>u32le total_refs (30)</code></td>
+                        <td><code>u16le slen</code> + ASCII cue name + <code>u16le</code> category ID (<code>2, 3</code>...).</td>
+                    </tr>
+                    <tr>
+                        <td><em>BM2</em> (<code>v5</code> LE)</td>
+                        <td><code>u32le 5</code>, <code>u32le list_count (11)</code>, <code>u32le total_refs (23)</code></td>
+                        <td><code>u16le slen</code> + ASCII cue name + <code>u16le</code> flags + trailing cue property floats (<code>"TB"</code>, <code>1.0f</code>...).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/scp.html"><code>.led / .sf / .scp</code></a> — Gameplay triggers fire named sound cues in the current level .sfx.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/msf.html"><code>.msf / .xma / .audio</code></a> — Resolves cue names to sample filenames / banks in audio/samples/.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>Endian Flip After TCS:</strong> <em>TCS</em> PS3 wrote <code>.sfx</code> big-endian (<code>00 00 00 02</code>), whereas <em>BM1+</em> standardized on little-endian even on PS3.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseSfx(buf):
+    is_be = (ReadU32BE(buf, 0) &lt;= 5)
+    ver, cnt, refs = ReadU323(buf, 0, be=is_be); p = 12; cues = []
+    for _ in 0 .. cnt - 1:
+        if p + 2 &gt; len(buf): break
+        slen = ReadU16(buf, p, be=is_be); p += 2
+        nm = buf[p:p+slen].decode(&quot;ascii&quot;, &quot;replace&quot;); p += slen
+        flg = buf[p] if is_be else ReadU16LE(buf, p); p += (1 if is_be else 2)
+        cues.append((nm, flg))
+    return {version: ver, cues: cues}</code></pre>
+    </section>
+
 </body>
+
 </html>

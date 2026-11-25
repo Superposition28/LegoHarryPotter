@@ -1,28 +1,90 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.cfg / .sfx (Audio Bus & Sound Effect Event Mapping)</title>
+    <title>.cfg (Engine Boot Configs) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.cfg
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.cfg (Engine Boot Configs)</nav>
+    <h1>.CFG (Boot, Audio &amp; Render Pipeline Configs)</h1>
+    <aside class="source-notice">
+        <p><strong>Observed Everywhere:</strong> Present at root of every <code>GAME.DAT</code> (<code>3..25</code> files).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · System Config · Universal (3–25 files/disc)</p>
+        <p>Plaintext/binary initialization scripts loaded right after engine startup (`AUDIO.CFG`, `MUSIC.CFG`, `VIEW_HGP.CFG`).</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.cfg</code></dd>
+            <dt>Key Files</dt>
+            <dd><code>AUDIO\AUDIO.CFG</code>, <code>AUDIO\MUSIC.CFG</code>, <code>VIEW_HGP.CFG</code></dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/cfg.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.cfg / .sfx (Audio Bus & Sound Effect Event Mapping)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Audio · <strong>Scope:</strong> Universal (All TT Engine Generations 2005–2024)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Plaintext audio mix bus configurations (.cfg) and binary/scripted sound event trigger maps (.sfx).</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.cfg</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>Audio 1.00 (Plaintext) / 0x05000000 (.sfx)</code></dd>
-        <dt>Subsystem</dt><dd>Audio</dd>
-        <dt>Cross-Game Scope</dt><dd>Universal (All TT Engine Generations 2005–2024)</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p><code>.cfg</code> files configure master audio buses, attenuation distances, and sample rates, while <code>.sfx</code> files (72 in <em>LSW2</em>, 424 in <em>HP 1–4</em>) map gameplay events to sound bank sample IDs.</p>
+    <section id="overview" class="doc-overview">
+        <p>Controls boot parameters, audio channel buses, music playlist stems, and platform display profiles before any level archive opens.</p>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Root Boot .cfg Files</caption>
+                <thead>
+                    <tr>
+                        <th>Filename</th>
+                        <th>Subsystem Controlled</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>AUDIO\AUDIO.CFG</code></td>
+                        <td>Mixer buses, voice limits, and sample banks.</td>
+                    </tr>
+                    <tr>
+                        <td><code>AUDIO\MUSIC.CFG</code></td>
+                        <td>Dynamic level/hub music stems and loop timings.</td>
+                    </tr>
+                    <tr>
+                        <td><code>VIEW_HGP.CFG</code> / platform <code>.cfg</code></td>
+                        <td>Camera FOV, viewport aspect, and platform graphics toggles.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/bin/index.html"><code>EBOOT.BIN / .exe / .xex</code></a> — Read immediately upon mounting GAME.DAT.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/sfx.html"><code>.msf / .xma / .sfx</code></a> — Declares global audio stream pools.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li>Save-game user preferences on PC also use <code>pcconfig.txt</code> outside <code>GAME.DAT</code>.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseCfg(text): return [l.strip() for l in text.splitlines() if l.strip()]</code></pre>
+    </section>
+
 </body>
+
 </html>

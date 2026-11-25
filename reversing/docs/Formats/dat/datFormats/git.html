@@ -1,28 +1,95 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.git (GitOptions Camera & Sector Environment Settings)</title>
+    <title>.git / .gix / .gil (GUI Layouts) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.git
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.git / .gix / .gil (GUI Layouts)</nav>
+    <h1>.GIT, .GIX &amp; .GIL (Plaintext GUI Layouts &amp; Assets)</h1>
+    <aside class="source-notice">
+        <p><strong>Verified Plaintext Directly:</strong> <em>TCS</em> (174 <code>.git</code>), <em>BM1</em> (115), <em>Indy 2</em> (94 + 10 <code>.gix</code> + 1 <code>.gil</code>), <em>HP 1–4</em> (154 + 7 <code>.gix</code> + 1 <code>.gil</code>), <em>CW</em> (137), <em>PotC</em> (99), <em>HP 5–7</em> (19).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · User Interface · Era 2–3b (TCS through HP 5–7)</p>
+        <p>Plaintext GUI layout and text containers using FileVersion 36.09/44.0 + begin gui blocks (.gix/.gil) and widget tables (.git).</p>
+        <dl>
+            <dt>Extensions</dt>
+            <dd><code>.git</code>, <code>.gix</code> (GUI index/FileVersion), <code>.gil</code> (GUI library)</dd>
+            <dt>Encoding</dt>
+            <dd>100% plaintext ASCII (NOT binary)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/git.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.git (GitOptions Camera & Sector Environment Settings)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Level Design & AI · <strong>Scope:</strong> Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Structured ASCII block configuring per-sector camera framing, split-screen merge thresholds, fog, bloom, and post-processing.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.git</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>GitOptions { (ASCII)</code></dd>
-        <dt>Subsystem</dt><dd>Level Design & AI</dd>
-        <dt>Cross-Game Scope</dt><dd>Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions)</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>Starts with <code>GitOptions {</code> in plaintext ASCII and configures level zone rendering and camera constraints.</p>
+    <section id="overview" class="doc-overview">
+        <p>Each <code>.gix</code> opens with <code>FileVersion 36.09</code> (or <code>44.0</code>) followed by <code>begin gui</code> blocks defining menu screens and button actions.</p>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>.git / .gix / .gil Plaintext GUI Manifests</caption>
+                <thead>
+                    <tr>
+                        <th>Extension</th>
+                        <th>Observed Titles</th>
+                        <th>Syntax Header</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>.git</code></td>
+                        <td><em>TCS</em> (174), <em>BM1</em> (115), <em>Indy 2..HP 5–7</em> (19–154)</td>
+                        <td>Plaintext UI widget/text blocks.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.gix</code></td>
+                        <td><em>Indy 2..PotC</em> (4–10)</td>
+                        <td><code>FileVersion 36.09 / 44.0</code> + <code>begin gui</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.gil</code></td>
+                        <td><em>Indy 2..PotC</em> (1 per disc)</td>
+                        <td>Root GUI library include list.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/bin/index.html"><code>EBOOT.BIN / GUI Manager</code></a> — Loaded at startup for title screen, pause menu, and HUD.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/ft2.html"><code>.ft2 / .gip / .tex</code></a> — Binds fonts, icons, and sub-pages.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li>Do not treat <code>.gix/.gil/.git</code> as binary structures; parse as indented plaintext blocks.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseGixHeader(text):
+    return RegexFindFirst(r&quot;FileVersion\s+([0-9.]+)&quot;, text)</code></pre>
+    </section>
+
 </body>
+
 </html>

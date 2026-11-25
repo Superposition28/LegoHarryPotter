@@ -1,33 +1,120 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.cd (Character Definition — EdFile StreamInfo)</title>
+    <title>.cd (EdFile CharDef) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.cd
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.cd (EdFile CharDef)</nav>
+    <h1>.CD (EdFile Reflected Character Definition)</h1>
+    <aside class="source-notice">
+        <p><strong>Dissected Across 10 PS3 Titles:</strong> <em>Indy 2</em> (534) through <em>Dimensions</em> (2,103). Wraps inside <code>.CC4HSERHSER</code> from <em>Marvel 1</em> onward.</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · EdFile Reflection · Era 3a–4 (Indy 2 through Dimensions)</p>
+        <p>Binary reflected EdFile character assembly linking .ghg meshes, .as state machines, abilities, voices, and customizeable slots (.cpd).</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.cd</code></dd>
+            <dt>Format</dt>
+            <dd>Self-describing <code>EdFile</code> RTTI (<code>StreamInfo v17..v30</code> + <code>TypeList</code> + <code>ClassList</code> + <code>OLST</code>)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/cd.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.cd (Character Definition — EdFile StreamInfo)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Characters & Models · <strong>Scope:</strong> Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions; preceded by CHARSTXT.TXT in Era 1–2)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Reflected EdFile serializer container defining modular minifigure parts, meshes (.ghg), textures (.tex), physics (.cpd), and animation sets (.as).</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.cd</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>StreamInfo (0x0A len + 'StreamInfo')</code></dd>
-        <dt>Subsystem</dt><dd>Characters & Models</dd>
-        <dt>Cross-Game Scope</dt><dd>Era 3–4 (HP 1–4, HP 5–7, Batman 2, Dimensions; preceded by CHARSTXT.TXT in Era 1–2)</dd>
-    </dl>
-</section>
-<h2>Overview &amp; EdFile StreamInfo Format</h2>
-<p>Starting in Era 3 (NXG), character definitions moved from plaintext scripts to TT Games' reflected binary serializer (<code>EdFile</code> / <code>NuSerializer</code>). Every <code>.cd</code>, <code>.cpd</code>, <code>.as</code>, <code>.apj</code>, and <code>.led</code> file begins with a 4-byte version/type tag, a 4-byte string length (<code>0x0A</code> = 10), and the ASCII string <code>StreamInfo</code> at offset <code>0x08</code>, followed by reflected tables:</p>
-<ul>
-    <li><code>TypeList</code>: Primitive and composite data types (<code>int</code>, <code>float</code>, <code>CharString</code>, <code>NuVec</code>).</li>
-    <li><code>ClassList</code>: C++ class schemas with member names and type indices.</li>
-    <li><code>OLST</code> (Object List) &amp; <code>MOBJ</code> (Main Object): Serialized object instances.</li>
-</ul>
+    <section id="overview" class="doc-overview">
+        <h2>StreamInfo Reflection Schema Across Titles</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Observed .cd StreamInfo Versions (Empirically Verified)</caption>
+                <thead>
+                    <tr>
+                        <th>Game</th>
+                        <th>PS3 Count</th>
+                        <th>&lt;code&gt;.CC4HSER&lt;/code&gt; Outer?</th>
+                        <th>&lt;code&gt;StreamInfo&lt;/code&gt; Offset &amp; Version</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><em>Indy 2</em> / <em>HP 1–4</em></td>
+                        <td>534 / 632</td>
+                        <td>No</td>
+                        <td>Offset <code>0</code>, <code>v17..20</code></td>
+                    </tr>
+                    <tr>
+                        <td><em>Clone Wars</em> / <em>PotC</em> / <em>HP 5–7</em></td>
+                        <td>507 / 428 / 890</td>
+                        <td>No</td>
+                        <td>Offset <code>0</code>, <code>v22..23</code></td>
+                    </tr>
+                    <tr>
+                        <td><em>BM2</em> / <em>LOTR</em></td>
+                        <td>453 / 621</td>
+                        <td>No</td>
+                        <td>Offset <code>0</code>, <code>v24..25</code></td>
+                    </tr>
+                    <tr>
+                        <td><em>Marvel 1</em></td>
+                        <td>928</td>
+                        <td><strong>Yes</strong></td>
+                        <td>Offset <code>841</code>, <code>v25</code></td>
+                    </tr>
+                    <tr>
+                        <td><em>Hobbit</em> / <em>Dimensions</em></td>
+                        <td>752 / 2,103</td>
+                        <td><strong>Yes</strong></td>
+                        <td>Offset <code>841+</code>, <code>v27</code> / <code>v30</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><code>.res / Character Registry</code> — Spawned when instantiating heroes, NPCs, and vehicles.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/ghg.html"><code>.ghg Models</code></a> — References skeletal rig & body mesh.</li>
+                <li><a href="../../../Formats/dat/datFormats/as.html"><code>.as AnimState</code></a> — Loads character animation state graph.</li>
+                <li><a href="../../../Formats/dat/datFormats/cpd.html"><code>.cpd Part Defs</code></a> — Modular customizer/hat/weapon parts.</li>
+                <li><code>.cbx / .msf Audio</code> — Voicebank / grunt audio references.</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>Dynamic Schema Parsing:</strong> Never hardcode field offsets inside <code>OLST</code> across titles; always decode <code>TypeList</code> and <code>ClassList</code> from the file itself first.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ReadEdFileTypeList(buf, tl_off):
+    cnt = ReadU32LE(buf, tl_off + 9); p = tl_off + 13; types = []
+    for i in 0 .. cnt - 1:
+        if buf[p:p+5] != b&quot;Type\0&quot;: break
+        p += 5; nlen = ReadU32LE(buf, p); p += 4
+        nm = buf[p:p+nlen].rstrip(b&quot;\0&quot;).decode(&quot;ascii&quot;); p += nlen
+        sz = ReadI32LE(buf, p); p += 4; types.append((nm, sz))
+    return types</code></pre>
+    </section>
+
 </body>
+
 </html>

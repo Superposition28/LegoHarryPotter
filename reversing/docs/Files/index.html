@@ -1,51 +1,92 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>LEGO Harry Potter - Combined Files Architecture</title>
+    <title>LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection — Archive Census</title>
     <link rel="stylesheet" href="../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../index.html#home' target='_parent'>Documentation</a><span>/</span>Files
-    </nav>
-    <h1>LEGO Harry Potter — Game Files &amp; Combined Directory Architecture</h1>
-<aside class="source-notice"><p><strong>Architecture Concept:</strong> Unified representation of Source and Extracted Archive Data</p></aside>
-<section class="doc-overview">
-    <h2>The Combined Virtual Filesystem Concept</h2>
-    <p>In retail distributions of TT Games titles, game assets are packed inside monolithic or multi-slice archive volumes (<code>GAME*.DAT</code>, <code>INSTALL*.DAT</code>, or <code>*.datwin</code>) or stored directly in the Xbox XDVDFS partition (in <em>LSW1</em> and <em>LSW2</em> Xbox/Xbox 360). This documentation presents the game's file structure using a <strong>combined virtual filesystem</strong> where archive packages are transparently replaced by their extracted directory trees.</p>
-    <h2>Inspected LEGO Harry Potter Releases &amp; Archive Summary</h2>
-    <div class="table-scroll"><table class="format-counts">
-    <thead><tr><th>Title &amp; Platform</th><th>Build / ID</th><th>Archives</th><th>Verified File Count &amp; Highlights</th></tr></thead>
-    <tbody>
-    <tr><td><strong>Years 1–4 (2010) — PS3 EU</strong></td><td><code>BLES00752</code> (v01.02 &amp; v03.01)</td><td><code>GAME.DAT</code> + <code>GAME1.DAT</code>..<code>GAME4.DAT</code></td><td><code>19,383</code> files (<code>PakDat v1.01</code> TOC <code>v-4</code>, <code>LZ2K</code>); v01.02 and v03.01 <code>GAME*.DAT</code> are 100% SHA-256 identical.</td></tr>
-    <tr><td><strong>Years 1–4 (2010) — Xbox 360 + Demo</strong></td><td><code>0x575207E6</code></td><td><code>GAME.DAT</code> + <code>GAME1.DAT</code>..<code>GAME4.DAT</code></td><td><code>10,641</code> files; 99.6% structural parity with PS3 on <code>GAME1</code>–<code>GAME4</code>; Kiosk Demo <code>GAME.DAT</code> has <code>7,274</code> entries.</td></tr>
-    <tr><td><strong>Years 5–7 (2011) — PS3 EU</strong></td><td><code>BLES01297</code></td><td><code>GAME0.DAT</code>..<code>GAME3.DAT</code></td><td><code>17,197</code> files (<code>PakDat v1.01</code> TOC <code>v-4</code>, <code>LZ2K</code>).</td></tr>
-    <tr><td><strong>Years 5–7 (2011) — Xbox 360 + Demo</strong></td><td><code>0x57520812</code></td><td><code>GAME0.DAT</code>..<code>GAME3.DAT</code></td><td><code>14,729</code> files; Kiosk Demo <code>GAME0.DAT</code> + <code>GAME1.DAT</code> holds <code>2,906</code> entries.</td></tr>
-    <tr><td><strong>Collection (2024) — PC Steam</strong></td><td><code>harry1.exe</code> / <code>harry2.exe</code> (AMD64)</td><td><code>harry1/1b.datwin</code>, <code>harry2/2b.datwin</code></td><td><code>41,389</code> entries across 4 <code>.datwin</code> volumes (TOC <code>v-1</code>, 24B entries with <code>0x12345678</code> canary and <code>LZHAM</code>) + <code>launcher.pkiwin</code>/<code>.pkdwin</code>.</td></tr>
-    </tbody>
-    </table></div>
-    <h2>Core Subsystem Directory Tree</h2>
-    <div class="table-scroll"><table class="format-counts">
-    <thead><tr><th>Virtual Directory</th><th>Subsystem Role</th><th>Primary File Types</th></tr></thead>
-    <tbody>
-    <tr><td><code>audio/</code> / <code>IOP/</code></td><td>Voice streams, soundtrack music, sound effect dictionaries, and audio bus curves.</td><td><code>.msf</code>, <code>.xma</code>, <code>.ogg</code>, <code>.vag</code>, <code>.wavx</code>, <code>.cfg</code>, <code>.sfx</code></td></tr>
-    <tr><td><code>chars/</code></td><td>Minifigures, creatures, vehicles, character definitions, and animations.</td><td><code>.ghg</code>/<code>.hgx</code>/<code>.hx2</code>, <code>.cd</code>, <code>.cpd</code>, <code>.as</code>, <code>.an3</code>/<code>.ani</code>/<code>.anm</code>, <code>.bsa</code>, <code>.tex</code></td></tr>
-    <tr><td><code>levels/</code></td><td>Story chapters, hub worlds, collision octrees, runtime lights, and level scripts.</td><td><code>.gsc</code>/<code>.nux</code>/<code>.nx2</code>, <code>.ter</code>/<code>.ctr</code>, <code>.rtl</code>, <code>.dno</code>, <code>.led</code>, <code>.giz</code>, <code>.git</code>, <code>.scp</code>, <code>.sf</code>, <code>.lua</code></td></tr>
-    <tr><td><code>cut/</code></td><td>In-engine cutscene choreography, actor staging, camera switching, and subtitle timings.</td><td><code>.cut</code>, <code>.cu2</code>/<code>.cc2</code>, <code>.cu3</code>, <code>.sub</code></td></tr>
-    <tr><td><code>gui/</code> / <code>framework-data/</code></td><td>Menu pages, pause screens, HUD stud counters, button prompts, and font sheets.</td><td><code>.ft2</code>, <code>.gip</code>, <code>.gix</code>, <code>.gil</code>, <code>.tex</code></td></tr>
-    <tr><td><code>stuff/</code></td><td>Global configuration, gameplay constants, particle templates, splines, and localization tables.</td><td><code>text.csv</code>, <code>game.txt</code>, <code>levels.txt</code>, <code>.ptl</code>, <code>.par</code>, <code>.spl</code></td></tr>
-    <tr><td><code>scripts/</code> / <code>ai/</code></td><td>Global mission scripting, AI navigation graphs, and Lua bytecode packages.</td><td><code>.ai2</code>, <code>.aib</code>, <code>.scp</code>, <code>.sf</code>, <code>.lua</code>, <code>ai.pak</code></td></tr>
-    <tr><td><code>movies/</code> / <code>FMV/</code></td><td>Pre-rendered FMVs, company logos, attract mode gameplay reels, and end credits.</td><td><code>.fmv</code>, <code>.bik</code>, <code>.pam</code>, <code>.pss</code>, <code>.xmv</code></td></tr>
-    </tbody>
-    </table></div>
-</section>
-<h2>Platform Implementations</h2>
-<ul>
-    <li><a href="../index.html#Files-PS3" target="_parent">PlayStation (PS2 &amp; PS3) Combined Filesystem</a></li>
-    <li><a href="../index.html#Files-Xbox360" target="_parent">Xbox (Original Xbox &amp; Xbox 360) Combined Filesystem</a></li>
-    <li><a href="../index.html#Files-PC" target="_parent">PC (Windows Retail &amp; Steam Remaster) Combined Filesystem</a></li>
-</ul>
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html#home" target="_parent">Documentation</a><span>/</span>Files</nav>
+    <h1>LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection — Verified Archive &amp; Extension Census</h1>
+    <aside class="source-notice">
+        <p><strong>Game Scope:</strong> Era 3a–3b &amp; 2024 x64 Remaster · PS3, Xbox 360 &amp; PC</p>
+    </aside>
+    <p class="callout">For the full 2005–2024 TT Games multi-title engine chronology and cross-game file census, see the <a href="../../../../../reversing/docs/Travellers_Tales/Files/index.html" target="_top">Traveller's Tales Parent Architecture Hub</a>.</p>
+    <section class="doc-overview">
+        <h2>Empirical Archive &amp; Extension Census</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Empirically Inspected Builds &amp; Virtual Archive Censuses</caption>
+                <thead>
+                    <tr>
+                        <th>Title / Build</th>
+                        <th>Platform</th>
+                        <th>Engine Generation</th>
+                        <th>Container / TOC</th>
+                        <th>Compression</th>
+                        <th>Entries</th>
+                        <th>Hash Verify</th>
+                        <th>Key Observed Formats</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>LEGO Harry Potter: Years 1–4 (2010)</strong><br><code>7 vols (GAME + GAME1..6) · EBOOT 10,967,064 B</code></td>
+                        <td>PS3 (BLES00720 v03.00, SYS 03.60)</td>
+                        <td>Era 3a — Multi-Volume NXG (PakDat v1.01)</td>
+                        <td>TOC v-4 (7 vols, 8B nodes)</td>
+                        <td>LZ2K (4,310) / Raw (6,917)</td>
+                        <td><code>11,227</code></td>
+                        <td>100%</td>
+                        <td><code>.txt 2,327, .scp 1,868, .gsc 1,366, .led 1,004, .cd 632, .tex 539, .cu2 528, .as 502, .pac 486, .dno 353, .ghg 303</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>LEGO Harry Potter: Years 1–4 (2010)</strong><br><code>USA/EU ISO (7.48 GB) · Default.xex (9,838,592 B, Title ID 0x575207E6) · GAME + GAME1..6.DAT</code></td>
+                        <td>Xbox 360 (XDVDFS / XEX2)</td>
+                        <td>Era 3a — Multi-Volume NXG (PakDat v1.01)</td>
+                        <td>TOC v-4 (7 vols, PakDat v1.01)</td>
+                        <td>LZ2K / Raw</td>
+                        <td><em>Loose / Ref</em></td>
+                        <td>Verified XEX2 + DAT vols</td>
+                        <td><code>.xma, .gsc, .ghg, .tex, .led, .scp, .cd, .dno, .as, .pac</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>LEGO Harry Potter: Years 5–7 (2011)</strong><br><code>10 vols (GAME + GAME0..8) · EBOOT 13,621,064 B</code></td>
+                        <td>PS3 (BLES01348, APP 01.00, SYS 03.73)</td>
+                        <td>Era 3b — ScriptFu (.sf) Introduction</td>
+                        <td>TOC v-4 (10 vols, 8B nodes)</td>
+                        <td>LZ2K (6,876) / Raw (7,388)</td>
+                        <td><code>14,264</code></td>
+                        <td>100%</td>
+                        <td><code>.txt 2,422, .led 2,098, .sf 1,756, .tex 1,626, .gsc 1,494, .cd 890, .dno 633, .as 578, .pac 520, .cpd 217</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>LEGO Harry Potter: Years 5–7 (2011)</strong><br><code>USA ISO (8.33 GB) · Default.xex (11,640,832 B, Title ID 0x57520812) · GAME + GAME0.DAT</code></td>
+                        <td>Xbox 360 (XDVDFS / XEX2)</td>
+                        <td>Era 3b — ScriptFu (.sf) Introduction</td>
+                        <td>TOC v-4 (2 large vols, PakDat v1.01)</td>
+                        <td>LZ2K / Raw</td>
+                        <td><em>Loose / Ref</em></td>
+                        <td>Verified XEX2 + DAT vols</td>
+                        <td><code>.xma, .sf, .led, .tex, .gsc, .cd, .dno, .as, .pac, .cpd</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>LEGO Harry Potter Collection (2024 Double Eleven)</strong><br><code>harry1.exe (13.09 MB) / harry2.exe (14.43 MB)</code></td>
+                        <td>Windows PC (PE32+ AMD64)</td>
+                        <td>Remaster — Double Eleven .datwin / LZHAM</td>
+                        <td>.datwin TOC v-1 (0x12345678 sentinel) + .pkiwin/.pkdwin</td>
+                        <td>LZHAM (.datwin) / zlib (.pkdwin)</td>
+                        <td><em>Loose / Ref</em></td>
+                        <td>N/A</td>
+                        <td><code>.datwin, .pkiwin, .pkdwin, .gsc (HSEM/DXBC), .ghg</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </body>
+
 </html>

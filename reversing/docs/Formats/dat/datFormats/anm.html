@@ -1,29 +1,132 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.anm (Animation Track Sequence)</title>
+    <title>.anm (Level Object Anims) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='#home'>Documentation</a><span>/</span><a href='../../index.html'>Formats</a><span>/</span><a href='../dat.html'>.dat</a><span>/</span>.anm
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.anm (Level Object Anims)</nav>
+    <h1>.ANM (Level Object Animation &amp; Event Tables)</h1>
+    <aside class="source-notice">
+        <p><strong>Micro-Probed Directly:</strong> <em>TCS</em> PS3 (82 files, e.g. <code>new_town.anm</code>) and <em>Batman 1</em> PS3 (64 files, e.g. <code>botanicgardens_a.anm</code>); diminishes to 1–2 files by <em>PotC</em>/<em>HP 5–7</em>.</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · World Animation · Era 2–3b (TCS to HP 5–7)</p>
+        <p>Fixed-stride (96-byte) record tables binding level scene mesh nodes (e.g., Pop_2_House_4, greenpumpnull1) to named animation events and duration/vector transforms.</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.anm</code></dd>
+            <dt>Header</dt>
+            <dd><code>+0x00 u32le ver (6)</code>, <code>+0x04 u32le entry_count</code></dd>
+            <dt>Record Stride</dt>
+            <dd>Fixed <code>96</code> bytes (<code>0x60</code>) per animated prop record</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/anm.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.anm (Animation Track Sequence)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Animation · Extracted from TT Games <code>.DAT</code> / <code>.datwin</code> archives</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Keyframe skeletal animation sequence defining bone rotations (quaternions), translations, and scale curves over time for minifigures, vehicles, and creatures.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.anm</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>0x06000000</code></dd>
-        <dt>Subsystem</dt><dd>Animation</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p><code>.anm</code> files animate skeletal hierarchies defined in <code>.ghg</code> files. Standard minifigure animations (run, jump, build, attack, cast spell, idle) are shared across titles via character definition scripts.</p>
-<h2>Structure</h2>
-<p>Headers begin with frame count, sampling rate (typically 30 or 60 FPS), and track channel counts. Channels store timestamped quaternion rotation tracks <code>(x, y, z, w)</code> and vector translations.</p>
+    <section id="overview" class="doc-overview">
+        <h2>Binary Layout (Verified in <code>new_town.anm</code> &amp; <code>botanicgardens_a.anm</code>)</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>.anm File &amp; Record Structure</caption>
+                <thead>
+                    <tr>
+                        <th>Offset</th>
+                        <th>Size</th>
+                        <th>Type</th>
+                        <th>Field</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>0x00</code></td>
+                        <td>4</td>
+                        <td><code>u32le</code></td>
+                        <td><code>version</code></td>
+                        <td>Observed constant <code>6</code> across <em>TCS</em> and <em>BM1</em>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x04</code></td>
+                        <td>4</td>
+                        <td><code>u32le</code></td>
+                        <td><code>count</code></td>
+                        <td>Number of <code>96</code>-byte prop entries (e.g. <code>21</code> in <code>new_town.anm</code>: <code>8 + 21*96 = 2,024</code> + 40B tail).</td>
+                    </tr>
+                    <tr>
+                        <td><code>Entry+0x00</code></td>
+                        <td>36</td>
+                        <td><code>ASCII</code></td>
+                        <td><code>node_name</code></td>
+                        <td>Null-padded scene object identifier (e.g. <code>"Pop_2_House_4"</code>, <code>"greenpumpnull1"</code>) + group index.</td>
+                    </tr>
+                    <tr>
+                        <td><code>Entry+0x2C</code></td>
+                        <td>24</td>
+                        <td><code>ASCII</code></td>
+                        <td><code>event_tag</code></td>
+                        <td>Animation/SFX trigger label (e.g. <code>"EVAP_POP_2"</code>, <code>"GOOPSTEP"</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><code>Entry+0x3C</code></td>
+                        <td>4</td>
+                        <td><code>u32le</code></td>
+                        <td><code>frames</code></td>
+                        <td>Observed <code>0x3C</code> (60 frames / 1.0s) or flags.</td>
+                    </tr>
+                    <tr>
+                        <td><code>Entry+0x40..0x5F</code></td>
+                        <td>32</td>
+                        <td><code>f32le[]</code></td>
+                        <td><code>delta_vec</code></td>
+                        <td>Translation / impulse deltas (e.g. small float32 motion vectors).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/gsc.html"><code>.gsc / .scp</code></a> — Bound to named mesh nulls in Era 2–3a level scenes.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <p><em>None documented (leaf or standalone file).</em></p>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>Tail Bytes:</strong> <code>new_town.anm</code> (2,064 B for 21 entries) includes a 40-byte trailer after <code>8 + count * 96</code>; treat bytes beyond <code>8 + count * 96</code> as optional level footer flags.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseAnm(buf):
+    ver, count = ReadU32LE2(buf, 0)
+    entries = []
+    for i in 0 .. count - 1:
+        off = 8 + i * 96
+        node = ReadNullAscii(buf, off, 32)
+        tag = ReadNullAscii(buf, off + 0x2C, 20)
+        frames = ReadU32LE(buf, off + 0x3C)
+        entries.append({node: node, tag: tag, frames: frames})
+    return entries</code></pre>
+    </section>
+
 </body>
+
 </html>

@@ -1,27 +1,110 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.xma (Microsoft Xbox 360 Audio)</title>
+    <title>.xma (Xbox 360 Audio) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='#home'>Documentation</a><span>/</span><a href='../../index.html'>Formats</a><span>/</span><a href='../dat.html'>.dat</a><span>/</span>.xma
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.xma (Xbox 360 Audio)</nav>
+    <h1>.XMA (Xbox 360 XMA2 RIFF Audio Containers)</h1>
+    <aside class="source-notice">
+        <p><strong>Inspected Directly:</strong> <em>LSW2</em> X360 (149 files, e.g. <code>Qui_DS_Escape.xma</code>, 4.67 MB), <em>HP 1–4</em> X360 (492), and 3 leftover files in <em>BM2</em> PS3.</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Xbox 360 Audio · LSW2 360, HP 1–4 360, HP 5–7 360 &amp; BM2 PS3</p>
+        <p>Standard Microsoft RIFF WAVE containers carrying Xbox 360 XMA / XMA2 hardware-compressed audio (format tag 0x0165 / 0x0166).</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.xma</code></dd>
+            <dt>Magic</dt>
+            <dd><code>"RIFF"</code> + <code>"WAVE"</code> + <code>"fmt "</code> (wFormatTag <code>0x0165</code> XMA / <code>0x0166</code> XMA2)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/xma.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.xma (Microsoft Xbox 360 Audio)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Audio · Extracted from TT Games <code>.DAT</code> / <code>.datwin</code> archives</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Microsoft Xbox 360 proprietary audio stream utilizing XMA2 compression for background music and dialog.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.xma</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>RIFF XMA2</code></dd>
-        <dt>Subsystem</dt><dd>Audio</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>Decoded by the Xbox 360 audio coprocessor. 1-to-1 counterpart of PS3 <code>.msf</code> and PC <code>.ogg</code> audio files across shared TT titles.</p>
+    <section id="overview" class="doc-overview">
+        <h2>RIFF Chunk Structure</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>XMA RIFF Header (LSW2 X360 Verified)</caption>
+                <thead>
+                    <tr>
+                        <th>Offset</th>
+                        <th>Size</th>
+                        <th>Type</th>
+                        <th>Field</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>0x00</code></td>
+                        <td>12</td>
+                        <td><code>RIFF..WAVE</code></td>
+                        <td><code>riff_hdr</code></td>
+                        <td>Little-endian RIFF container size &amp; <code>"WAVE"</code> form.</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x0C</code></td>
+                        <td>8</td>
+                        <td><code>"fmt "</code></td>
+                        <td><code>fmt_hdr</code></td>
+                        <td>Standard <code>fmt </code> chunk (size <code>0x20</code> / <code>0x34</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x14</code></td>
+                        <td>2</td>
+                        <td><code>u16le</code></td>
+                        <td><code>wFormatTag</code></td>
+                        <td><code>0x0165</code> (XMA1, observed in <em>LSW2</em> 360) or <code>0x0166</code> (XMA2).</td>
+                    </tr>
+                    <tr>
+                        <td><code>data</code></td>
+                        <td>var</td>
+                        <td><code>2KB pkts</code></td>
+                        <td><code>xma_stream</code></td>
+                        <td>Big-endian 2048-byte XMA packets decoded by Xenon XMA coprocessor.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/sfx.html"><code>.sfx / audio.cfg</code></a> — Xbox 360 SFX, music, and cutscene tracks.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <p><em>None documented (leaf or standalone file).</em></p>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>Cross-Disc Leftovers:</strong> <em>Batman 2</em> PS3 accidentally retains 3 <code>.xma</code> files alongside PS3 <code>.msf</code>.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseXma(buf):
+    if buf[0:4] != b&quot;RIFF&quot; or buf[8:12] != b&quot;WAVE&quot;: raise NotRiff
+    wFormat = ReadU16LE(buf, 0x14)
+    return {format_tag: wFormat, is_xma: wFormat in (0x0165, 0x0166)}</code></pre>
+    </section>
+
 </body>
+
 </html>

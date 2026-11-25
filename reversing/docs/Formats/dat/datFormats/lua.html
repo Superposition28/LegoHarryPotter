@@ -1,28 +1,88 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.lua (Compiled Lua 5.1 Bytecode & Gameplay Scripts)</title>
+    <title>.lua (GUI &amp; Editor Scripts) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.lua
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.lua (GUI &amp; Editor Scripts)</nav>
+    <h1>.LUA (Lua 5.1 Framework &amp; UI Logic)</h1>
+    <aside class="source-notice">
+        <p><strong>Corrected Census:</strong> Present at <code>5</code> plaintext scripts per disc from <em>CW</em> through <em>Marvel 1</em> (e.g. <code>editoronly.lua</code>); <code>0 .lua</code> files exist on inspected <em>Dimensions</em> PS3 discs.</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · UI &amp; Tool Scripting · Clone Wars through Marvel 1</p>
+        <p>Plaintext Lua scripts in framework-data/gui/script/ (5 files/disc in CW, PotC, HP 5–7, BM2, LOTR, Marvel 1; 0 in Hobbit/Dimensions).</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.lua</code> (all plaintext on inspected PS3 builds; 0 compiled bytecode)</dd>
+            <dt>Count</dt>
+            <dd><code>5</code> (CW–Marvel 1), <code>0</code> (Hobbit, Dimensions)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/lua.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.lua (Compiled Lua 5.1 Bytecode & Gameplay Scripts)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Gameplay & AI · <strong>Scope:</strong> Era 4–5 (LEGO Dimensions: 9,858 files, LEGO Worlds, Skywalker Saga)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Compiled Lua 5.1 bytecode (and plaintext Lua scripts) replacing legacy .scp/.sf state machines for gameplay, UI, and portal logic in Era 4+ titles.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.lua</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>\x1BLuaQ (0x1B 0x4C 0x75 0x61 0x51)</code></dd>
-        <dt>Subsystem</dt><dd>Gameplay & AI</dd>
-        <dt>Cross-Game Scope</dt><dd>Era 4–5 (LEGO Dimensions: 9,858 files, LEGO Worlds, Skywalker Saga)</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>In <em>LEGO Dimensions</em>, <code>.lua</code> becomes the single largest script type in the archive (9,858 files across GAME*.DAT and INSTALL0_*.DAT), replacing almost all legacy <code>.scp</code> and <code>.sf</code> scripts.</p>
+    <section id="overview" class="doc-overview">
+        <p>Direct inspection confirms these scripts live under <code>framework-data\gui\script\</code> as plain UTF-8/ASCII Lua source (e.g. <code>-- Temporary functions for testing in GWiz</code>) rather than compiled <code>\x1bLua</code> bytecode.</p>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Observed .lua Census (Corrected)</caption>
+                <thead>
+                    <tr>
+                        <th>Game</th>
+                        <th>Count</th>
+                        <th>Type &amp; Location</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><em>Clone Wars</em> .. <em>Marvel 1</em></td>
+                        <td><code>5</code> per disc</td>
+                        <td>Plaintext Lua under <code>framework-data\gui\script\</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><em>Hobbit</em> / <em>Dimensions</em></td>
+                        <td><code>0</code></td>
+                        <td>Zero <code>.lua</code> files on verified PS3 disc + install volumes.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/gip.html"><code>Framework GUI Engine</code></a> — Executed when opening debug/GUI server panels.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <p><em>None documented (leaf or standalone file).</em></p>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li>Old docs claimed 9,858 <code>.lua</code> files in <em>LEGO Dimensions</em>; actual count on verified PS3 ISO + install volumes is <code>0</code>.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function IsCompiledLua(buf):
+    return buf[0:4] == b&quot;\x1bLua&quot;</code></pre>
+    </section>
+
 </body>
+
 </html>

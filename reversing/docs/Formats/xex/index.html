@@ -1,36 +1,160 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Xbox & Xbox 360 Executables (.xex / .xbe)</title>
+    <title>.xex / .xbe (Xbox / 360) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span>.xex
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span>.xex / .xbe (Xbox / 360)</nav>
+    <h1>Xbox &amp; Xbox 360 Executables (XEX2 &amp; XBEH)</h1>
+    <aside class="source-notice">
+        <p><strong>Inspected Directly:</strong> Extracted from XDVDFS images: <em>LSW1</em> Xbox (<code>default.xbe</code>), <em>LSW2</em> Xbox (<code>default.xbe</code>), <em>LSW2</em> X360 (<code>default.xex</code>), <em>HP 1–4</em> X360, and <em>HP 5–7</em> X360.</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Console Executables · Xbox &amp; Xbox 360 XDVDFS</p>
+        <p>Microsoft console executables: Original Xbox x86 XBEH images (LSW1, LSW2) and Xbox 360 PowerPC64 XEX2 executables (LSW2 360, HP 1–4, HP 5–7).</p>
+        <dl>
+            <dt>Signatures</dt>
+            <dd><code>XBEH</code> (Original Xbox LE) &middot; <code>XEX2</code> (Xbox 360 BE)</dd>
+            <dt>Filesystem</dt>
+            <dd><code>MICROSOFT*XBOX*MEDIA</code> (XDVDFS LBA 32 root directory)</dd>
+            <dt>Title IDs Verified</dt>
+            <dd><code>0x575207E6</code> (<em>HP 1–4</em>), <code>0x57520812</code> (<em>HP 5–7</em>)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../reversing/docs/Travellers_Tales/Formats/xex/index.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>Xbox &amp; Xbox 360 Executables (.xex / .xbe)</h1>
-<aside class="source-notice"><p><strong>Platforms:</strong> Microsoft Xbox 360 (<code>XEX2</code> Xenon PPC64 BE) &amp; Original Xbox (<code>XBEH</code> x86 LE)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Executable Containers · Retail Discs, Demos &amp; STFS Packages</p>
-    <p>Microsoft console executable containers: Original Xbox <code>default.xbe</code> (32-bit x86 image at base <code>0x00010000</code>) for Era 1–2 and Xbox 360 <code>Default.xex</code> (64-bit Big-Endian PowerPC PE image at base <code>0x82000000</code>) for Era 2–4.</p>
-    <dl>
-        <dt>Container Signatures</dt><dd><code>XEX2</code> (<code>0x58455832</code>, Xbox 360) · <code>XBEH</code> (<code>0x48454258</code>, Original Xbox)</dd>
-        <dt>Inspected Titles</dt><dd><em>LSW1</em> Xbox (<code>default.xbe</code>, 2.74 MB), <em>LSW2</em> Xbox (<code>default.xbe</code>, 3.66 MB), <em>LSW2</em> X360 (<code>default.xex</code>, 6.29 MB), <em>HP 1–4</em> X360 (<code>Default.xex</code>, Title ID <code>0x575207E6</code>), <em>HP 5–7</em> X360 (<code>Default.xex</code>, Title ID <code>0x57520812</code>)</dd>
-        <dt>Decryption Tooling</dt><dd><code>XexTool v7.0</code> (<code>-u -o Default_unpacked.xex -d . -i Default.idc Default.xex</code>)</dd>
-    </dl>
-</section>
-<h2>Inspected Xbox &amp; Xbox 360 Executables</h2>
-<div class="table-scroll"><table class="format-counts">
-<thead><tr><th>Title &amp; Platform</th><th>Executable</th><th>Size</th><th>Internal PE / Details</th></tr></thead>
-<tbody>
-<tr><td><em>LEGO Star Wars: The Video Game</em> (Xbox USA)</td><td><code>default.xbe</code></td><td><code>2,740,224</code> B</td><td><code>XBEH</code> x86 image reading loose <code>.nux</code>, <code>.hgx</code>, <code>.ani</code>, <code>.bsa</code>, <code>.wavx</code> files from XDVDFS.</td></tr>
-<tr><td><em>LEGO Star Wars II: The Original Trilogy</em> (Xbox)</td><td><code>default.xbe</code></td><td><code>3,661,824</code> B</td><td><code>XBEH</code> x86 image reading loose <code>.nx2</code>, <code>.hx2</code>, <code>.an3</code>, <code>.fpk</code> files.</td></tr>
-<tr><td><em>LEGO Star Wars II: The Original Trilogy</em> (Xbox 360)</td><td><code>default.xex</code></td><td><code>6,287,360</code> B</td><td><code>XEX2</code> Xenon PPC64 executable reading loose XDVDFS assets via <code>360_exlist</code>.</td></tr>
-<tr><td><em>LEGO Harry Potter: Years 1–4</em> (Xbox 360)</td><td><code>Default.xex</code></td><td><code>9,838,592</code> B</td><td>Unpacks to <code>legogame_Final_360.exe</code> (25.3 MB, Title ID <code>0x575207E6</code>, Media ID <code>0x3E371834</code>).</td></tr>
-<tr><td><em>LEGO Harry Potter: Years 5–7</em> (Xbox 360)</td><td><code>Default.xex</code></td><td><code>11,640,832</code> B</td><td>Unpacks to <code>harry2.master.pe</code> (13.7 MB, Title ID <code>0x57520812</code>, Media ID <code>0x61D8E1DE</code>).</td></tr>
-</tbody>
-</table></div>
+    <section id="overview" class="doc-overview">
+        <h2>Inspected Xbox &amp; Xbox 360 Executables</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>XBEH / XEX2 Executables in XDVDFS Discs</caption>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>File</th>
+                        <th>Size</th>
+                        <th>Base &amp; Internal Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><em>LEGO Star Wars</em> (Xbox)</td>
+                        <td><code>default.xbe</code></td>
+                        <td><code>2,740,224</code> B</td>
+                        <td><code>XBEH</code> x86 @ <code>0x00010000</code>; loads loose <code>.nux</code>, <code>.hgx</code>, <code>.ani</code>, <code>.bsa</code>, <code>.wavx</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO Star Wars II</em> (Xbox)</td>
+                        <td><code>default.xbe</code></td>
+                        <td><code>3,661,824</code> B</td>
+                        <td><code>XBEH</code> x86 @ <code>0x00010000</code>; loads loose <code>.nx2</code>, <code>.hx2</code>, <code>.an3</code>, <code>.fpk</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO Star Wars II</em> (X360)</td>
+                        <td><code>default.xex</code></td>
+                        <td><code>6,287,360</code> B</td>
+                        <td><code>XEX2</code> PPC64 BE; loads loose <code>02UN</code> <code>.gsc</code>/<code>.ghg</code> via <code>360_exlist</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO Pirates of the Caribbean</em> (X360)</td>
+                        <td><code>Default.xex</code></td>
+                        <td><code>5,394,432</code> B</td>
+                        <td>Mounts 6-vol <code>PakDat v1.01</code> (<code>8,537</code> entries, 100% hash) + 5 <code>LIVE</code> STFS Addons (<code>0x42560802</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO Harry Potter 1–4</em> (X360)</td>
+                        <td><code>Default.xex</code></td>
+                        <td><code>9,838,592</code> B</td>
+                        <td>Unpacks to <code>legogame_Final_360.exe</code> (Title ID <code>0x575207E6</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><em>LEGO Harry Potter 5–7</em> (X360)</td>
+                        <td><code>Default.xex</code></td>
+                        <td><code>11,640,832</code> B</td>
+                        <td>Unpacks to <code>harry2.master.pe</code> (Title ID <code>0x57520812</code>).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <h2>XDVDFS Sector-32 Root Header Layout</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>XDVDFS Volume Descriptor (Offset 32 * 2048 within Partition)</caption>
+                <thead>
+                    <tr>
+                        <th>Offset</th>
+                        <th>Size</th>
+                        <th>Type</th>
+                        <th>Field</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>0x00</code></td>
+                        <td>20</td>
+                        <td><code>char[20]</code></td>
+                        <td><code>magic_head</code></td>
+                        <td><code>"MICROSOFT*XBOX*MEDIA"</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>0x14</code></td>
+                        <td>4</td>
+                        <td><code>u32le</code></td>
+                        <td><code>root_sec</code></td>
+                        <td>Starting 2048-byte sector of root BST directory table.</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x18</code></td>
+                        <td>4</td>
+                        <td><code>u32le</code></td>
+                        <td><code>root_size</code></td>
+                        <td>Byte length of root directory table.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><code>XDVDFS ISO</code> — Microsoft console discs boot default.xbe / Default.xex from root partition.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <ul>
+                <li><a href="../../Formats/dat/dat.html"><code>.DAT Archives</code></a> — Mounted in Era 3+ X360 titles (loose XDVDFS files in Era 1–2 LSW1/LSW2).</li>
+            </ul>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li>Redump Xbox/X360 ISOs contain an outer security/video partition before the XDVDFS game partition (typical offsets: <code>0x18300000</code> for Original Xbox, <code>0x0FD90000</code> or <code>0x02080000</code> for X360); scan candidates for <code>MICROSOFT*XBOX*MEDIA</code> at <code>base + 32*2048</code>.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function FindXdvdfsBase(iso):
+    for base in [0, 0x18300000, 0x0FD90000, 0x02080000]:
+        if iso.ReadAt(base + 32*2048, 20) == &quot;MICROSOFT*XBOX*MEDIA&quot;:
+            return base
+    raise NotXdvdfs</code></pre>
+    </section>
+
 </body>
+
 </html>

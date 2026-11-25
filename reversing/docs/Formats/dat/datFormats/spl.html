@@ -1,28 +1,112 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.spl / .fsp (EDSPLINE 3D Curve & Rail Paths)</title>
+    <title>.spl (EDSPLINE Paths) — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.spl
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.spl (EDSPLINE Paths)</nav>
+    <h1>.SPL (EDSPLINE Navigation, Camera &amp; Climb Splines)</h1>
+    <aside class="source-notice">
+        <p><strong>Dissected Directly:</strong> <em>Batman 1</em> PS3 (68 files, e.g. <code>batcave_a.spl</code>, 406 B), <em>Indy 2</em> (36), and <em>HP 1–4</em> (29).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · World Paths · Era 2–3a (Batman 1, Indy 2, HP 1–4)</p>
+        <p>Binary spline path container used for ladders, camera rails, and chase routes under the ASCII magic "EDSPLINE v. " + u32le version.</p>
+        <dl>
+            <dt>Extension</dt>
+            <dd><code>.spl</code></dd>
+            <dt>Magic Header</dt>
+            <dd><code>"EDSPLINE v. "</code> (12 bytes) + <code>u32le version (3)</code></dd>
+            <dt>Contains</dt>
+            <dd>Named splines (e.g. <code>arkhamLadder1</code>, <code>BATSPLINE1</code>) + <code>Float32</code> Vec3 knots/tangents</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/spl.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.spl / .fsp (EDSPLINE 3D Curve & Rail Paths)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Level Design & AI · <strong>Scope:</strong> Universal (LSW1 2005 through LEGO Dimensions 2015)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>3D Bezier/Catmull-Rom spline curves (EDSPLINE v. 03) used for camera rails, coaster tracks, vehicle paths, and stud trails.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.spl</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>EDSPLINE v. 03</code></dd>
-        <dt>Subsystem</dt><dd>Level Design & AI</dd>
-        <dt>Cross-Game Scope</dt><dd>Universal (LSW1 2005 through LEGO Dimensions 2015)</dd>
-    </dl>
-</section>
-<h2>Overview</h2>
-<p>Begins with ASCII <code>EDSPLINE v. 03</code> followed by control point coordinates and tangents.</p>
+    <section id="overview" class="doc-overview">
+        <h2>Binary Layout (Observed in <code>batcave_a.spl</code>)</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>EDSPLINE v3 Binary Structure</caption>
+                <thead>
+                    <tr>
+                        <th>Offset</th>
+                        <th>Size</th>
+                        <th>Type</th>
+                        <th>Field</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>0x00</code></td>
+                        <td>12</td>
+                        <td><code>char[12]</code></td>
+                        <td><code>magic</code></td>
+                        <td><code>"EDSPLINE v. "</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>0x0C</code></td>
+                        <td>4</td>
+                        <td><code>u32le</code></td>
+                        <td><code>version</code></td>
+                        <td>Observed version <code>3</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x10</code></td>
+                        <td>4</td>
+                        <td><code>u32le</code></td>
+                        <td><code>spline_count</code></td>
+                        <td>Number of splines in file (<code>4</code> in <code>batcave_a.spl</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x14+</code></td>
+                        <td>var</td>
+                        <td><code>u32le + records</code></td>
+                        <td><code>SplineTable</code></td>
+                        <td>Per-spline name (ASCII), point count, Vec3 world knots, tangent handles, and usage tag (e.g. <code>climb_batman</code>).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/led.html"><code>.led / .scp</code></a> — Climbables, zip-lines, and camera rails query spline names by string.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <p><em>None documented (leaf or standalone file).</em></p>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>Era 3b+ Sunset:</strong> Largely subsumed directly into <code>EdFile</code> (<code>.led</code>) and <code>.nvm/.fst</code> in <em>Clone Wars</em> onward.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function ParseSpl(buf):
+    if buf[0:12] != b&quot;EDSPLINE v. &quot;: raise NotEdspline
+    ver, cnt = ReadU32LE2(buf, 12)
+    return {version: ver, spline_count: cnt}</code></pre>
+    </section>
+
 </body>
+
 </html>

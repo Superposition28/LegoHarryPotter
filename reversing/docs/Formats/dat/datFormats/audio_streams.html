@@ -1,37 +1,116 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>.vag / .wavx / .wavm / .msf / .xma / .ogg (Platform Audio Streams)</title>
+    <title>.vag / .wavx / .ogg / .ctr — LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection</title>
     <link rel="stylesheet" href="../../../style/main.css">
 </head>
+
 <body class="doc-page">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href='../../../index.html#home' target='_parent'>Documentation</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>Formats</a><span>/</span><a href='../../../index.html#Formats-dat' target='_parent'>.dat</a><span>/</span>.msf / .xma / .ogg / .vag
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../../index.html#home" target="_parent">Documentation</a><span>/</span><a href="../../../index.html#Formats-dat" target="_parent">Formats</a><span>/</span><a href="../../../Formats/dat/dat.html">.dat Archive</a><span>/</span>.vag / .wavx / .ogg / .ctr</nav>
+    <h1>.VAG, .WAVX, .XSB/.XWB, .AT9, .OGG &amp; .CTR (Platform Audio Streams &amp; Banks)</h1>
+    <aside class="source-notice">
+        <p><strong>Observed Directly Across Platforms:</strong> <em>LSW1</em> PS2 (<code>796 .vag</code> + <code>NUSND3G.IRX</code>) &amp; Xbox (<code>.wavx</code>), <em>LSW2</em> PS2 (<code>1,037 .vag</code> + <code>KBDS .xsb</code> / <code>DNBW .xwb</code> 29.6 MB), <em>PS4 LEGO Worlds</em> (<code>snd0.at9</code> RIFF ATRAC9), <em>BM1</em> PS3 (<code>641 .vag</code>), and <em>LOTR</em> PS3 (<code>2 .ogg</code>).</p>
+    </aside>
+    <section class="format-summary">
+        <p class="eyebrow">LEGO Harry Potter: Years 1–4, Years 5–7 &amp; 2024 Collection · Cross-Platform Audio · PS2, PS4, Xbox, Xbox 360 &amp; PC</p>
+        <p>Consolidated specification for platform audio containers outside .msf/.xma/.cbx: PS2 SPU2 VAGp (.vag) + XACT .xsb/.xwb banks (LSW2 PS2), Xbox ADPCM/WMA (.wavx/.wavm), PS4 ATRAC9 (.at9 in LEGO Worlds CUSA02985), PC Ogg Vorbis (.ogg), and Nu audio track tables (.ctr).</p>
+        <dl>
+            <dt>Extensions</dt>
+            <dd><code>.vag</code>, <code>.wavx/.wavm</code>, <code>.xsb/.xwb</code>, <code>.at9</code>, <code>.ogg</code>, <code>.raw</code>, <code>.ctr</code></dd>
+            <dt>Magic Signatures</dt>
+            <dd><code>"VAGp"</code> &middot; <code>"KBDS"</code>/<code>"DNBW"</code> &middot; <code>"RIFF..WAVE"</code> (`0xFFFE` ATRAC9) &middot; <code>"OggS"</code> &middot; <code>0x00036F32</code> (<code>.ctr</code>)</dd>
+        </dl>
+    </section>
+    <p class="callout"><strong>Cross-Generation History:</strong> This page is scoped strictly to the versions and containers observed in this game. For multi-era evolution across Nu2, NXG, DX11, and NTT, see the <a href="../../../../../../../reversing/docs/Travellers_Tales/Formats/dat/datFormats/audio_streams.html" target="_top">Parent LEGO Shared Specification</a>.</p>
+    <nav class="page-toc" aria-label="On this page">
+        <ul>
+            <li><a href="#overview">1. Overview &amp; Layout</a></li>
+            <li><a href="#relationships">2. Cross-Format Relationships</a></li>
+            <li><a href="#edge-cases">3. Edge Cases &amp; Unresolved Fields</a></li>
+            <li><a href="#pseudocode">4. Standalone Parser Pseudocode</a></li>
+        </ul>
     </nav>
-    <h1>.vag / .wavx / .wavm / .msf / .xma / .ogg (Platform Audio Streams)</h1>
-<aside class="source-notice"><p><strong>Category:</strong> Audio · <strong>Scope:</strong> Universal (Platform-Specific Codecs per Console/PC Target)</p></aside>
-<section class="format-summary">
-    <p class="eyebrow">Format Specification · TT Games Engine</p>
-    <p>Streaming music, ambience, and dialogue audio containers tailored to each target platform's hardware decoder.</p>
-    <dl>
-        <dt>File Extension</dt><dd><code>.msf / .xma / .ogg / .vag</code></dd>
-        <dt>Header Signature / Magic</dt><dd><code>VAGp / RIFF / MSF\x01 / XMA2 / OggS</code></dd>
-        <dt>Subsystem</dt><dd>Audio</dd>
-        <dt>Cross-Game Scope</dt><dd>Universal (Platform-Specific Codecs per Console/PC Target)</dd>
-    </dl>
-</section>
-<h2>Cross-Platform Audio Codec Matrix</h2>
-<div class="table-scroll"><table class="format-counts">
-<thead><tr><th>Platform</th><th>Extension</th><th>Header Magic</th><th>Codec &amp; Observed Examples</th></tr></thead>
-<tbody>
-<tr><td>PS2</td><td><code>.vag</code> / <code>.mib</code></td><td><code>VAGp</code></td><td>Sony PS2 SPU2 ADPCM (1,037 <code>.vag</code> files in <em>LSW2</em> PS2 <code>GAME.DAT</code> + 170 MB <code>IOP/MODULES/SOUND/</code> streams).</td></tr>
-<tr><td>Original Xbox</td><td><code>.wavx</code> / <code>.wavm</code> / <code>.wma</code></td><td><code>RIFF</code> / <code>ASF</code></td><td>Xbox ADPCM &amp; WMA streams (124 <code>.wavx</code> in <em>LSW1</em> Xbox; 149 <code>.wavm</code> in <em>LSW2</em> Xbox).</td></tr>
-<tr><td>PS3</td><td><code>.msf</code></td><td><code>MSF\x01</code> (<code>0x4D534601</code>)</td><td>Sony CellOS ATRAC3plus / PCM (493 files in <em>HP 1–4</em> PS3).</td></tr>
-<tr><td>Xbox 360</td><td><code>.xma</code></td><td><code>RIFF</code> (<code>XMA2</code>)</td><td>Microsoft XMA2 hardware audio (149 in <em>LSW2</em> X360; 492 in <em>HP 1–4</em> X360).</td></tr>
-<tr><td>Windows PC</td><td><code>.ogg</code> / <code>.wav</code></td><td><code>OggS</code> / <code>RIFF WAVE</code></td><td>Ogg Vorbis streaming tracks and uncompressed RIFF WAVE sound effects (Audio\_SoundFX\).</td></tr>
-</tbody>
-</table></div>
+    <section id="overview" class="doc-overview">
+        <h2>Platform Audio &amp; Music Cue Matrix</h2>
+        <div class="table-scroll">
+            <table class="format-counts">
+                <caption>Inspected Audio Stream &amp; Bank Formats</caption>
+                <thead>
+                    <tr>
+                        <th>Ext</th>
+                        <th>Observed Games</th>
+                        <th>Header &amp; Encoding</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>.vag</code></td>
+                        <td><em>LSW1</em> PS2 (796), <em>LSW2</em> PS2 (1,037), <em>BM1</em> PS3 (641)</td>
+                        <td>Sony <code>"VAGp"</code> 48B big-endian header + 4-bit PS-ADPCM 16B blocks; driven on PS2 IOP by <code>SYS/NUSND3G.IRX</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.xsb</code> / <code>.xwb</code></td>
+                        <td><em>LSW2</em> PS2 (<code>spotfx.xsb</code> / <code>spotfx.xwb</code>)</td>
+                        <td>XACT SoundBank (<code>"KBDS"</code> 29 KB) and WaveBank (<code>"DNBW"</code> 29.6 MB) packed inside PS2 <code>GAME.DAT</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.at9</code></td>
+                        <td>PS4 <em>LEGO Worlds</em> (<code>snd0.at9</code>, 1.61 MB)</td>
+                        <td><code>RIFF WAVE</code> extended format (<code>wFormatTag = 0xFFFE</code>, <code>48,000 Hz</code> stereo) Sony ATRAC9 title-screen loop.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.wavx</code> / <code>.wavm</code></td>
+                        <td><em>LSW1</em> / <em>LSW2</em> Xbox</td>
+                        <td>Headerless/Xbox ADPCM or WMA stream blocks aligned to Xbox audio sectors (<code>Ep3_VaderFight1.wavx</code> 3.52 MB).</td>
+                    </tr>
+                    <tr>
+                        <td><code>.ogg</code></td>
+                        <td>PC builds, <em>LOTR</em> PS3 (2)</td>
+                        <td>Standard Xiph <code>"OggS"</code> Vorbis container.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.raw</code></td>
+                        <td><em>Indy 2</em>–<em>HP 5–7</em> (1–2)</td>
+                        <td>Headerless 16-bit PCM test/DSP buffers.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.ctr</code></td>
+                        <td><em>LSW2</em> 360, <em>TCS</em> (293), <em>BM1</em> (183)</td>
+                        <td>Camera/music audio track descriptor (`u32be` header `0x00036F32`, count `9`, `f32be` camera/beat vectors in <em>LSW2</em> 360).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="relationships" class="section">
+        <h2>Cross-Format Relationships &amp; Dependencies</h2>
+        <div class="relationship-flow">
+            <h3>Referenced By (Upstream Containers / Loaders)</h3>
+            <ul>
+                <li><a href="../../../Formats/dat/datFormats/sfx.html"><code>.sfx / audio.cfg</code></a> — Streamed dynamically per level or dialogue cue.</li>
+            </ul>
+            <h3>References (Downstream Assets / Sub-Formats)</h3>
+            <p><em>None documented (leaf or standalone file).</em></p>
+        </div>
+    </section>
+    <section id="edge-cases" class="section">
+        <h2>Filtering, Edge Cases &amp; Unresolved Fields</h2>
+        <ul>
+            <li><strong>Mixed PS2-Era Carryover:</strong> <em>Batman 1</em> (2008) PS3 ships both 1,549 <code>.msf</code> and 641 <code>.vag</code> files simultaneously.</li>
+        </ul>
+    </section>
+    <section id="pseudocode" class="section">
+        <h2>Standalone Clean-Room Parser Pseudocode</h2>
+        <pre><code>function IdentifyStreamAudio(buf):
+    if buf[0:4] == b&quot;VAGp&quot;: return {codec: &quot;PS_ADPCM&quot;, rate: ReadU32BE(buf, 16)}
+    if buf[0:4] == b&quot;OggS&quot;: return {codec: &quot;OggVorbis&quot;}
+    if buf[0:4] == b&quot;MSFC&quot;: return ParseMsf(buf)
+    return {codec: &quot;RawOrXboxADPCM&quot;, size: len(buf)}</code></pre>
+    </section>
+
 </body>
+
 </html>
